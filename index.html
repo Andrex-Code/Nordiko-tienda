@@ -312,54 +312,37 @@
         </div>
     </aside>
 
-    <!-- MODAL DE CHECKOUT -->
+    <!-- MODAL DE CHECKOUT - PEDIDO POR WHATSAPP -->
     <div class="modal" id="checkoutModal">
         <div class="modal-content">
             <button class="modal-close" id="modalClose" aria-label="Cerrar modal">&times;</button>
-            <h2><i class="fas fa-credit-card"></i> Finalizar Compra</h2>
+            <h2><i class="fab fa-whatsapp"></i> Finalizar Pedido</h2>
+            <p style="color: #888; margin-bottom: 20px; font-size: 0.95rem;">
+                Completa tus datos y te enviaremos a WhatsApp para confirmar tu pedido.
+            </p>
             <form id="checkoutForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" placeholder="Nombre completo" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="email" placeholder="Correo electrónico" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" placeholder="Teléfono" required>
-                    </div>
+                <div class="form-group">
+                    <input type="text" id="customerName" placeholder="Tu nombre completo" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" placeholder="Dirección de envío" required>
+                    <input type="tel" id="customerPhone" placeholder="Tu teléfono (WhatsApp)" required>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" placeholder="Ciudad" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" placeholder="Código postal" required>
-                    </div>
-                </div>
-                <hr>
-                <h3><i class="fas fa-lock"></i> Información de Pago</h3>
                 <div class="form-group">
-                    <input type="text" placeholder="Número de tarjeta" required maxlength="19">
+                    <input type="text" id="customerAddress" placeholder="Dirección de entrega" required>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <input type="text" placeholder="MM/AA" required maxlength="5">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" placeholder="CVV" required maxlength="4">
-                    </div>
+                <div class="form-group">
+                    <textarea id="customerNotes" placeholder="Notas adicionales (opcional)" rows="3"></textarea>
                 </div>
-                <div class="cart-total">
-                    <span>Total a pagar:</span>
+                <div class="cart-total" style="background: #f5f0e8; padding: 16px; border-radius: 8px; margin: 20px 0;">
+                    <span>Total del pedido:</span>
                     <strong id="modalTotal">$0.00</strong>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-lock"></i> Pagar Ahora</button>
+                <button type="submit" class="btn btn-primary btn-block" style="background: #25D366;">
+                    <i class="fab fa-whatsapp"></i> Enviar Pedido por WhatsApp
+                </button>
+                <p style="text-align: center; color: #888; font-size: 0.85rem; margin-top: 12px;">
+                    <i class="fas fa-truck"></i> Entrega personal en el Eje Cafetero
+                </p>
             </form>
         </div>
     </div>
@@ -368,5 +351,57 @@
     <div class="toast" id="toast"></div>
 
     <script src="app.js"></script>
+    <script>
+        // Cargar configuración de categorías y redes sociales desde localStorage
+        (function cargarConfiguracion() {
+            try {
+                const configGuardada = localStorage.getItem('nordiko_config');
+                if (configGuardada) {
+                    const config = JSON.parse(configGuardada);
+                    
+                    // Cargar categorías personalizadas
+                    if (config.categorias && Array.isArray(config.categorias)) {
+                        const filtersContainer = document.querySelector('.filters');
+                        if (filtersContainer) {
+                            let html = '<button class="filter-btn active" data-filter="todos">Todos</button>';
+                            config.categorias.forEach(cat => {
+                                if (cat.activa) {
+                                    html += `<button class="filter-btn" data-filter="${cat.id}">${cat.nombre}</button>`;
+                                }
+                            });
+                            filtersContainer.innerHTML = html;
+                            
+                            // Re-asignar eventos a los nuevos botones
+                            document.querySelectorAll('.filter-btn').forEach(btn => {
+                                btn.addEventListener('click', () => {
+                                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                                    btn.classList.add('active');
+                                    if (typeof renderizarProductos === 'function') {
+                                        renderizarProductos(btn.dataset.filter);
+                                    }
+                                });
+                            });
+                        }
+                    }
+                    
+                    // Cargar redes sociales personalizadas
+                    if (config.redes && Array.isArray(config.redes)) {
+                        const socialContainer = document.querySelector('.social-links');
+                        if (socialContainer) {
+                            let html = '';
+                            config.redes.forEach(red => {
+                                if (red.activa && red.url) {
+                                    html += `<a href="${red.url}" target="_blank" aria-label="${red.nombre}"><i class="${red.icono}"></i></a>`;
+                                }
+                            });
+                            socialContainer.innerHTML = html;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Error cargando configuración:', e);
+            }
+        })();
+    </script>
 </body>
 </html>

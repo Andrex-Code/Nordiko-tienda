@@ -580,26 +580,65 @@ checkoutModal.addEventListener('click', (e) => {
 });
 
 /**
- * Procesa la compra con confirmación clara.
- * Pregunta "¿Seguro que quieres comprar?" antes de finalizar.
+ * Procesa el pedido enviándolo por WhatsApp.
+ * Pide nombre, teléfono y dirección, luego abre WhatsApp con el pedido.
  */
 checkoutForm.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    // Confirmación clara y simple
-    const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-    if (!confirm(`¿Seguro que quieres comprar por ${formatearPrecio(total)}?`)) {
+    // Obtener datos del cliente
+    const nombre = document.getElementById('customerName').value.trim();
+    const telefono = document.getElementById('customerPhone').value.trim();
+    const direccion = document.getElementById('customerAddress').value.trim();
+    const notas = document.getElementById('customerNotes').value.trim();
+    
+    if (!nombre || !telefono || !direccion) {
+        mostrarToast('Por favor completa todos los campos', 'error');
         return;
     }
     
-    // Cerrar el modal y vaciar el carrito
+    // Obtener número de WhatsApp configurado
+    let config = {};
+    try {
+        const configGuardada = localStorage.getItem('nordiko_config');
+        if (configGuardada) {
+            config = JSON.parse(configGuardada);
+        }
+    } catch (e) {
+        console.warn('Error cargando configuración:', e);
+    }
+    
+    const whatsappNumber = config.whatsapp || '573001234567';
+    
+    // Construir mensaje de WhatsApp
+    let mensaje = `Hola NØRDIKO, quiero hacer un pedido:%0A%0A`;
+    
+    carrito.forEach(item => {
+        mensaje += `${item.icono || ''} ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}%0A`;
+    });
+    
+    const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    mensaje += `%0A💰 Total: $${total.toFixed(2)}%0A%0A`;
+    mensaje += `👤 Nombre: ${nombre}%0A`;
+    mensaje += `📱 Teléfono: ${telefono}%0A`;
+    mensaje += `📍 Dirección: ${direccion}%0A`;
+    
+    if (notas) {
+        mensaje += `📝 Notas: ${notas}%0A`;
+    }
+    
+    mensaje += `%0A¡Gracias! 🙌`;
+    
+    // Abrir WhatsApp
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
+    window.open(whatsappURL, '_blank');
+    
+    // Limpiar carrito
     checkoutModal.classList.remove('active');
     document.body.style.overflow = '';
     carrito = [];
     actualizarCarrito();
-    
-    // Mensaje de felicitación claro
-    mostrarToast('¡Gracias por tu compra! Recibirás un correo de confirmación.', 'success');
+    mostrarToast('¡Redirigiendo a WhatsApp para confirmar tu pedido!', 'success');
 });
 
 // ============================================
