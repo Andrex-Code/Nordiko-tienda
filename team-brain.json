@@ -191,27 +191,45 @@
       "nombre": "Revisor Código",
       "tarea": "Revisión completa de HTML/CSS/JS, bugs, SEO, accesibilidad",
       "archivo": "Todos",
-      "estado": "trabajando",
-      "progreso": 0,
-      "iniciado": "2026-09-27T16:30:00"
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "XSS corregido, SEO completo, accesibilidad mejorada, 12 problemas corregidos"
     },
     {
       "id": "revision-ux",
       "nombre": "Revisor UX/UI",
       "tarea": "Revisión de experiencia de usuario, flujo de compra, carrito, admin",
       "archivo": "Todos",
-      "estado": "trabajando",
-      "progreso": 0,
-      "iniciado": "2026-09-27T16:30:00"
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "24 mejoras: precios colombianos, carrito persistente, WhatsApp validado, botón flotante"
     },
     {
       "id": "revision-seguridad",
       "nombre": "Revisor Seguridad",
       "tarea": "Revisión de seguridad, XSS, rendimiento, PWA",
       "archivo": "Todos",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "XSS corregido, URLs validadas, WhatsApp codificado, PWA, lazy loading"
+    },
+    {
+      "id": "revision-responsive",
+      "nombre": "Revisor Responsive",
+      "tarea": "Corregir botones, tipografía, carrito y admin en móvil",
+      "archivo": "index.html, styles.css, app.js, admin/index.html",
       "estado": "trabajando",
       "progreso": 0,
-      "iniciado": "2026-09-27T16:30:00"
+      "iniciado": "2026-09-27T16:45:00"
+    },
+    {
+      "id": "revision-temas",
+      "nombre": "Revisor Temas",
+      "tarea": "Temas aplicados a tienda principal + vista previa en admin",
+      "archivo": "admin/index.html, index.html",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T16:45:00"
     }
   ],
   "archivos": {

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>NØRDIKO | Productos Masculinos Premium</title>
     <meta name="description" content="Productos masculinos premium del Eje Cafetero colombiano. Loción, cuidado personal y estilo con estándar mundial. Café arábica, manteca de karité y uva de la región.">
     <meta name="theme-color" content="#0a0a0a">
@@ -307,36 +307,36 @@
                     </a>
                     <p>Productos masculinos premium del Eje Cafetero colombiano. Calidad que se nota, estilo que perdura.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://instagram.com/nordiko" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://facebook.com/nordiko" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="https://tiktok.com/@nordiko" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://wa.me/573001234567" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
                     <h4>Tienda</h4>
                     <ul>
-                        <li><a href="#">Hidratantes</a></li>
-                        <li><a href="#">Corporales</a></li>
-                        <li><a href="#">Facial</a></li>
-                        <li><a href="#">Antiedad</a></li>
+                        <li><a href="#productos" onclick="setFilter('hidratante')">Hidratantes</a></li>
+                        <li><a href="#productos" onclick="setFilter('corporal')">Corporales</a></li>
+                        <li><a href="#productos" onclick="setFilter('facial')">Facial</a></li>
+                        <li><a href="#productos" onclick="setFilter('ante-envejecimiento')">Antiedad</a></li>
                     </ul>
                 </div>
                 <div class="footer-links">
                     <h4>Ayuda</h4>
                     <ul>
-                        <li><a href="#">Envíos</a></li>
-                        <li><a href="#">Devoluciones</a></li>
-                        <li><a href="#">Preguntas frecuentes</a></li>
-                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#contacto">Envíos</a></li>
+                        <li><a href="#contacto">Devoluciones</a></li>
+                        <li><a href="#contacto">Preguntas frecuentes</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
                     </ul>
                 </div>
                 <div class="footer-links">
                     <h4>Legal</h4>
                     <ul>
-                        <li><a href="#">Aviso de privacidad</a></li>
-                        <li><a href="#">Términos y condiciones</a></li>
-                        <li><a href="#">Política de cookies</a></li>
+                        <li><a href="#" onclick="showLegal('privacidad'); return false;">Aviso de privacidad</a></li>
+                        <li><a href="#" onclick="showLegal('terminos'); return false;">Términos y condiciones</a></li>
+                        <li><a href="#" onclick="showLegal('cookies'); return false;">Política de cookies</a></li>
                     </ul>
                 </div>
             </div>
@@ -364,6 +364,10 @@
                 <strong id="cartTotal">$0.00</strong>
             </div>
             <button class="btn btn-primary btn-block" id="checkoutBtn">Proceder al Pago</button>
+            <button class="btn btn-secondary btn-block" id="seguirComprandoBtn" style="margin-top: 12px;">
+                <i class="fas fa-arrow-left"></i>
+                Seguir Comprando
+            </button>
         </div>
     </aside>
 
@@ -416,6 +420,15 @@
 
     <!-- TOAST NOTIFICATION -->
     <div class="toast" id="toast"></div>
+
+    <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+    <a href="https://wa.me/573001234567?text=Hola%20N%C3%98RDIKO%2C%20tengo%20una%20pregunta" 
+       target="_blank" 
+       rel="noopener"
+       class="whatsapp-float"
+       aria-label="Escríbenos por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <script src="app.js"></script>
     <script>
@@ -609,31 +622,37 @@
                     let variables;
                     if (nombreTema === 'personalizado' && customColores.primario) {
                         // Construir tema personalizado basado en los colores del usuario
+                        // Generar variaciones de color para un tema completo
+                        const primario = customColores.primario;
+                        const acento = customColores.acento;
+                        const fondo = customColores.fondo;
+                        const texto = customColores.texto;
+
                         variables = {
-                            '--color-forest': customColores.primario,
-                            '--color-forest-light': customColores.primario,
-                            '--color-coffee': customColores.primario,
-                            '--color-coffee-light': customColores.primario,
-                            '--color-bronze': customColores.acento,
-                            '--color-bronze-dark': customColores.acento,
-                            '--color-bronze-light': customColores.acento,
-                            '--color-cream': customColores.texto,
-                            '--color-black': customColores.fondo,
-                            '--color-charcoal': customColores.fondo,
-                            '--color-smoke': customColores.primario,
-                            '--color-ash': customColores.acento,
-                            '--color-text': customColores.texto,
-                            '--color-text-light': customColores.texto,
-                            '--color-text-muted': customColores.texto,
-                            '--color-bg': customColores.fondo,
-                            '--color-bg-alt': customColores.fondo,
-                            '--color-bg-card': customColores.primario,
-                            '--color-border': customColores.acento,
-                            '--color-border-bronze': customColores.acento + '38',
+                            '--color-forest': primario,
+                            '--color-forest-light': primario,
+                            '--color-coffee': primario,
+                            '--color-coffee-light': primario,
+                            '--color-bronze': acento,
+                            '--color-bronze-dark': acento,
+                            '--color-bronze-light': acento,
+                            '--color-cream': texto,
+                            '--color-black': fondo,
+                            '--color-charcoal': fondo,
+                            '--color-smoke': primario,
+                            '--color-ash': acento,
+                            '--color-text': texto,
+                            '--color-text-light': texto,
+                            '--color-text-muted': texto,
+                            '--color-bg': fondo,
+                            '--color-bg-alt': fondo,
+                            '--color-bg-card': primario,
+                            '--color-border': acento,
+                            '--color-border-bronze': acento + '38',
                             '--color-success': '#4ade80',
                             '--color-error': '#f87171',
-                            '--shadow-bronze': `0 4px 20px ${customColores.acento}2e`,
-                            '--shadow-bronze-lg': `0 8px 36px ${customColores.acento}47`
+                            '--shadow-bronze': `0 4px 20px ${acento}2e`,
+                            '--shadow-bronze-lg': `0 8px 36px ${acento}47`
                         };
                     } else {
                         variables = TEMAS[nombreTema];

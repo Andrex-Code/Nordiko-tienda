@@ -152,6 +152,8 @@ input, textarea, select, button {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    min-height: 50px;
+    min-width: 50px;
 }
 
 /* Efecto brushed metal — líneas finas horizontales */
@@ -649,17 +651,19 @@ input, textarea, select, button {
 }
 
 .filter-btn {
-    padding: 11px 28px;
+    padding: 12px 24px;
     border: 1px solid var(--color-border);
-    border-radius: 3px;
+    border-radius: 8px;
     background: transparent;
     color: var(--color-text-light);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    min-height: 50px;
+    min-width: 50px;
 }
 
 .filter-btn:hover {
@@ -841,19 +845,23 @@ input, textarea, select, button {
 }
 
 .add-to-cart {
-    width: 46px;
-    height: 46px;
-    border-radius: 4px;
+    min-width: 50px;
+    min-height: 50px;
+    padding: 0 16px;
+    border-radius: 8px;
     background: linear-gradient(135deg, var(--color-bronze) 0%, var(--color-bronze-dark) 100%);
     color: var(--color-black);
     border: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
     box-shadow: var(--shadow-bronze);
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .add-to-cart:hover {
@@ -1040,11 +1048,12 @@ input, textarea, select, button {
     padding: 16px 24px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--color-border);
-    border-radius: 3px;
-    font-size: 0.92rem;
+    border-radius: 8px;
+    font-size: 1rem;
     color: var(--color-text);
     outline: none;
     transition: var(--transition);
+    min-height: 52px;
 }
 
 .newsletter-form input::placeholder {
@@ -1122,12 +1131,13 @@ input, textarea, select, button {
     padding: 16px 20px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    font-size: 0.92rem;
+    border-radius: 8px;
+    font-size: 1rem;
     color: var(--color-text);
     transition: var(--transition);
     outline: none;
     resize: vertical;
+    min-height: 52px;
 }
 
 .contact-form input::placeholder,
@@ -1176,9 +1186,9 @@ input, textarea, select, button {
 }
 
 .social-links a {
-    width: 42px;
-    height: 42px;
-    border-radius: 4px;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--color-border);
     display: flex;
@@ -1374,18 +1384,19 @@ input, textarea, select, button {
 }
 
 .qty-btn {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     border: 1px solid var(--color-border);
     background: transparent;
-    border-radius: 3px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition);
     color: var(--color-text);
+    font-weight: 700;
 }
 
 .qty-btn:hover {
@@ -1402,7 +1413,13 @@ input, textarea, select, button {
     font-size: 1.1rem;
     transition: var(--transition);
     align-self: flex-start;
-    padding: 2px;
+    padding: 8px;
+    min-width: 50px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
 }
 
 .cart-item-remove:hover {
@@ -1456,7 +1473,7 @@ input, textarea, select, button {
     background: var(--color-bg-alt);
     border: 1px solid var(--color-border-bronze);
     border-radius: var(--radius);
-    padding: 48px;
+    padding: 32px;
     width: 100%;
     max-width: 580px;
     max-height: 90vh;
@@ -1537,14 +1554,15 @@ input, textarea, select, button {
 
 .modal-content input {
     width: 100%;
-    padding: 15px 20px;
+    padding: 16px 20px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    font-size: 0.92rem;
+    border-radius: 8px;
+    font-size: 1rem;
     color: var(--color-text);
     transition: var(--transition);
     outline: none;
+    min-height: 52px;
 }
 
 .modal-content input::placeholder {
@@ -1557,6 +1575,87 @@ input, textarea, select, button {
     box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
 }
 
+/* ===== BOTÓN FLOTANTE WHATSAPP ===== */
+.whatsapp-float {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+    z-index: 1500;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 40px rgba(37, 211, 102, 0.5);
+    color: #fff;
+}
+
+.whatsapp-float:active {
+    transform: scale(0.95);
+}
+
+/* ===== CHECKOUT PROGRESS ===== */
+.checkout-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(201, 169, 110, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--color-border-bronze);
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.progress-step.active {
+    color: var(--color-bronze);
+}
+
+.progress-step .step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-border);
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.progress-step.active .step-number {
+    background: var(--color-bronze);
+    color: var(--color-black);
+}
+
+.progress-line {
+    flex: 1;
+    height: 2px;
+    background: var(--color-border);
+    max-width: 40px;
+}
+
 /* ===== TOAST ===== */
 .toast {
     position: fixed;
@@ -1565,16 +1664,18 @@ input, textarea, select, button {
     transform: translateX(-50%) translateY(100px);
     background: var(--color-bg-alt);
     color: var(--color-text);
-    padding: 16px 32px;
-    border-radius: 4px;
+    padding: 18px 32px;
+    border-radius: 12px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 1rem;
     z-index: 4000;
     opacity: 0;
     transition: var(--transition);
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--color-border-bronze);
     pointer-events: none;
+    max-width: 90vw;
+    text-align: center;
 }
 
 .toast.show {
@@ -1679,6 +1780,54 @@ input, textarea, select, button {
         grid-template-columns: 1fr;
         gap: 36px;
     }
+
+    /* Carrito sidebar: ancho completo en móvil */
+    .cart-sidebar {
+        width: 100vw;
+        right: -100vw;
+        max-width: 100vw;
+    }
+
+    /* Modal: padding reducido en móvil */
+    .modal-content {
+        padding: 28px 20px;
+        border-radius: 16px;
+    }
+
+    /* Botones grandes en móvil */
+    .btn {
+        min-height: 52px;
+        padding: 14px 28px;
+        font-size: 0.95rem;
+    }
+
+    .btn-lg {
+        min-height: 56px;
+        padding: 16px 32px;
+        font-size: 1rem;
+    }
+
+    /* Inputs grandes en móvil */
+    .modal-content input,
+    .contact-form input,
+    .contact-form textarea,
+    .newsletter-form input {
+        min-height: 52px;
+        font-size: 1rem;
+        padding: 14px 20px;
+    }
+
+    /* Toast más grande */
+    .toast {
+        padding: 18px 28px;
+        font-size: 1rem;
+        min-width: 280px;
+    }
+
+    /* Espaciado de contenedor */
+    .container {
+        padding: 0 18px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1700,302 +1849,106 @@ input, textarea, select, button {
     }
 
     .modal-content {
-        padding: 30px 24px;
+        padding: 24px 18px;
     }
 
     .container {
+        padding: 0 16px;
+    }
+
+    /* Hero padding reducido */
+    .hero-content {
         padding: 0 18px;
+    }
+
+    /* Filtros: scroll horizontal en pantallas muy pequeñas */
+    .filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
     }
 }
 
-/* ============================================
-   MEJORAS MÓVILES — BOTONES GRANDES Y TÁCTILES
-   ============================================ */
+/* Pantallas muy pequeñas (360px y menos) */
+@media (max-width: 360px) {
+    .hero-title {
+        font-size: 1.9rem;
+    }
 
-/* Botones de cantidad en el carrito: fáciles de tocar con el pulgar */
-.qty-btn {
-    min-width: 50px !important;
-    min-height: 50px !important;
-    font-size: 1.3rem !important;
-    border-radius: 10px !important;
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .product-name {
+        font-size: 1.1rem;
+    }
+
+    .product-price {
+        font-size: 1.2rem;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        padding: 20px 16px;
+    }
+
+    .cart-header h3 {
+        font-size: 1.1rem;
+    }
 }
 
-/* Botón de agregar al carrito: grande y claro */
-.add-to-cart {
-    min-height: 50px !important;
-    padding: 0 20px !important;
-    font-size: 0.95rem !important;
-    border-radius: 10px !important;
-    gap: 6px;
+/* Prevenir zoom en inputs en iOS/Android */
+input, textarea, select {
+    font-size: 16px;
 }
 
-/* Botón de eliminar del carrito: fácil de tocar */
-.cart-item-remove {
-    min-width: 50px !important;
-    min-height: 50px !important;
-    font-size: 1.2rem !important;
-    border-radius: 10px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-/* Filtros: botones grandes y fáciles de tocar */
-.filter-btn {
-    min-height: 50px !important;
-    padding: 12px 24px !important;
-    font-size: 1rem !important;
-    border-radius: 10px !important;
-}
-
-/* Toast: más grande y visible en móvil */
-.toast {
-    padding: 20px 36px !important;
-    font-size: 1.1rem !important;
-    border-radius: 16px !important;
-    min-width: 280px !important;
-    text-align: center !important;
-    max-width: 90vw !important;
-}
-
-/* Carrito: items más grandes y fáciles de ver */
-.cart-item-image {
-    width: 90px !important;
-    height: 90px !important;
-}
-
-.cart-item-name {
-    font-size: 1rem !important;
-}
-
-.cart-item-price {
-    font-size: 1rem !important;
-}
-
-/* Botón de checkout: bien grande */
-#checkoutBtn {
-    min-height: 56px !important;
-    font-size: 1.05rem !important;
-    border-radius: 10px !important;
-}
-
-/* Inputs del checkout: fáciles de llenar con el pulgar */
-.modal-content input {
-    min-height: 52px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-}
-
-/* Botón de pagar: grande y claro */
-#checkoutForm button[type="submit"] {
-    min-height: 56px !important;
-    font-size: 1.05rem !important;
-    border-radius: 10px !important;
-}
-
-/* Navbar: más espacio para tocar */
-.nav-container {
-    height: 64px !important;
-}
-
-.nav-menu {
-    top: 64px !important;
-}
-
-/* Hero: ajustado para móvil */
-.hero-content {
-    padding: 0 20px !important;
-}
-
-.hero .btn {
-    min-height: 56px !important;
-    padding: 16px 32px !important;
-    font-size: 1rem !important;
-    border-radius: 10px !important;
-}
-
-/* Botones grandes en general */
-.btn {
-    min-height: 50px !important;
-    border-radius: 8px !important;
-}
-
-/* Carrito sidebar: ancho completo en móvil */
-.cart-sidebar {
-    width: 100vw !important;
-    right: -100vw !important;
-}
-
-/* Header del carrito: más grande */
-.cart-header {
-    padding: 20px 24px !important;
-}
-
-.cart-header h3 {
-    font-size: 1.2rem !important;
-}
-
-.cart-close {
-    font-size: 2rem !important;
-    padding: 8px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-}
-
-/* Items del carrito: más espacio */
-.cart-item {
-    padding: 20px 0 !important;
-    gap: 16px !important;
-}
-
-/* Footer del carrito: más grande */
-.cart-footer {
-    padding: 24px !important;
-}
-
-.cart-total strong {
-    font-size: 1.6rem !important;
-}
-
-/* Overlay del carrito: más oscuro para enfocar */
-.cart-overlay {
-    background: rgba(0, 0, 0, 0.85) !important;
-}
-
-/* Modal: más espacio en móvil */
-.modal-content {
-    padding: 32px 24px !important;
-    border-radius: 16px !important;
-}
-
-.modal-close {
-    font-size: 2rem !important;
-    padding: 8px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-}
-
-/* Product cards: más grandes en móvil */
-.product-card {
-    border-radius: 12px !important;
-}
-
-.product-image {
-    height: 220px !important;
-}
-
-.product-info {
-    padding: 20px !important;
-}
-
-.product-name {
-    font-size: 1.15rem !important;
-}
-
-.product-desc {
-    font-size: 0.95rem !important;
-}
-
-.product-price {
-    font-size: 1.3rem !important;
-}
-
-/* Favoritos: botón más grande */
-.product-wishlist {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    border-radius: 10px !important;
-}
-
-/* Badges: más legibles */
-.product-badge {
-    font-size: 0.75rem !important;
-    padding: 8px 14px !important;
-    border-radius: 6px !important;
-}
-
-/* Testimonial cards: más grandes */
-.testimonial-card {
-    padding: 28px 24px !important;
-    border-radius: 12px !important;
-}
-
-/* Contact form: inputs grandes */
-.contact-form input,
-.contact-form textarea {
-    min-height: 52px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-}
-
-.contact-form .btn {
-    min-height: 56px !important;
-}
-
-/* Newsletter: input y botón grandes */
-.newsletter-form input {
-    min-height: 52px !important;
-    font-size: 1rem !important;
-    border-radius: 8px !important;
-}
-
-.newsletter-form .btn {
-    min-height: 52px !important;
-}
-
-/* Footer: más grande */
-.footer-links a {
-    font-size: 1rem !important;
-    padding: 8px 0 !important;
-    display: block !important;
-}
-
-/* Social links: más grandes */
-.social-links a {
-    min-width: 48px !important;
-    min-height: 48px !important;
-    border-radius: 10px !important;
-}
-
-/* Contact items: más grandes */
-.contact-item i {
-    min-width: 56px !important;
-    min-height: 56px !important;
-    border-radius: 10px !important;
-}
-
-/* Animación suave para todo */
+/* Touch-friendly: eliminar tap highlight */
 * {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Scroll suave */
-html {
-    scroll-behavior: smooth !important;
+/* Focus visible para accesibilidad */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--color-bronze);
+    outline-offset: 2px;
 }
 
-/* Prevenir zoom en inputs en iOS */
-input, textarea, select {
-    font-size: 16px !important;
+/* Reducir movimiento si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
-/* Hover states: más suaves */
-.btn:hover,
-.add-to-cart:hover,
-.qty-btn:hover,
-.filter-btn:hover {
-    transform: translateY(-2px);
-    transition: transform 0.2s ease;
-}
-
-/* Active states: feedback táctil */
-.btn:active,
-.add-to-cart:active,
-.qty-btn:active,
-.filter-btn:active {
-    transform: scale(0.97);
-    transition: transform 0.1s ease;
-}
+/* ============================================
+   ANIMACIONES Y EFECTOS
+   ============================================ */
 
 /* Animación de entrada para tarjetas */
 @keyframes slideUp {
@@ -2073,26 +2026,6 @@ input, textarea, select {
 
 .cart-sidebar.active {
     animation: slideInCart 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-/* Mejoras de accesibilidad */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-    outline: 3px solid var(--color-bronze);
-    outline-offset: 2px;
-}
-
-/* Reducir movimiento si el usuario lo prefiere */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
 }
 
 /* ===== SKIP LINK — ACCESIBILIDAD ===== */

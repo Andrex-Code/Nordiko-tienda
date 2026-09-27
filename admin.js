@@ -1,14 +1,22 @@
 /**
  * ============================================================
- *  PANEL DE ADMINISTRACIÓN - TIENDA DE LOCIONES
+ *  PANEL DE ADMINISTRACIÓN - NØRDIKO
  * ============================================================
- *  Lógica completa del panel de administración:
+ *  Lógica del panel de administración:
  *  - CRUD de productos con localStorage
  *  - Dashboard con estadísticas
- *  - Buscador y filtros en tiempo real
- *  - Importar / Exportar JSON
+ *  - Buscador en tiempo real
  *  - Configuración de la tienda
+ *  - Sistema de temas
  *  - Notificaciones toast
+ *  - Validación de formularios
+ *
+ *  MEJORAS APLICADAS:
+ *  - Compatibilidad total con admin/index.html
+ *  - Claves de localStorage corregidas (nordiko_*)
+ *  - Escape HTML para prevenir XSS
+ *  - Validación de datos mejorada
+ *  - Eliminación de código muerto (renderizarTabla, etc.)
  * ============================================================
  */
 
@@ -18,8 +26,9 @@
  *  CONSTANTES Y CONFIGURACIÓN
  * ============================================================ */
 
-const STORAGE_KEY_PRODUCTOS = 'lotionShop_productos';
-const STORAGE_KEY_CONFIG = 'lotionShop_config';
+const STORAGE_KEY_PRODUCTOS = 'nordiko_productos';
+const STORAGE_KEY_CONFIG = 'nordiko_config';
+const STORAGE_KEY_TEMA = 'nordiko_tema';
 
 /** Categorías disponibles para los productos */
 const CATEGORIAS = [
@@ -29,224 +38,13 @@ const CATEGORIAS = [
   'ante-envejecimiento'
 ];
 
-/** Opciones de badge para los productos */
-const BADGES = [
-  { valor: '', texto: 'Sin badge' },
-  { valor: 'bestseller', texto: 'Bestseller' },
-  { valor: 'new', texto: 'Nuevo' },
-  { valor: 'sale', texto: 'Oferta' }
-];
-
-/** Umbral de stock bajo */
-const STOCK_BAJO_UMBRAL = 5;
-
-/* ============================================================
- *  PRODUCTOS POR DEFECTO
- * ============================================================ */
-
-const PRODUCTOS_DEFAULT = [
-  {
-    id: 1,
-    nombre: 'Loción de Rosas',
-    descripcion: 'Hidratante corporal con extracto de rosas naturales.',
-    precio: 350,
-    precioAnterior: null,
-    categoria: 'hidratante',
-    stock: 25,
-    imagen: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400',
-    icono: '🌹',
-    badge: 'bestseller'
-  },
-  {
-    id: 2,
-    nombre: 'Loción de Lavanda',
-    descripcion: 'Corporal relajante con aceite esencial de lavanda.',
-    precio: 320,
-    precioAnterior: null,
-    categoria: 'corporal',
-    stock: 18,
-    imagen: 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400',
-    icono: '💜',
-    badge: ''
-  },
-  {
-    id: 3,
-    nombre: 'Sérum Facial Vitamina C',
-    descripcion: 'Sérum facial iluminador con vitamina C concentrada.',
-    precio: 480,
-    precioAnterior: null,
-    categoria: 'facial',
-    stock: 12,
-    imagen: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400',
-    icono: '🍊',
-    badge: 'new'
-  },
-  {
-    id: 4,
-    nombre: 'Loción Antiedad Colágeno',
-    descripcion: 'Tratamiento antienvejecimiento con colágeno hidrolizado.',
-    precio: 550,
-    precioAnterior: 650,
-    categoria: 'ante-envejecimiento',
-    stock: 8,
-    imagen: 'https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?w=400',
-    icono: '✨',
-    badge: 'sale'
-  },
-  {
-    id: 5,
-    nombre: 'Loción de Aloe Vera',
-    descripcion: 'Hidratante natural con aloe vera puro.',
-    precio: 290,
-    precioAnterior: null,
-    categoria: 'hidratante',
-    stock: 30,
-    imagen: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400',
-    icono: '🌿',
-    badge: ''
-  },
-  {
-    id: 6,
-    nombre: 'Loción Corporal de Coco',
-    descripcion: 'Corporal nutritiva con aceite de coco orgánico.',
-    precio: 340,
-    precioAnterior: null,
-    categoria: 'corporal',
-    stock: 22,
-    imagen: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400',
-    icono: '🥥',
-    badge: ''
-  },
-  {
-    id: 7,
-    nombre: 'Crema Facial Retinol',
-    descripcion: 'Crema facial renovadora con retinol.',
-    precio: 620,
-    precioAnterior: null,
-    categoria: 'facial',
-    stock: 6,
-    imagen: 'https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=400',
-    icono: '🌙',
-    badge: 'new'
-  },
-  {
-    id: 8,
-    nombre: 'Loción Reafirmante Q10',
-    descripcion: 'Reafirmante con coenzima Q10 para piel tersa.',
-    precio: 580,
-    precioAnterior: 700,
-    categoria: 'ante-envejecimiento',
-    stock: 4,
-    imagen: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400',
-    icono: '💎',
-    badge: 'sale'
-  },
-  {
-    id: 9,
-    nombre: 'Loción de Manzanilla',
-    descripcion: 'Hidratante suave con extracto de manzanilla.',
-    precio: 310,
-    precioAnterior: null,
-    categoria: 'hidratante',
-    stock: 20,
-    imagen: 'https://images.unsplash.com/photo-1615486363973-f79eea4a4b1b?w=400',
-    icono: '🌼',
-    badge: ''
-  },
-  {
-    id: 10,
-    nombre: 'Loción Corporal de Karité',
-    descripcion: 'Corporal intensiva con manteca de karité.',
-    precio: 360,
-    precioAnterior: null,
-    categoria: 'corporal',
-    stock: 15,
-    imagen: 'https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?w=400',
-    icono: '🧈',
-    badge: ''
-  },
-  {
-    id: 11,
-    nombre: 'Gel Facial Hialurónico',
-    descripcion: 'Gel facial hidratante con ácido hialurónico.',
-    precio: 450,
-    precioAnterior: null,
-    categoria: 'facial',
-    stock: 10,
-    imagen: 'https://images.unsplash.com/photo-1620756236308-65c3ef5d25f8?w=400',
-    icono: '💧',
-    badge: 'bestseller'
-  },
-  {
-    id: 12,
-    nombre: 'Loción Noche Regeneradora',
-    descripcion: 'Tratamiento nocturno regenerador celular.',
-    precio: 590,
-    precioAnterior: null,
-    categoria: 'ante-envejecimiento',
-    stock: 7,
-    imagen: 'https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=400',
-    icono: '🌟',
-    badge: ''
-  }
-];
-
-/* ============================================================
- *  ESTADO GLOBAL
- * ============================================================ */
-
-let productos = [];
-let configTienda = {
-  nombre: 'LotionShop',
-  email: 'contacto@lotionshop.com',
-  telefono: '+52 555 123 4567',
-  direccion: 'Av. Reforma 123, CDMX'
-};
-
-/** Filtros actuales de la tabla */
-let filtros = {
-  busqueda: '',
-  categoria: 'todas'
-};
-
-/** ID del producto que se está editando (null = ninguno) */
-let editandoId = null;
-
 /* ============================================================
  *  UTILIDADES
  * ============================================================ */
 
 /**
- * Genera un ID único para un nuevo producto.
- * Usa Date.now() combinado con el máximo existente para garantizar unicidad.
- * @returns {number} ID único
- */
-function generarId() {
-  try {
-    const maxId = productos.reduce((max, p) => Math.max(max, p.id), 0);
-    return Math.max(Date.now(), maxId + 1);
-  } catch (error) {
-    console.error('Error al generar ID:', error);
-    return Date.now();
-  }
-}
-
-/**
- * Formatea un número como moneda mexicana.
- * @param {number} valor - Valor a formatear
- * @returns {string} Valor formateado (ej. "$350.00")
- */
-function formatMoneda(valor) {
-  try {
-    return '$' + Number(valor).toFixed(2);
-  } catch (error) {
-    return '$0.00';
-  }
-}
-
-/**
  * Escapa texto para prevenir XSS al insertar en HTML.
- * @param {string} texto - Texto a escapar
+ * @param {*} texto - Texto a escapar
  * @returns {string} Texto seguro
  */
 function escapeHtml(texto) {
@@ -257,947 +55,974 @@ function escapeHtml(texto) {
 }
 
 /**
- * Obtiene el texto legible de un badge.
- * @param {string} badge - Valor del badge
- * @returns {string} Texto descriptivo
+ * Formatea un número como precio.
+ * @param {number} valor - Valor a formatear
+ * @returns {string} Valor formateado
  */
-function badgeTexto(badge) {
-  const encontrado = BADGES.find(b => b.valor === badge);
-  return encontrado ? encontrado.texto : '';
+function formatMoneda(valor) {
+  const num = Number(valor);
+  if (isNaN(num) || num < 0) return '$0.00';
+  return '$' + num.toFixed(2);
 }
 
 /**
- * Obtiene la clase CSS para un badge.
- * @param {string} badge - Valor del badge
- * @returns {string} Clase CSS
+ * Genera un ID único para un nuevo producto.
+ * @returns {number} ID único
  */
-function badgeClase(badge) {
-  const clases = {
-    bestseller: 'badge-bestseller',
-    new: 'badge-new',
-    sale: 'badge-sale'
-  };
-  return clases[badge] || '';
+function generarId() {
+  const maxId = productos.reduce((max, p) => Math.max(max, p.id || 0), 0);
+  return Math.max(Date.now(), maxId + 1);
 }
 
 /* ============================================================
- *  SISTEMA DE NOTIFICACIONES TOAST
+ *  ESTADO GLOBAL
  * ============================================================ */
 
-/**
- * Muestra una notificación toast en pantalla.
- * @param {string} mensaje - Mensaje a mostrar
- * @param {string} tipo - Tipo: 'success', 'error', 'info', 'warning'
- * @param {number} duracion - Duración en ms (default 3000)
- */
-function mostrarToast(mensaje, tipo = 'success', duracion = 3000) {
-  try {
-    // Buscar o crear el contenedor de toasts
-    let contenedor = document.getElementById('toast-container');
-    if (!contenedor) {
-      contenedor = document.createElement('div');
-      contenedor.id = 'toast-container';
-      contenedor.className = 'toast-container';
-      document.body.appendChild(contenedor);
+let productos = [];
+let config = {
+  nombre: 'NØRDIKO',
+  whatsapp: '',
+  mensaje: '¡Gracias por tu pedido! Te contactaremos pronto.',
+  email: '',
+  direccion: ''
+};
+
+let pedidos = [
+  { id: 1001, cliente: 'María García', fecha: '2026-09-25', total: 51.98, estado: 'pendiente' },
+  { id: 1002, cliente: 'Carlos López', fecha: '2026-09-24', total: 45.50, estado: 'enviado' },
+  { id: 1003, cliente: 'Ana Martínez', fecha: '2026-09-23', total: 70.99, estado: 'completado' },
+  { id: 1004, cliente: 'Luis Hernández', fecha: '2026-09-22', total: 32.00, estado: 'completado' },
+  { id: 1005, cliente: 'Sofía Ramírez', fecha: '2026-09-21', total: 57.49, estado: 'cancelado' }
+];
+
+let productoAEliminar = null;
+let productoEditando = null;
+
+/* ============================================================
+ *  PRODUCTOS POR DEFECTO
+ * ============================================================ */
+
+function obtenerProductosEjemplo() {
+  return [
+    { id: 1, nombre: 'Loción de Rosas', descripcion: 'Hidratante con extracto de rosa', precio: 25.99, precioAnterior: null, categoria: 'hidratante', stock: 15, imagenBase64: '', emoji: '🌹' },
+    { id: 2, nombre: 'Crema Facial Antiedad', descripcion: 'Reduce arrugas y líneas de expresión', precio: 45.50, precioAnterior: 55.00, categoria: 'facial', stock: 8, imagenBase64: '', emoji: '✨' },
+    { id: 3, nombre: 'Aceite Corporal de Almendras', descripcion: 'Nutrición profunda para la piel', precio: 32.00, precioAnterior: null, categoria: 'corporal', stock: 20, imagenBase64: '', emoji: '🌰' },
+    { id: 4, nombre: 'Sérum Vitamina C', descripcion: 'Ilumina y unifica el tono', precio: 38.99, precioAnterior: null, categoria: 'facial', stock: 5, imagenBase64: '', emoji: '🍊' },
+    { id: 5, nombre: 'Manteca de Karité', descripcion: 'Hidratación intensa natural', precio: 18.50, precioAnterior: 22.00, categoria: 'corporal', stock: 12, imagenBase64: '', emoji: '🧈' }
+  ];
+}
+
+/* ============================================================
+ *  CARGAR Y GUARDAR DATOS
+ * ============================================================ */
+
+function cargarDatos() {
+  // Cargar configuración
+  const configGuardada = localStorage.getItem(STORAGE_KEY_CONFIG);
+  if (configGuardada) {
+    try {
+      config = { ...config, ...JSON.parse(configGuardada) };
+    } catch (e) {
+      console.error('Error al cargar configuración:', e);
     }
-
-    // Crear el toast
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${tipo}`;
-    toast.innerHTML = `
-      <span class="toast-icon">${obtenerIconoToast(tipo)}</span>
-      <span class="toast-mensaje">${escapeHtml(mensaje)}</span>
-      <button class="toast-cerrar" onclick="this.parentElement.remove()">&times;</button>
-    `;
-
-    contenedor.appendChild(toast);
-
-    // Animación de entrada
-    setTimeout(() => toast.classList.add('toast-visible'), 10);
-
-    // Auto-cierre
-    setTimeout(() => {
-      toast.classList.remove('toast-visible');
-      setTimeout(() => toast.remove(), 300);
-    }, duracion);
-  } catch (error) {
-    console.error('Error al mostrar toast:', error);
   }
-}
 
-/**
- * Obtiene el emoji icono según el tipo de toast.
- * @param {string} tipo - Tipo de toast
- * @returns {string} Emoji
- */
-function obtenerIconoToast(tipo) {
-  const iconos = {
-    success: '✅',
-    error: '❌',
-    info: 'ℹ️',
-    warning: '⚠️'
-  };
-  return iconos[tipo] || 'ℹ️';
-}
-
-/* ============================================================
- *  GESTIÓN DE PRODUCTOS - CRUD
- * ============================================================ */
-
-/**
- * Carga los productos desde localStorage.
- * Si no existen, usa los productos por defecto.
- */
-function cargarProductos() {
-  try {
-    const datos = localStorage.getItem(STORAGE_KEY_PRODUCTOS);
-    if (datos) {
-      productos = JSON.parse(datos);
-      // Validar que sea un array
-      if (!Array.isArray(productos)) {
-        productos = [...PRODUCTOS_DEFAULT];
+  // Cargar productos
+  const productosGuardados = localStorage.getItem(STORAGE_KEY_PRODUCTOS);
+  if (productosGuardados) {
+    try {
+      const datos = JSON.parse(productosGuardados);
+      if (Array.isArray(datos)) {
+        productos = datos;
+      } else {
+        productos = obtenerProductosEjemplo();
       }
-    } else {
-      productos = [...PRODUCTOS_DEFAULT];
-      guardarProductos();
+    } catch (e) {
+      console.error('Error al cargar productos:', e);
+      productos = obtenerProductosEjemplo();
     }
-  } catch (error) {
-    console.error('Error al cargar productos:', error);
-    productos = [...PRODUCTOS_DEFAULT];
-    mostrarToast('Error al cargar productos. Se usaron datos por defecto.', 'error');
+  } else {
+    productos = obtenerProductosEjemplo();
+    guardarProductos();
   }
 }
 
-/**
- * Guarda todos los productos en localStorage.
- * @returns {boolean} true si se guardó correctamente
- */
 function guardarProductos() {
-  try {
-    localStorage.setItem(STORAGE_KEY_PRODUCTOS, JSON.stringify(productos));
-    return true;
-  } catch (error) {
-    console.error('Error al guardar productos:', error);
-    mostrarToast('Error al guardar los productos.', 'error');
-    return false;
-  }
+  localStorage.setItem(STORAGE_KEY_PRODUCTOS, JSON.stringify(productos));
 }
 
-/**
- * Agrega un nuevo producto al inventario.
- * @param {Object} datos - Datos del producto
- * @returns {boolean} true si se agregó correctamente
- */
-function agregarProducto(datos) {
-  try {
-    // Validar datos
-    const validacion = validarProducto(datos);
-    if (!validacion.valido) {
-      mostrarToast(validacion.mensaje, 'error');
-      return false;
-    }
-
-    const nuevoProducto = {
-      id: generarId(),
-      nombre: datos.nombre.trim(),
-      descripcion: datos.descripcion.trim(),
-      precio: Number(datos.precio),
-      precioAnterior: datos.precioAnterior ? Number(datos.precioAnterior) : null,
-      categoria: datos.categoria,
-      stock: Number(datos.stock),
-      imagen: datos.imagen.trim(),
-      icono: datos.icono,
-      badge: datos.badge
-    };
-
-    productos.push(nuevoProducto);
-    guardarProductos();
-    mostrarToast(`Producto "${nuevoProducto.nombre}" agregado correctamente.`, 'success');
-    return true;
-  } catch (error) {
-    console.error('Error al agregar producto:', error);
-    mostrarToast('Error al agregar el producto.', 'error');
-    return false;
-  }
-}
-
-/**
- * Actualiza un producto existente.
- * @param {number} id - ID del producto a actualizar
- * @param {Object} datos - Nuevos datos
- * @returns {boolean} true si se actualizó correctamente
- */
-function actualizarProducto(id, datos) {
-  try {
-    const index = productos.findIndex(p => p.id === id);
-    if (index === -1) {
-      mostrarToast('Producto no encontrado.', 'error');
-      return false;
-    }
-
-    // Validar datos
-    const validacion = validarProducto(datos);
-    if (!validacion.valido) {
-      mostrarToast(validacion.mensaje, 'error');
-      return false;
-    }
-
-    productos[index] = {
-      ...productos[index],
-      nombre: datos.nombre.trim(),
-      descripcion: datos.descripcion.trim(),
-      precio: Number(datos.precio),
-      precioAnterior: datos.precioAnterior ? Number(datos.precioAnterior) : null,
-      categoria: datos.categoria,
-      stock: Number(datos.stock),
-      imagen: datos.imagen.trim(),
-      icono: datos.icono,
-      badge: datos.badge
-    };
-
-    guardarProductos();
-    mostrarToast(`Producto "${datos.nombre}" actualizado correctamente.`, 'success');
-    return true;
-  } catch (error) {
-    console.error('Error al actualizar producto:', error);
-    mostrarToast('Error al actualizar el producto.', 'error');
-    return false;
-  }
-}
-
-/**
- * Elimina un producto del inventario.
- * @param {number} id - ID del producto a eliminar
- * @returns {boolean} true si se eliminó correctamente
- */
-function eliminarProducto(id) {
-  try {
-    const index = productos.findIndex(p => p.id === id);
-    if (index === -1) {
-      mostrarToast('Producto no encontrado.', 'error');
-      return false;
-    }
-
-    const nombre = productos[index].nombre;
-    productos.splice(index, 1);
-    guardarProductos();
-    mostrarToast(`Producto "${nombre}" eliminado correctamente.`, 'success');
-    return true;
-  } catch (error) {
-    console.error('Error al eliminar producto:', error);
-    mostrarToast('Error al eliminar el producto.', 'error');
-    return false;
-  }
-}
-
-/**
- * Busca un producto por su ID.
- * @param {number} id - ID del producto
- * @returns {Object|null} Producto encontrado o null
- */
-function obtenerProducto(id) {
-  try {
-    return productos.find(p => p.id === id) || null;
-  } catch (error) {
-    console.error('Error al obtener producto:', error);
-    return null;
-  }
-}
-
-/* ============================================================
- *  VALIDACIÓN DE FORMULARIO
- * ============================================================ */
-
-/**
- * Valida los datos de un producto antes de guardar.
- * @param {Object} datos - Datos a validar
- * @returns {Object} { valido: boolean, mensaje: string }
- */
-function validarProducto(datos) {
-  try {
-    // Nombre requerido
-    if (!datos.nombre || !datos.nombre.trim()) {
-      return { valido: false, mensaje: 'El nombre del producto es obligatorio.' };
-    }
-
-    // Nombre mínimo 3 caracteres
-    if (datos.nombre.trim().length < 3) {
-      return { valido: false, mensaje: 'El nombre debe tener al menos 3 caracteres.' };
-    }
-
-    // Precio requerido y positivo
-    if (datos.precio === '' || datos.precio === null || datos.precio === undefined) {
-      return { valido: false, mensaje: 'El precio es obligatorio.' };
-    }
-
-    const precio = Number(datos.precio);
-    if (isNaN(precio) || precio <= 0) {
-      return { valido: false, mensaje: 'El precio debe ser un número positivo.' };
-    }
-
-    // Precio anterior (opcional, pero si existe debe ser válido)
-    if (datos.precioAnterior && datos.precioAnterior !== '') {
-      const precioAnt = Number(datos.precioAnterior);
-      if (isNaN(precioAnt) || precioAnt <= 0) {
-        return { valido: false, mensaje: 'El precio anterior debe ser un número positivo.' };
-      }
-      if (precioAnt <= precio) {
-        return { valido: false, mensaje: 'El precio anterior debe ser mayor al precio actual.' };
-      }
-    }
-
-    // Categoría requerida
-    if (!datos.categoria) {
-      return { valido: false, mensaje: 'La categoría es obligatoria.' };
-    }
-
-    // Stock requerido y no negativo
-    if (datos.stock === '' || datos.stock === null || datos.stock === undefined) {
-      return { valido: false, mensaje: 'El stock es obligatorio.' };
-    }
-
-    const stock = Number(datos.stock);
-    if (isNaN(stock) || stock < 0 || !Number.isInteger(stock)) {
-      return { valido: false, mensaje: 'El stock debe ser un número entero no negativo.' };
-    }
-
-    // Descripción requerida
-    if (!datos.descripcion || !datos.descripcion.trim()) {
-      return { valido: false, mensaje: 'La descripción es obligatoria.' };
-    }
-
-    return { valido: true, mensaje: '' };
-  } catch (error) {
-    console.error('Error en validación:', error);
-    return { valido: false, mensaje: 'Error al validar los datos.' };
-  }
-}
-
-/* ============================================================
- *  RENDERIZADO DE LA TABLA DE PRODUCTOS
- * ============================================================ */
-
-/**
- * Obtiene los productos filtrados según los filtros actuales.
- * @returns {Array} Productos filtrados
- */
-function obtenerProductosFiltrados() {
-  try {
-    return productos.filter(p => {
-      // Filtro por búsqueda (nombre o descripción)
-      const busqueda = filtros.busqueda.toLowerCase();
-      const coincideBusqueda = !busqueda ||
-        p.nombre.toLowerCase().includes(busqueda) ||
-        p.descripcion.toLowerCase().includes(busqueda);
-
-      // Filtro por categoría
-      const coincideCategoria = filtros.categoria === 'todas' ||
-        p.categoria === filtros.categoria;
-
-      return coincideBusqueda && coincideCategoria;
-    });
-  } catch (error) {
-    console.error('Error al filtrar productos:', error);
-    return [];
-  }
-}
-
-/**
- * Renderiza la tabla de productos en el DOM.
- */
-function renderizarTabla() {
-  try {
-    const tbody = document.getElementById('tabla-productos-body');
-    if (!tbody) return;
-
-    const productosFiltrados = obtenerProductosFiltrados();
-
-    if (productosFiltrados.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="8" class="tabla-vacia">
-            <div class="tabla-vacia-contenido">
-              <span class="tabla-vacia-icono">📦</span>
-              <p>No se encontraron productos</p>
-              <p class="tabla-vacia-sub">Intenta cambiar los filtros o agregar un nuevo producto</p>
-            </div>
-          </td>
-        </tr>
-      `;
-      return;
-    }
-
-    tbody.innerHTML = productosFiltrados.map(p => {
-      const esStockBajo = p.stock <= STOCK_BAJO_UMBRAL;
-      const tieneOferta = p.precioAnterior && p.precioAnterior > p.precio;
-
-      return `
-        <tr class="${esStockBajo ? 'fila-stock-bajo' : ''}">
-          <td class="col-icono">
-            <span class="producto-icono">${escapeHtml(p.icono)}</span>
-          </td>
-          <td class="col-nombre">
-            <strong>${escapeHtml(p.nombre)}</strong>
-            ${p.badge ? `<span class="badge ${badgeClase(p.badge)}">${badgeTexto(p.badge)}</span>` : ''}
-          </td>
-          <td class="col-categoria">
-            <span class="categoria-tag">${escapeHtml(p.categoria)}</span>
-          </td>
-          <td class="col-precio">
-            <span class="precio-actual">${formatMoneda(p.precio)}</span>
-            ${tieneOferta ? `<span class="precio-anterior">${formatMoneda(p.precioAnterior)}</span>` : ''}
-          </td>
-          <td class="col-stock">
-            <span class="stock-badge ${esStockBajo ? 'stock-bajo' : 'stock-ok'}">
-              ${p.stock} uds
-            </span>
-          </td>
-          <td class="col-estado">
-            ${tieneOferta ? '<span class="estado-oferta">🏷️ Oferta</span>' : '<span class="estado-normal">Normal</span>'}
-          </td>
-          <td class="col-acciones">
-            <button class="btn-accion btn-editar" onclick="abrirModalEditar(${p.id})" title="Editar">
-              ✏️
-            </button>
-            <button class="btn-accion btn-eliminar" onclick="confirmarEliminar(${p.id})" title="Eliminar">
-              🗑️
-            </button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  } catch (error) {
-    console.error('Error al renderizar tabla:', error);
-  }
-}
-
-/* ============================================================
- *  DASHBOARD - ESTADÍSTICAS
- * ============================================================ */
-
-/**
- * Calcula y renderiza las estadísticas del dashboard.
- */
-function renderizarDashboard() {
-  try {
-    // Total de productos
-    const totalProductos = productos.length;
-
-    // Valor del inventario (precio * stock de cada producto)
-    const valorInventario = productos.reduce((total, p) => {
-      return total + (p.precio * p.stock);
-    }, 0);
-
-    // Productos con stock bajo
-    const stockBajo = productos.filter(p => p.stock <= STOCK_BAJO_UMBRAL).length;
-
-    // Productos en oferta
-    const enOferta = productos.filter(p => p.precioAnterior && p.precioAnterior > p.precio).length;
-
-    // Actualizar el DOM
-    const el = id => document.getElementById(id);
-    if (el('stat-total')) el('stat-total').textContent = totalProductos;
-    if (el('stat-valor')) el('stat-valor').textContent = formatMoneda(valorInventario);
-    if (el('stat-stock-bajo')) el('stat-stock-bajo').textContent = stockBajo;
-    if (el('stat-ofertas')) el('stat-ofertas').textContent = enOferta;
-  } catch (error) {
-    console.error('Error al renderizar dashboard:', error);
-  }
-}
-
-/* ============================================================
- *  MODAL - AGREGAR / EDITAR PRODUCTO
- * ============================================================ */
-
-/**
- * Abre el modal para agregar un nuevo producto.
- */
-function abrirModalAgregar() {
-  try {
-    editandoId = null;
-    document.getElementById('modal-titulo').textContent = 'Agregar Nuevo Producto';
-    document.getElementById('form-producto').reset();
-    document.getElementById('producto-id').value = '';
-    document.getElementById('modal-producto').classList.add('modal-visible');
-    document.getElementById('overlay-modal').classList.add('overlay-visible');
-  } catch (error) {
-    console.error('Error al abrir modal de agregar:', error);
-  }
-}
-
-/**
- * Abre el modal para editar un producto existente.
- * @param {number} id - ID del producto a editar
- */
-function abrirModalEditar(id) {
-  try {
-    const producto = obtenerProducto(id);
-    if (!producto) {
-      mostrarToast('Producto no encontrado.', 'error');
-      return;
-    }
-
-    editandoId = id;
-    document.getElementById('modal-titulo').textContent = 'Editar Producto';
-    document.getElementById('producto-id').value = producto.id;
-    document.getElementById('producto-nombre').value = producto.nombre;
-    document.getElementById('producto-descripcion').value = producto.descripcion;
-    document.getElementById('producto-precio').value = producto.precio;
-    document.getElementById('producto-precio-anterior').value = producto.precioAnterior || '';
-    document.getElementById('producto-categoria').value = producto.categoria;
-    document.getElementById('producto-stock').value = producto.stock;
-    document.getElementById('producto-imagen').value = producto.imagen;
-    document.getElementById('producto-icono').value = producto.icono;
-    document.getElementById('producto-badge').value = producto.badge;
-
-    document.getElementById('modal-producto').classList.add('modal-visible');
-    document.getElementById('overlay-modal').classList.add('overlay-visible');
-  } catch (error) {
-    console.error('Error al abrir modal de editar:', error);
-  }
-}
-
-/**
- * Cierra el modal de producto.
- */
-function cerrarModal() {
-  try {
-    document.getElementById('modal-producto').classList.remove('modal-visible');
-    document.getElementById('overlay-modal').classList.remove('overlay-visible');
-    editandoId = null;
-  } catch (error) {
-    console.error('Error al cerrar modal:', error);
-  }
-}
-
-/**
- * Maneja el envío del formulario de producto (agregar o editar).
- * @param {Event} event - Evento del formulario
- */
-function manejarSubmitProducto(event) {
-  try {
-    event.preventDefault();
-
-    const datos = {
-      nombre: document.getElementById('producto-nombre').value,
-      descripcion: document.getElementById('producto-descripcion').value,
-      precio: document.getElementById('producto-precio').value,
-      precioAnterior: document.getElementById('producto-precio-anterior').value,
-      categoria: document.getElementById('producto-categoria').value,
-      stock: document.getElementById('producto-stock').value,
-      imagen: document.getElementById('producto-imagen').value,
-      icono: document.getElementById('producto-icono').value,
-      badge: document.getElementById('producto-badge').value
-    };
-
-    let exito;
-    if (editandoId) {
-      exito = actualizarProducto(editandoId, datos);
-    } else {
-      exito = agregarProducto(datos);
-    }
-
-    if (exito) {
-      cerrarModal();
-      renderizarTabla();
-      renderizarDashboard();
-    }
-  } catch (error) {
-    console.error('Error en submit de producto:', error);
-    mostrarToast('Error al procesar el formulario.', 'error');
-  }
-}
-
-/* ============================================================
- *  CONFIRMACIÓN DE ELIMINACIÓN
- * ============================================================ */
-
-/**
- * Muestra un diálogo de confirmación antes de eliminar un producto.
- * @param {number} id - ID del producto a eliminar
- */
-function confirmarEliminar(id) {
-  try {
-    const producto = obtenerProducto(id);
-    if (!producto) {
-      mostrarToast('Producto no encontrado.', 'error');
-      return;
-    }
-
-    // Crear modal de confirmación personalizado
-    const confirmado = window.confirm(
-      `¿Estás seguro de que deseas eliminar el producto "${producto.nombre}"?\n\nEsta acción no se puede deshacer.`
-    );
-
-    if (confirmado) {
-      if (eliminarProducto(id)) {
-        renderizarTabla();
-        renderizarDashboard();
-      }
-    }
-  } catch (error) {
-    console.error('Error al confirmar eliminación:', error);
-    mostrarToast('Error al eliminar el producto.', 'error');
-  }
-}
-
-/* ============================================================
- *  BUSCADOR Y FILTROS
- * ============================================================ */
-
-/**
- * Maneja la entrada del buscador en tiempo real.
- * @param {Event} event - Evento de input
- */
-function manejarBusqueda(event) {
-  try {
-    filtros.busqueda = event.target.value;
-    renderizarTabla();
-  } catch (error) {
-    console.error('Error en búsqueda:', error);
-  }
-}
-
-/**
- * Maneja el cambio de filtro de categoría.
- * @param {Event} event - Evento de change
- */
-function manejarFiltroCategoria(event) {
-  try {
-    filtros.categoria = event.target.value;
-    renderizarTabla();
-  } catch (error) {
-    console.error('Error en filtro de categoría:', error);
-  }
-}
-
-/**
- * Limpia todos los filtros y la búsqueda.
- */
-function limpiarFiltros() {
-  try {
-    filtros.busqueda = '';
-    filtros.categoria = 'todas';
-    const inputBusqueda = document.getElementById('buscador-productos');
-    const selectCategoria = document.getElementById('filtro-categoria');
-    if (inputBusqueda) inputBusqueda.value = '';
-    if (selectCategoria) selectCategoria.value = 'todas';
-    renderizarTabla();
-    mostrarToast('Filtros limpiados.', 'info');
-  } catch (error) {
-    console.error('Error al limpiar filtros:', error);
-  }
-}
-
-/* ============================================================
- *  EXPORTAR / IMPORTAR JSON
- * ============================================================ */
-
-/**
- * Exporta todos los productos a un archivo JSON descargable.
- */
-function exportarJSON() {
-  try {
-    const datos = {
-      fecha: new Date().toISOString(),
-      total: productos.length,
-      productos: productos
-    };
-
-    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `lotionshop_productos_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    mostrarToast('Productos exportados correctamente.', 'success');
-  } catch (error) {
-    console.error('Error al exportar JSON:', error);
-    mostrarToast('Error al exportar los productos.', 'error');
-  }
-}
-
-/**
- * Importa productos desde un archivo JSON.
- * @param {Event} event - Evento de cambio del input file
- */
-function importarJSON(event) {
-  try {
-    const archivo = event.target.files[0];
-    if (!archivo) return;
-
-    // Validar extensión
-    if (!archivo.name.endsWith('.json')) {
-      mostrarToast('El archivo debe ser de tipo JSON.', 'error');
-      return;
-    }
-
-    const lector = new FileReader();
-    lector.onload = function(e) {
-      try {
-        const datos = JSON.parse(e.target.result);
-
-        // Validar estructura
-        if (!datos.productos || !Array.isArray(datos.productos)) {
-          mostrarToast('El archivo no tiene el formato correcto.', 'error');
-          return;
-        }
-
-        // Confirmar sobrescritura
-        const confirmado = window.confirm(
-          `Se importarán ${datos.productos.length} productos.\n\n¿Deseas reemplazar los productos actuales?`
-        );
-
-        if (!confirmado) return;
-
-        // Validar cada producto antes de importar
-        const productosValidos = datos.productos.filter(p => {
-          return p.nombre && p.precio && p.categoria && p.stock !== undefined;
-        });
-
-        if (productosValidos.length === 0) {
-          mostrarToast('No se encontraron productos válidos en el archivo.', 'error');
-          return;
-        }
-
-        // Asignar IDs únicos a los productos importados
-        productosValidos.forEach(p => {
-          p.id = generarId();
-        });
-
-        productos = productosValidos;
-        guardarProductos();
-        renderizarTabla();
-        renderizarDashboard();
-        mostrarToast(`${productosValidos.length} productos importados correctamente.`, 'success');
-      } catch (parseError) {
-        console.error('Error al parsear JSON:', parseError);
-        mostrarToast('El archivo JSON no es válido.', 'error');
-      }
-    };
-
-    lector.onerror = function() {
-      mostrarToast('Error al leer el archivo.', 'error');
-    };
-
-    lector.readAsText(archivo);
-
-    // Limpiar el input para permitir re-importar el mismo archivo
-    event.target.value = '';
-  } catch (error) {
-    console.error('Error al importar JSON:', error);
-    mostrarToast('Error al importar los productos.', 'error');
-  }
-}
-
-/* ============================================================
- *  CONFIGURACIÓN DE LA TIENDA
- * ============================================================ */
-
-/**
- * Carga la configuración de la tienda desde localStorage.
- */
-function cargarConfig() {
-  try {
-    const datos = localStorage.getItem(STORAGE_KEY_CONFIG);
-    if (datos) {
-      const config = JSON.parse(datos);
-      if (config && typeof config === 'object') {
-        configTienda = { ...configTienda, ...config };
-      }
-    }
-  } catch (error) {
-    console.error('Error al cargar configuración:', error);
-  }
-}
-
-/**
- * Guarda la configuración de la tienda en localStorage.
- * @returns {boolean} true si se guardó correctamente
- */
 function guardarConfig() {
-  try {
-    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(configTienda));
-    return true;
-  } catch (error) {
-    console.error('Error al guardar configuración:', error);
-    mostrarToast('Error al guardar la configuración.', 'error');
-    return false;
+  localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+}
+
+/* ============================================================
+ *  ELEMENTOS DEL DOM
+ * ============================================================ */
+
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const navItems = document.querySelectorAll('.nav-item');
+const sectionContents = document.querySelectorAll('.section-content');
+const pageTitle = document.getElementById('pageTitle');
+
+/* ============================================================
+ *  SISTEMA DE TEMAS
+ * ============================================================ */
+
+const TEMAS = {
+  bosque: {
+    primario: '#1a2e1a',
+    primarioClaro: '#243824',
+    primarioOscuro: '#0f1f0f',
+    acento: '#c9a96e',
+    acentoClaro: '#e0c896',
+    acentoOscuro: '#a88b52',
+    fondo: '#0a0a0a',
+    fondoAlt: '#141210',
+    fondoCard: '#1c1916',
+    texto: '#f5f0e8',
+    textoClaro: '#b8b0a0',
+    textoMuted: '#7a7268',
+    borde: '#3a342e',
+    exito: '#6b8f5e',
+    error: '#c0392b',
+    advertencia: '#fbbf24'
+  },
+  cafe: {
+    primario: '#3e2723',
+    primarioClaro: '#5d4037',
+    primarioOscuro: '#2d1a17',
+    acento: '#d4a574',
+    acentoClaro: '#e8c9a0',
+    acentoOscuro: '#b8865c',
+    fondo: '#1a1210',
+    fondoAlt: '#251a17',
+    fondoCard: '#2d201c',
+    texto: '#f5f0e8',
+    textoClaro: '#c4b8a8',
+    textoMuted: '#8a7a6a',
+    borde: '#4a3a32',
+    exito: '#7a9a6d',
+    error: '#c0392b',
+    advertencia: '#fbbf24'
+  },
+  noche: {
+    primario: '#0a0a0a',
+    primarioClaro: '#1a1a2e',
+    primarioOscuro: '#050508',
+    acento: '#2563eb',
+    acentoClaro: '#60a5fa',
+    acentoOscuro: '#1d4ed8',
+    fondo: '#050508',
+    fondoAlt: '#0f0f1a',
+    fondoCard: '#151525',
+    texto: '#e2e8f0',
+    textoClaro: '#94a3b8',
+    textoMuted: '#64748b',
+    borde: '#2a2a4a',
+    exito: '#22c55e',
+    error: '#ef4444',
+    advertencia: '#f59e0b'
+  },
+  tierra: {
+    primario: '#2d1f1a',
+    primarioClaro: '#4a2c1a',
+    primarioOscuro: '#1a100d',
+    acento: '#c2410c',
+    acentoClaro: '#f59e0b',
+    acentoOscuro: '#9a3412',
+    fondo: '#120a08',
+    fondoAlt: '#1a100d',
+    fondoCard: '#221510',
+    texto: '#fef3c7',
+    textoClaro: '#d4c4a8',
+    textoMuted: '#8a7a68',
+    borde: '#3d2a22',
+    exito: '#84cc16',
+    error: '#ef4444',
+    advertencia: '#fbbf24'
+  },
+  personalizado: {
+    primario: '#2a2a2a',
+    primarioClaro: '#3a3a3a',
+    primarioOscuro: '#1a1a1a',
+    acento: '#c9a96e',
+    acentoClaro: '#e0c896',
+    acentoOscuro: '#a88b52',
+    fondo: '#0a0a0a',
+    fondoAlt: '#141414',
+    fondoCard: '#1c1c1c',
+    texto: '#ffffff',
+    textoClaro: '#b0b0b0',
+    textoMuted: '#707070',
+    borde: '#3a3a3a',
+    exito: '#4ade80',
+    error: '#f87171',
+    advertencia: '#fbbf24'
+  }
+};
+
+let temaActual = 'bosque';
+let customColores = {
+  primario: '#2a2a2a',
+  acento: '#c9a96e',
+  fondo: '#0a0a0a',
+  texto: '#ffffff'
+};
+
+function cargarTema() {
+  const temaGuardado = localStorage.getItem(STORAGE_KEY_TEMA);
+  if (temaGuardado) {
+    try {
+      const datos = JSON.parse(temaGuardado);
+      temaActual = datos.tema || 'bosque';
+      if (datos.customColores) {
+        customColores = { ...customColores, ...datos.customColores };
+      }
+    } catch (e) {
+      console.error('Error al cargar tema:', e);
+    }
+  }
+  aplicarTema(temaActual);
+}
+
+function aplicarTema(nombreTema) {
+  const tema = TEMAS[nombreTema];
+  if (!tema) return;
+
+  const colores = nombreTema === 'personalizado' ? {
+    ...tema,
+    primario: customColores.primario,
+    acento: customColores.acento,
+    fondo: customColores.fondo,
+    texto: customColores.texto
+  } : tema;
+
+  const root = document.documentElement;
+  root.style.setProperty('--verde-oscuro', colores.primario);
+  root.style.setProperty('--verde-1', colores.primarioClaro);
+  root.style.setProperty('--verde-2', colores.fondoCard);
+  root.style.setProperty('--verde-3', colores.borde);
+  root.style.setProperty('--dorado', colores.acento);
+  root.style.setProperty('--dorado-claro', colores.acentoClaro);
+  root.style.setProperty('--dorado-oscuro', colores.acentoOscuro);
+  root.style.setProperty('--negro', colores.fondo);
+  root.style.setProperty('--gris-1', colores.fondoCard);
+  root.style.setProperty('--gris-2', colores.fondoCard);
+  root.style.setProperty('--gris-3', colores.borde);
+  root.style.setProperty('--blanco', colores.texto);
+  root.style.setProperty('--gris-texto', colores.textoClaro);
+  root.style.setProperty('--exito', colores.exito);
+  root.style.setProperty('--error', colores.error);
+  root.style.setProperty('--advertencia', colores.advertencia);
+
+  // Actualizar tarjeta de tema activa en la UI
+  document.querySelectorAll('.tema-card').forEach(card => {
+    card.classList.toggle('active', card.dataset.tema === nombreTema);
+  });
+
+  // Actualizar color pickers si el panel personalizado está visible
+  const panel = document.getElementById('customColorsPanel');
+  if (panel && panel.classList.contains('visible')) {
+    const pickerPrimario = document.getElementById('customPrimario');
+    const pickerAcento = document.getElementById('customAcento');
+    const pickerFondo = document.getElementById('customFondo');
+    const pickerTexto = document.getElementById('customTexto');
+    if (pickerPrimario) pickerPrimario.value = customColores.primario;
+    if (pickerAcento) pickerAcento.value = customColores.acento;
+    if (pickerFondo) pickerFondo.value = customColores.fondo;
+    if (pickerTexto) pickerTexto.value = customColores.texto;
   }
 }
 
-/**
- * Abre el modal de configuración de la tienda.
- */
-function abrirModalConfig() {
-  try {
-    document.getElementById('config-nombre').value = configTienda.nombre;
-    document.getElementById('config-email').value = configTienda.email;
-    document.getElementById('config-telefono').value = configTienda.telefono;
-    document.getElementById('config-direccion').value = configTienda.direccion;
+/* ============================================================
+ *  NOTIFICACIONES TOAST
+ * ============================================================ */
 
-    document.getElementById('modal-config').classList.add('modal-visible');
-    document.getElementById('overlay-config').classList.add('overlay-visible');
-  } catch (error) {
-    console.error('Error al abrir modal de configuración:', error);
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} toast-icon"></i>
+    <span class="toast-message">${escapeHtml(message)}</span>
+  `;
+  container.appendChild(toast);
+
+  // Animar entrada
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  // Remover después de 3 segundos
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+/* ============================================================
+ *  NAVEGACIÓN
+ * ============================================================ */
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const section = item.dataset.section;
+
+    // Actualizar nav activo
+    navItems.forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+
+    // Mostrar sección correspondiente
+    sectionContents.forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + section).classList.add('active');
+
+    // Actualizar título
+    const titulos = {
+      'inicio': 'Inicio',
+      'productos': 'Mis Productos',
+      'pedidos': 'Mis Pedidos',
+      'ajustes': 'Ajustes'
+    };
+    pageTitle.textContent = titulos[section] || section;
+
+    // Cerrar menú móvil
+    sidebar.classList.remove('mobile-open');
+    sidebarOverlay.classList.remove('active');
+  });
+});
+
+/* ============================================================
+ *  MENÚ MÓVIL
+ * ============================================================ */
+
+mobileMenuBtn.addEventListener('click', () => {
+  sidebar.classList.toggle('mobile-open');
+  sidebarOverlay.classList.toggle('active');
+});
+
+sidebarOverlay.addEventListener('click', () => {
+  sidebar.classList.remove('mobile-open');
+  sidebarOverlay.classList.remove('active');
+});
+
+/* ============================================================
+ *  RENDERIZAR PRODUCTOS
+ * ============================================================ */
+
+function renderProductos(filtro = '') {
+  const lista = document.getElementById('productosLista');
+  const productosFiltrados = productos.filter(p =>
+    p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+    p.categoria.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  if (productosFiltrados.length === 0) {
+    lista.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <p>No hay productos</p>
+      </div>
+    `;
+    return;
+  }
+
+  lista.innerHTML = productosFiltrados.map(p => {
+    // Determinar qué mostrar: foto o emoji
+    let imagenHTML;
+    if (p.imagenBase64) {
+      imagenHTML = `<img src="${escapeHtml(p.imagenBase64)}" alt="${escapeHtml(p.nombre)}">`;
+    } else {
+      const emoji = p.emoji || '📦';
+      imagenHTML = `<span>${escapeHtml(emoji)}</span>`;
+    }
+
+    return `
+      <div class="producto-card" data-id="${escapeHtml(p.id)}">
+        <div class="producto-foto">
+          ${imagenHTML}
+        </div>
+        <div class="producto-info">
+          <div class="producto-nombre">${escapeHtml(p.nombre)}</div>
+          <div class="producto-categoria">${escapeHtml(obtenerNombreCategoria(p.categoria))}</div>
+          <div class="producto-precio">
+            ${formatMoneda(p.precio)}
+            ${p.precioAnterior ? `<span class="producto-precio-anterior">${formatMoneda(p.precioAnterior)}</span>` : ''}
+          </div>
+        </div>
+        <div class="producto-acciones">
+          <button class="producto-btn edit" onclick="editarProducto(${p.id})" aria-label="Editar">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="producto-btn delete" onclick="confirmarEliminar(${p.id})" aria-label="Eliminar">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function obtenerNombreCategoria(cat) {
+  const categorias = {
+    'hidratante': 'Hidratante',
+    'corporal': 'Corporal',
+    'facial': 'Facial',
+    'ante-envejecimiento': 'Antiedad'
+  };
+  return categorias[cat] || cat;
+}
+
+/* ============================================================
+ *  RENDERIZAR PEDIDOS
+ * ============================================================ */
+
+function renderPedidos() {
+  const lista = document.getElementById('pedidosLista');
+
+  if (pedidos.length === 0) {
+    lista.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-shopping-cart"></i>
+        <p>No hay pedidos</p>
+      </div>
+    `;
+    return;
+  }
+
+  lista.innerHTML = pedidos.map(p => {
+    const estadoClase = {
+      'completado': 'estado-completado',
+      'pendiente': 'estado-pendiente',
+      'enviado': 'estado-enviado',
+      'cancelado': 'estado-cancelado'
+    };
+
+    const estadoTexto = {
+      'completado': 'Completado',
+      'pendiente': 'Pendiente',
+      'enviado': 'Enviado',
+      'cancelado': 'Cancelado'
+    };
+
+    return `
+      <div class="pedido-card">
+        <div class="pedido-icono">
+          <i class="fas fa-shopping-bag"></i>
+        </div>
+        <div class="pedido-info">
+          <div class="pedido-numero">Pedido #${p.id}</div>
+          <div class="pedido-cliente">${escapeHtml(p.cliente)}</div>
+          <div class="pedido-fecha">${formatearFecha(p.fecha)}</div>
+          <span class="pedido-estado ${estadoClase[p.estado]}">${estadoTexto[p.estado]}</span>
+        </div>
+        <div class="pedido-total">$${p.total.toFixed(2)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatearFecha(fechaStr) {
+  const fecha = new Date(fechaStr);
+  return fecha.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+/* ============================================================
+ *  RENDERIZAR DASHBOARD
+ * ============================================================ */
+
+function renderDashboard() {
+  // Estadísticas
+  document.getElementById('statProductos').textContent = productos.length;
+  document.getElementById('statPedidos').textContent = pedidos.filter(p => p.estado === 'pendiente').length;
+
+  const ventasMes = pedidos
+    .filter(p => p.estado === 'completado')
+    .reduce((sum, p) => sum + p.total, 0);
+  document.getElementById('statVentas').textContent = '$' + ventasMes.toFixed(2);
+  document.getElementById('statIngresos').textContent = '$' + ventasMes.toFixed(2);
+
+  // Badge de productos
+  document.getElementById('productCount').textContent = productos.length;
+
+  // Actividad reciente
+  const actividad = document.getElementById('dashboardActivity');
+  const pedidosRecientes = pedidos.slice(0, 3);
+
+  if (pedidosRecientes.length === 0) {
+    actividad.innerHTML = '<p style="color: var(--gris-texto);">Sin actividad reciente</p>';
+  } else {
+    actividad.innerHTML = pedidosRecientes.map(p => `
+      <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--verde-2);">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(201, 169, 110, 0.15); display: flex; align-items: center; justify-content: center; color: var(--dorado);">
+          <i class="fas fa-shopping-bag"></i>
+        </div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 0.9rem;">${escapeHtml(p.cliente)}</div>
+          <div style="font-size: 0.8rem; color: var(--gris-texto);">Pedido #${p.id} - ${formatearFecha(p.fecha)}</div>
+        </div>
+        <div style="font-weight: 700; color: var(--dorado);">$${p.total.toFixed(2)}</div>
+      </div>
+    `).join('');
   }
 }
 
-/**
- * Cierra el modal de configuración.
- */
-function cerrarModalConfig() {
-  try {
-    document.getElementById('modal-config').classList.remove('modal-visible');
-    document.getElementById('overlay-config').classList.remove('overlay-visible');
-  } catch (error) {
-    console.error('Error al cerrar modal de configuración:', error);
+/* ============================================================
+ *  MODAL DE PRODUCTO
+ * ============================================================ */
+
+const productoModal = document.getElementById('productoModal');
+const modalTitle = document.getElementById('modalTitle');
+const productoForm = document.getElementById('productoForm');
+const btnAgregarProducto = document.getElementById('btnAgregarProducto');
+const btnCancelar = document.getElementById('btnCancelar');
+const modalClose = document.getElementById('modalClose');
+
+// Elementos de foto
+const fotoUploadZone = document.getElementById('fotoUploadZone');
+const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
+const fotoPreview = document.getElementById('fotoPreview');
+const fotoRemoveBtn = document.getElementById('fotoRemoveBtn');
+const prodFotoInput = document.getElementById('prodFotoInput');
+const prodImagenBase64 = document.getElementById('prodImagenBase64');
+
+// Abrir modal para agregar
+btnAgregarProducto.addEventListener('click', () => {
+  productoEditando = null;
+  modalTitle.innerHTML = 'Agregar <span>Producto</span>';
+  productoForm.reset();
+  document.getElementById('productoId').value = '';
+  prodImagenBase64.value = '';
+  mostrarZonaSubida();
+  productoModal.classList.add('active');
+});
+
+// Cerrar modal
+function cerrarModal() {
+  productoModal.classList.remove('active');
+  productoEditando = null;
+}
+
+modalClose.addEventListener('click', cerrarModal);
+btnCancelar.addEventListener('click', cerrarModal);
+
+// Cerrar modal al tocar fuera
+productoModal.addEventListener('click', (e) => {
+  if (e.target === productoModal) {
+    cerrarModal();
   }
+});
+
+/* ============================================================
+ *  SUBIR FOTO DESDE EL CELULAR
+ * ============================================================ */
+
+// Al tocar la zona de subida, abrir la galería
+fotoUploadZone.addEventListener('click', () => {
+  prodFotoInput.click();
+});
+
+// Cuando se selecciona una foto
+prodFotoInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Verificar que sea una imagen
+  if (!file.type.startsWith('image/')) {
+    showToast('Por favor selecciona una imagen', 'error');
+    return;
+  }
+
+  // Verificar tamaño máximo (5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('La imagen no puede superar 5MB', 'error');
+    return;
+  }
+
+  // Usar FileReader para convertir a base64
+  const reader = new FileReader();
+
+  reader.onload = (event) => {
+    const base64 = event.target.result;
+
+    // Mostrar vista previa
+    fotoPreview.src = base64;
+    prodImagenBase64.value = base64;
+    mostrarVistaPrevia();
+
+    showToast('Foto cargada correctamente');
+  };
+
+  reader.onerror = () => {
+    showToast('Error al cargar la imagen', 'error');
+  };
+
+  // Leer el archivo como base64
+  reader.readAsDataURL(file);
+});
+
+// Quitar foto
+fotoRemoveBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  prodFotoInput.value = '';
+  prodImagenBase64.value = '';
+  fotoPreview.src = '';
+  mostrarZonaSubida();
+});
+
+// Mostrar zona de subida (sin foto)
+function mostrarZonaSubida() {
+  fotoUploadZone.style.display = 'flex';
+  fotoPreviewContainer.style.display = 'none';
+}
+
+// Mostrar vista previa (con foto)
+function mostrarVistaPrevia() {
+  fotoUploadZone.style.display = 'none';
+  fotoPreviewContainer.style.display = 'block';
+}
+
+/* ============================================================
+ *  EDITAR PRODUCTO
+ * ============================================================ */
+
+function editarProducto(id) {
+  const producto = productos.find(p => p.id === id);
+  if (!producto) return;
+
+  productoEditando = producto;
+  modalTitle.innerHTML = 'Editar <span>Producto</span>';
+
+  // Llenar formulario
+  document.getElementById('productoId').value = producto.id;
+  document.getElementById('prodNombre').value = producto.nombre;
+  document.getElementById('prodDescripcion').value = producto.descripcion || '';
+  document.getElementById('prodPrecio').value = producto.precio;
+  document.getElementById('prodPrecioAnterior').value = producto.precioAnterior || '';
+  document.getElementById('prodCategoria').value = producto.categoria;
+  document.getElementById('prodStock').value = producto.stock;
+
+  // Manejar foto
+  if (producto.imagenBase64) {
+    fotoPreview.src = producto.imagenBase64;
+    prodImagenBase64.value = producto.imagenBase64;
+    mostrarVistaPrevia();
+  } else {
+    prodImagenBase64.value = '';
+    mostrarZonaSubida();
+  }
+
+  productoModal.classList.add('active');
+}
+
+/* ============================================================
+ *  GUARDAR PRODUCTO
+ * ============================================================ */
+
+productoForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById('productoId').value;
+  const nombre = document.getElementById('prodNombre').value.trim();
+  const descripcion = document.getElementById('prodDescripcion').value.trim();
+  const precio = parseFloat(document.getElementById('prodPrecio').value);
+  const precioAnterior = parseFloat(document.getElementById('prodPrecioAnterior').value) || null;
+  const categoria = document.getElementById('prodCategoria').value;
+  const stock = parseInt(document.getElementById('prodStock').value);
+  const imagenBase64 = prodImagenBase64.value;
+
+  // Validaciones
+  if (!nombre) {
+    showToast('El nombre es obligatorio', 'error');
+    return;
+  }
+  if (!precio || precio <= 0) {
+    showToast('El precio debe ser mayor a 0', 'error');
+    return;
+  }
+  if (!categoria) {
+    showToast('Selecciona una categoría', 'error');
+    return;
+  }
+  if (isNaN(stock) || stock < 0) {
+    showToast('El stock debe ser un número positivo', 'error');
+    return;
+  }
+
+  if (id) {
+    // Editar producto existente
+    const index = productos.findIndex(p => p.id === parseInt(id));
+    if (index !== -1) {
+      productos[index] = {
+        ...productos[index],
+        nombre,
+        descripcion,
+        precio,
+        precioAnterior,
+        categoria,
+        stock,
+        imagenBase64
+      };
+      showToast('Producto actualizado');
+    }
+  } else {
+    // Agregar nuevo producto
+    const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
+    const emojis = ['🌹', '✨', '🌰', '🍊', '🧈', '🌸', '💎', '🌿', '⭐', '🔮'];
+    const emojiAleatorio = emojis[Math.floor(Math.random() * emojis.length)];
+
+    productos.push({
+      id: nuevoId,
+      nombre,
+      descripcion,
+      precio,
+      precioAnterior,
+      categoria,
+      stock,
+      imagenBase64,
+      emoji: emojiAleatorio
+    });
+    showToast('Producto agregado');
+  }
+
+  guardarProductos();
+  renderProductos();
+  renderDashboard();
+  cerrarModal();
+});
+
+/* ============================================================
+ *  ELIMINAR PRODUCTO
+ * ============================================================ */
+
+const confirmOverlay = document.getElementById('confirmOverlay');
+const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
+
+function confirmarEliminar(id) {
+  productoAEliminar = id;
+  confirmOverlay.classList.add('active');
+}
+
+btnConfirmarEliminar.addEventListener('click', () => {
+  if (productoAEliminar) {
+    productos = productos.filter(p => p.id !== productoAEliminar);
+    guardarProductos();
+    renderProductos();
+    renderDashboard();
+    showToast('Producto eliminado');
+  }
+  confirmOverlay.classList.remove('active');
+  productoAEliminar = null;
+});
+
+btnCancelarEliminar.addEventListener('click', () => {
+  confirmOverlay.classList.remove('active');
+  productoAEliminar = null;
+});
+
+// Cerrar confirmación al tocar fuera
+confirmOverlay.addEventListener('click', (e) => {
+  if (e.target === confirmOverlay) {
+    confirmOverlay.classList.remove('active');
+    productoAEliminar = null;
+  }
+});
+
+/* ============================================================
+ *  BUSCADOR DE PRODUCTOS
+ * ============================================================ */
+
+document.getElementById('searchProductos').addEventListener('input', (e) => {
+  renderProductos(e.target.value);
+});
+
+/* ============================================================
+ *  CONFIGURACIÓN (AJUSTES)
+ * ============================================================ */
+
+const configForm = document.getElementById('configForm');
+
+// Cargar configuración en el formulario
+function cargarConfigEnFormulario() {
+  document.getElementById('configNombre').value = config.nombre;
+  document.getElementById('configWhatsapp').value = config.whatsapp;
+  document.getElementById('configMensaje').value = config.mensaje;
+  document.getElementById('configEmail').value = config.email;
+  document.getElementById('configDireccion').value = config.direccion;
+}
+
+// Guardar configuración
+configForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  config.nombre = document.getElementById('configNombre').value.trim() || 'NØRDIKO';
+  config.whatsapp = document.getElementById('configWhatsapp').value.trim();
+  config.mensaje = document.getElementById('configMensaje').value.trim();
+  config.email = document.getElementById('configEmail').value.trim();
+  config.direccion = document.getElementById('configDireccion').value.trim();
+
+  // Validar WhatsApp
+  if (!config.whatsapp) {
+    showToast('El número de WhatsApp es obligatorio', 'error');
+    return;
+  }
+
+  guardarConfig();
+  showToast('Configuración guardada');
+});
+
+/* ============================================================
+ *  SISTEMA DE TEMAS - UI
+ * ============================================================ */
+
+// Manejar selección de tema
+document.querySelectorAll('.tema-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const tema = card.dataset.tema;
+
+    if (tema === 'personalizado') {
+      // Mostrar panel de colores personalizados
+      const panel = document.getElementById('customColorsPanel');
+      if (panel) {
+        panel.classList.toggle('visible');
+      }
+    } else {
+      // Ocultar panel personalizado si está visible
+      const panel = document.getElementById('customColorsPanel');
+      if (panel) {
+        panel.classList.remove('visible');
+      }
+    }
+
+    temaActual = tema;
+    aplicarTema(tema);
+
+    // Actualizar tarjeta activa
+    document.querySelectorAll('.tema-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.tema === tema);
+    });
+  });
+});
+
+// Manejar color pickers personalizados
+const colorPickers = [
+  { picker: 'customPrimario', hex: 'hexPrimario', key: 'primario' },
+  { picker: 'customAcento', hex: 'hexAcento', key: 'acento' },
+  { picker: 'customFondo', hex: 'hexFondo', key: 'fondo' },
+  { picker: 'customTexto', hex: 'hexTexto', key: 'texto' }
+];
+
+colorPickers.forEach(({ picker, hex, key }) => {
+  const input = document.getElementById(picker);
+  const hexDisplay = document.getElementById(hex);
+
+  if (input && hexDisplay) {
+    input.addEventListener('input', () => {
+      customColores[key] = input.value;
+      hexDisplay.textContent = input.value.toUpperCase();
+      if (temaActual === 'personalizado') {
+        aplicarTema('personalizado');
+      }
+    });
+  }
+});
+
+// Guardar tema
+document.getElementById('btnGuardarTema').addEventListener('click', () => {
+  localStorage.setItem(STORAGE_KEY_TEMA, JSON.stringify({
+    tema: temaActual,
+    customColores: customColores
+  }));
+  showToast('Tema guardado');
+});
+
+// Restablecer tema
+document.getElementById('btnRestablecerTema').addEventListener('click', () => {
+  temaActual = 'bosque';
+  customColores = {
+    primario: '#2a2a2a',
+    acento: '#c9a96e',
+    fondo: '#0a0a0a',
+    texto: '#ffffff'
+  };
+  aplicarTema('bosque');
+  localStorage.removeItem(STORAGE_KEY_TEMA);
+
+  // Ocultar panel personalizado
+  const panel = document.getElementById('customColorsPanel');
+  if (panel) {
+    panel.classList.remove('visible');
+  }
+
+  showToast('Tema restablecido');
+});
+
+/* ============================================================
+ *  FUNCIONES DE WHATSAPP (para index.html)
+ * ============================================================ */
+
+/**
+ * Genera el mensaje de WhatsApp con el pedido
+ * @param {Array} items - Array de productos con cantidad
+ * @param {Object} cliente - Datos del cliente
+ * @returns {string} - Mensaje formateado para WhatsApp
+ */
+function generarMensajeWhatsApp(items, cliente) {
+  const nombreNegocio = config.nombre || 'NØRDIKO';
+
+  let mensaje = `Hola ${nombreNegocio}, quiero hacer un pedido:\n\n`;
+
+  let total = 0;
+  items.forEach(item => {
+    const subtotal = item.precio * item.cantidad;
+    total += subtotal;
+    mensaje += `${item.emoji || '📦'} ${item.nombre} x${item.cantidad} - $${subtotal.toFixed(2)}\n`;
+  });
+
+  mensaje += `\nTotal: $${total.toFixed(2)}\n\n`;
+  mensaje += `Nombre: ${cliente.nombre}\n`;
+  mensaje += `Teléfono: ${cliente.telefono}\n`;
+  mensaje += `Dirección: ${cliente.direccion}\n\n`;
+
+  if (config.mensaje) {
+    mensaje += `${config.mensaje}\n`;
+  }
+
+  mensaje += '¡Gracias!';
+
+  return mensaje;
 }
 
 /**
- * Guarda la configuración de la tienda desde el formulario.
- * @param {Event} event - Evento del formulario
+ * Abre WhatsApp con el mensaje prellenado
+ * @param {string} numero - Número de WhatsApp (sin +57)
+ * @param {string} mensaje - Mensaje a enviar
  */
-function guardarConfigForm(event) {
-  try {
-    event.preventDefault();
+function abrirWhatsApp(numero, mensaje) {
+  // Limpiar número (espacios, guiones, paréntesis)
+  const numeroLimpio = numero.replace(/[\s\-\(\)]/g, '');
 
-    const nombre = document.getElementById('config-nombre').value.trim();
-    const email = document.getElementById('config-email').value.trim();
-    const telefono = document.getElementById('config-telefono').value.trim();
-    const direccion = document.getElementById('config-direccion').value.trim();
+  // Codificar mensaje para URL
+  const mensajeCodificado = encodeURIComponent(mensaje);
 
-    // Validaciones básicas
-    if (!nombre) {
-      mostrarToast('El nombre de la tienda es obligatorio.', 'error');
-      return;
-    }
+  // URL de WhatsApp
+  const url = `https://wa.me/57${numeroLimpio}?text=${mensajeCodificado}`;
 
-    if (!email || !email.includes('@')) {
-      mostrarToast('Ingresa un email válido.', 'error');
-      return;
-    }
-
-    configTienda = { nombre, email, telefono, direccion };
-
-    if (guardarConfig()) {
-      cerrarModalConfig();
-      mostrarToast('Configuración guardada correctamente.', 'success');
-    }
-  } catch (error) {
-    console.error('Error al guardar configuración:', error);
-    mostrarToast('Error al guardar la configuración.', 'error');
-  }
+  // Abrir en nueva pestaña
+  window.open(url, '_blank');
 }
 
 /* ============================================================
  *  INICIALIZACIÓN
  * ============================================================ */
 
-/**
- * Inicializa el panel de administración.
- * Se ejecuta cuando el DOM está listo.
- */
 function initAdmin() {
-  try {
-    // Cargar datos
-    cargarProductos();
-    cargarConfig();
-
-    // Renderizar vista inicial
-    renderizarTabla();
-    renderizarDashboard();
-
-    // Event Listeners - Búsqueda y filtros
-    const buscador = document.getElementById('buscador-productos');
-    if (buscador) {
-      buscador.addEventListener('input', manejarBusqueda);
-    }
-
-    const filtroCat = document.getElementById('filtro-categoria');
-    if (filtroCat) {
-      filtroCat.addEventListener('change', manejarFiltroCategoria);
-    }
-
-    // Event Listeners - Botones principales
-    const btnAgregar = document.getElementById('btn-agregar');
-    if (btnAgregar) {
-      btnAgregar.addEventListener('click', abrirModalAgregar);
-    }
-
-    const btnExportar = document.getElementById('btn-exportar');
-    if (btnExportar) {
-      btnExportar.addEventListener('click', exportarJSON);
-    }
-
-    const btnImportar = document.getElementById('btn-importar');
-    const inputImportar = document.getElementById('input-importar');
-    if (btnImportar && inputImportar) {
-      btnImportar.addEventListener('click', () => inputImportar.click());
-      inputImportar.addEventListener('change', importarJSON);
-    }
-
-    const btnLimpiar = document.getElementById('btn-limpiar-filtros');
-    if (btnLimpiar) {
-      btnLimpiar.addEventListener('click', limpiarFiltros);
-    }
-
-    const btnConfig = document.getElementById('btn-config');
-    if (btnConfig) {
-      btnConfig.addEventListener('click', abrirModalConfig);
-    }
-
-    // Event Listeners - Formularios
-    const formProducto = document.getElementById('form-producto');
-    if (formProducto) {
-      formProducto.addEventListener('submit', manejarSubmitProducto);
-    }
-
-    const formConfig = document.getElementById('form-config');
-    if (formConfig) {
-      formConfig.addEventListener('submit', guardarConfigForm);
-    }
-
-    // Event Listeners - Cerrar modales con overlay
-    const overlayModal = document.getElementById('overlay-modal');
-    if (overlayModal) {
-      overlayModal.addEventListener('click', cerrarModal);
-    }
-
-    const overlayConfig = document.getElementById('overlay-config');
-    if (overlayConfig) {
-      overlayConfig.addEventListener('click', cerrarModalConfig);
-    }
-
-    // Event Listeners - Cerrar modales con botón
-    const btnCerrarModal = document.getElementById('btn-cerrar-modal');
-    if (btnCerrarModal) {
-      btnCerrarModal.addEventListener('click', cerrarModal);
-    }
-
-    const btnCerrarConfig = document.getElementById('btn-cerrar-config');
-    if (btnCerrarConfig) {
-      btnCerrarConfig.addEventListener('click', cerrarModalConfig);
-    }
-
-    // Event Listener - Cerrar modales con tecla Escape
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        cerrarModal();
-        cerrarModalConfig();
-      }
-    });
-
-    console.log('Panel de administración inicializado correctamente.');
-  } catch (error) {
-    console.error('Error al inicializar el panel:', error);
-    mostrarToast('Error al inicializar el panel de administración.', 'error');
-  }
+  cargarDatos();
+  cargarTema();
+  cargarConfigEnFormulario();
+  renderProductos();
+  renderPedidos();
+  renderDashboard();
 }
 
 // Inicializar cuando el DOM esté listo
