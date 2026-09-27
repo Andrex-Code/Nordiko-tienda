@@ -2442,11 +2442,7 @@
                     <span>Productos</span>
                     <span class="nav-badge" id="productCount">0</span>
                 </a>
-                <a class="nav-item" data-section="pedidos">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Pedidos</span>
-                    <span class="nav-badge">0</span>
-                </a>
+
                 <a class="nav-item" data-section="ajustes">
                     <i class="fas fa-cog"></i>
                     <span>Ajustes</span>
@@ -2570,19 +2566,7 @@
                     </div>
                 </div>
 
-                <!-- ===== SECCIÓN: PEDIDOS ===== -->
-                <div class="section-content" id="section-pedidos">
-                    <div class="panel-header">
-                        <div>
-                            <h2 class="panel-title">Mis <span>Pedidos</span></h2>
-                            <p class="panel-subtitle">Revisa los pedidos de tus clientes</p>
-                        </div>
-                    </div>
 
-                    <div class="pedidos-lista" id="pedidosLista">
-                        <!-- Se llena con JS -->
-                    </div>
-                </div>
 
                 <!-- ===== SECCIÓN: AJUSTES ===== -->
                 <div class="section-content" id="section-ajustes">
@@ -2987,6 +2971,17 @@
 
     <script>
         // ============================================================
+        // ===== UTILIDAD — ESCAPE HTML (Anti-XSS)
+        // ============================================================
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        // ============================================================
         // ===== CONFIGURACIÓN Y DATOS =====
         // ============================================================
 
@@ -3178,23 +3173,23 @@
                 }
 
                 return `
-                    <div class="producto-card" data-id="${p.id}">
+                    <div class="producto-card" data-id="${escapeHtml(p.id)}">
                         <div class="producto-foto">
                             ${imagenHTML}
                         </div>
                         <div class="producto-info">
-                            <div class="producto-nombre">${p.nombre}</div>
-                            <div class="producto-categoria">${obtenerNombreCategoria(p.categoria)}</div>
+                            <div class="producto-nombre">${escapeHtml(p.nombre)}</div>
+                            <div class="producto-categoria">${escapeHtml(obtenerNombreCategoria(p.categoria))}</div>
                             <div class="producto-precio">
-                                $${p.precio.toFixed(2)}
-                                ${p.precioAnterior ? `<span class="producto-precio-anterior">$${p.precioAnterior.toFixed(2)}</span>` : ''}
+                                $${escapeHtml(p.precio.toFixed(2))}
+                                ${p.precioAnterior ? `<span class="producto-precio-anterior">$${escapeHtml(p.precioAnterior.toFixed(2))}</span>` : ''}
                             </div>
                         </div>
                         <div class="producto-acciones">
-                            <button class="producto-btn edit" onclick="editarProducto(${p.id})" aria-label="Editar">
+                            <button class="producto-btn edit" onclick="editarProducto(${escapeHtml(p.id)})" aria-label="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="producto-btn delete" onclick="confirmarEliminar(${p.id})" aria-label="Eliminar">
+                            <button class="producto-btn delete" onclick="confirmarEliminar(${escapeHtml(p.id)})" aria-label="Eliminar">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -3251,12 +3246,12 @@
                             <i class="fas fa-shopping-bag"></i>
                         </div>
                         <div class="pedido-info">
-                            <div class="pedido-numero">Pedido #${p.id}</div>
-                            <div class="pedido-cliente">${p.cliente}</div>
-                            <div class="pedido-fecha">${formatearFecha(p.fecha)}</div>
-                            <span class="pedido-estado ${estadoClase[p.estado]}">${estadoTexto[p.estado]}</span>
+                            <div class="pedido-numero">Pedido #${escapeHtml(p.id)}</div>
+                            <div class="pedido-cliente">${escapeHtml(p.cliente)}</div>
+                            <div class="pedido-fecha">${escapeHtml(formatearFecha(p.fecha))}</div>
+                            <span class="pedido-estado ${estadoClase[p.estado]}">${escapeHtml(estadoTexto[p.estado])}</span>
                         </div>
-                        <div class="pedido-total">$${p.total.toFixed(2)}</div>
+                        <div class="pedido-total">$${escapeHtml(p.total.toFixed(2))}</div>
                     </div>
                 `;
             }).join('');

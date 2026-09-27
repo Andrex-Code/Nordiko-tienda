@@ -255,11 +255,13 @@
     /**
      * Formatea un número como precio en pesos colombianos.
      * Maneja NaN y números negativos de forma segura.
+     * Formato colombiano: $350.000 (sin decimales, separador de miles con punto)
      */
     function formatearPrecio(precio) {
         const num = Number(precio);
-        if (isNaN(num) || num < 0) return '$0.00';
-        return '$' + num.toFixed(2);
+        if (isNaN(num) || num < 0) return '$0.000';
+        // Formato colombiano: $350.000 (sin decimales, separador de miles con punto)
+        return '$' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
 
     // ============================================
@@ -433,6 +435,7 @@
         }, 200);
 
         actualizarCarrito();
+        guardarCarrito();
 
         // Toast grande y claro
         mostrarToast(`${producto.nombre} agregado al carrito`, 'success');
@@ -537,11 +540,42 @@
         const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
         cartTotal.textContent = formatearPrecio(total);
         modalTotal.textContent = formatearPrecio(total);
+        
+        // Guardar carrito en localStorage
+        guardarCarrito();
     }
 
     // ============================================
     // 9. SIDEBAR DEL CARRITO — FÁCIL DE USAR
     // ============================================
+
+    // ============================================
+    // 8.1 PERSISTENCIA DEL CARRITO
+    // ============================================
+
+    function guardarCarrito() {
+        try {
+            localStorage.setItem('nordiko_carrito', JSON.stringify(carrito));
+        } catch (e) {
+            console.warn('No se pudo guardar el carrito:', e);
+        }
+    }
+
+    function cargarCarrito() {
+        try {
+            const carritoGuardado = localStorage.getItem('nordiko_carrito');
+            if (carritoGuardado) {
+                const datos = JSON.parse(carritoGuardado);
+                if (Array.isArray(datos)) {
+                    // Validar que cada item tenga los campos mínimos
+                    carrito = datos.filter(item => item && item.id && item.nombre && item.precio);
+                }
+            }
+        } catch (e) {
+            console.warn('No se pudo cargar el carrito:', e);
+            carrito = [];
+        }
+    }
 
     function abrirCarrito() {
         cartSidebar.classList.add('active');
@@ -640,6 +674,13 @@
             return;
         }
 
+        // Validar teléfono colombiano (10 dígitos, puede empezar con 3 o 57)
+        const telefonoLimpio = telefono.replace(/[\s\-\(\)\+]/g, '');
+        if (!(/^[3][0-9]{9}$/.test(telefonoLimpio) || /^57[3][0-9]{9}$/.test(telefonoLimpio))) {
+            mostrarToast('Ingresa un teléfono válido (10 dígitos, ej: 3001234567)', 'error');
+            return;
+        }
+
         // Obtener número de WhatsApp configurado
         let config = {};
         try {
@@ -680,6 +721,7 @@
         checkoutModal.classList.remove('active');
         document.body.style.overflow = '';
         carrito = [];
+        guardarCarrito();
         actualizarCarrito();
         mostrarToast('¡Redirigiendo a WhatsApp para confirmar tu pedido!', 'success');
     });
@@ -719,8 +761,44 @@
 
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        const nombre = document.getElementById('contactName').value.trim();
+        const telefono = document.getElementById('contactPhone').value.trim();
+        const mensaje = document.getElementById('contactMessage').value.trim();
+        
+        if (!nombre || !mensaje) {
+            mostrarToast('Por favor completa tu nombre y mensaje', 'error');
+            return;
+        }
+        
+        // Obtener número de WhatsApp configurado
+        let config = {};
+        try {
+            const configGuardada = localStorage.getItem('nordiko_config');
+            if (configGuardada) {
+                config = JSON.parse(configGuardada);
+            }
+        } catch (e) {
+            console.warn('Error cargando configuración:', e);
+        }
+        
+        const whatsappNumber = config.whatsapp || '573128439577';
+        
+        // Construir mensaje de WhatsApp
+        let wppMensaje = `Hola NØRDIKO, me gustaría contactarlos:%0A%0A`;
+        wppMensaje += `👤 Nombre: ${nombre}%0A`;
+        if (telefono) {
+            wppMensaje += `📱 Teléfono: ${telefono}%0A`;
+        }
+        wppMensaje += `📝 Mensaje: ${mensaje}%0A%0A`;
+        wppMensaje += `¡Gracias! 🙌`;
+        
+        // Abrir WhatsApp
+        const whatsappURL = `https://wa.me/${whatsappNumber}?text=${wppMensaje}`;
+        window.open(whatsappURL, '_blank');
+        
         contactForm.reset();
-        mostrarToast('Mensaje enviado. Te contactaremos pronto.', 'success');
+        mostrarToast('¡Redirigiendo a WhatsApp!', 'success');
     });
 
     // ============================================
