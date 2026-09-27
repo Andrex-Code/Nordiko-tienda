@@ -2517,6 +2517,16 @@
             color: var(--verde-oscuro);
         }
 
+        .categoria-btn.edit {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
+        .categoria-btn.edit:active {
+            background: #60a5fa;
+            color: var(--verde-oscuro);
+        }
+
         .categoria-btn.delete {
             background: rgba(248, 113, 113, 0.15);
             color: var(--error);
@@ -3713,13 +3723,14 @@
 
             productoEditando = producto;
             modalTitle.innerHTML = 'Editar <span>Producto</span>';
-            
+
             // Llenar formulario
             document.getElementById('productoId').value = producto.id;
             document.getElementById('prodNombre').value = producto.nombre;
             document.getElementById('prodDescripcion').value = producto.descripcion || '';
             document.getElementById('prodPrecio').value = producto.precio;
             document.getElementById('prodPrecioAnterior').value = producto.precioAnterior || '';
+            actualizarSelectCategorias();
             document.getElementById('prodCategoria').value = producto.categoria;
             document.getElementById('prodStock').value = producto.stock;
             
@@ -3915,6 +3926,9 @@
                             <input type="checkbox" ${cat.activa ? 'checked' : ''} onchange="toggleCategoria('${escapeHtml(cat.id)}')">
                             <span class="toggle-slider"></span>
                         </label>
+                        <button class="categoria-btn edit" onclick="editarCategoria('${escapeHtml(cat.id)}')" aria-label="Editar categoría">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button class="categoria-btn delete" onclick="confirmarEliminarCategoria('${escapeHtml(cat.id)}')" aria-label="Eliminar categoría">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -3961,6 +3975,10 @@
             categoriaModalTitle.innerHTML = 'Agregar <span>Categoría</span>';
             categoriaForm.reset();
             document.getElementById('categoriaEditandoId').value = '';
+            const catCodigo = document.getElementById('catCodigo');
+            catCodigo.readOnly = false;
+            catCodigo.style.opacity = '1';
+            catCodigo.style.cursor = 'text';
             categoriaModal.classList.add('active');
         });
 
@@ -4013,11 +4031,10 @@
             }
 
             if (editandoId) {
-                // Editar categoría existente
+                // Editar categoría existente (el código interno NO cambia para no romper productos)
                 const cat = (config.categorias || []).find(c => c.id === editandoId);
                 if (cat) {
                     cat.nombre = nombre;
-                    cat.id = codigo;
                     showToast('Categoría actualizada');
                 }
             } else {
@@ -4032,6 +4049,23 @@
             actualizarSelectCategorias();
             cerrarCategoriaModal();
         });
+
+        // Abrir modal para editar categoría (solo se puede cambiar el nombre)
+        function editarCategoria(id) {
+            const cat = (config.categorias || []).find(c => c.id === id);
+            if (!cat) return;
+
+            categoriaEditando = id;
+            categoriaModalTitle.innerHTML = 'Editar <span>Categoría</span>';
+            categoriaForm.reset();
+            document.getElementById('categoriaEditandoId').value = id;
+            document.getElementById('catNombre').value = cat.nombre;
+            document.getElementById('catCodigo').value = cat.id;
+            document.getElementById('catCodigo').readOnly = true;
+            document.getElementById('catCodigo').style.opacity = '0.5';
+            document.getElementById('catCodigo').style.cursor = 'not-allowed';
+            categoriaModal.classList.add('active');
+        }
 
         // Activar / desactivar categoría
         function toggleCategoria(id) {

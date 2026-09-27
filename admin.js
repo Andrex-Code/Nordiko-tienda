@@ -317,6 +317,25 @@ function aplicarTema(nombreTema) {
   root.style.setProperty('--error', colores.error);
   root.style.setProperty('--advertencia', colores.advertencia);
 
+  // ============================================================
+  // ACTUALIZAR VARIABLES DEL PREVIEW DE LA TIENDA
+  // Estas variables controlan la vista previa en tiempo real
+  // ============================================================
+  root.style.setProperty('--preview-fondo', colores.fondo);
+  root.style.setProperty('--preview-borde', colores.borde);
+  root.style.setProperty('--preview-primario', colores.primario);
+  root.style.setProperty('--preview-acento', colores.acento);
+  root.style.setProperty('--preview-texto', colores.texto);
+  root.style.setProperty('--preview-texto-claro', colores.textoClaro);
+  root.style.setProperty('--preview-primario-texto', colores.primarioOscuro);
+  root.style.setProperty('--preview-fondo-card', colores.fondoCard);
+
+  // Actualizar variables de la tarjeta personalizada
+  root.style.setProperty('--custom-primario', customColores.primario);
+  root.style.setProperty('--custom-acento', customColores.acento);
+  root.style.setProperty('--custom-fondo', customColores.fondo);
+  root.style.setProperty('--custom-texto', customColores.texto);
+
   // Actualizar tarjeta de tema activa en la UI
   document.querySelectorAll('.tema-card').forEach(card => {
     card.classList.toggle('active', card.dataset.tema === nombreTema);
@@ -875,7 +894,7 @@ configForm.addEventListener('submit', (e) => {
  *  SISTEMA DE TEMAS - UI
  * ============================================================ */
 
-// Manejar selección de tema
+// Manejar selección de tema — con guardado automático
 document.querySelectorAll('.tema-card').forEach(card => {
   card.addEventListener('click', () => {
     const tema = card.dataset.tema;
@@ -896,6 +915,13 @@ document.querySelectorAll('.tema-card').forEach(card => {
 
     temaActual = tema;
     aplicarTema(tema);
+
+    // Guardar automáticamente al seleccionar un tema
+    guardarTema();
+
+    // Feedback visual: animación en la tarjeta seleccionada
+    card.classList.add('pulse');
+    setTimeout(() => card.classList.remove('pulse'), 300);
 
     // Actualizar tarjeta activa
     document.querySelectorAll('.tema-card').forEach(c => {
@@ -923,21 +949,131 @@ colorPickers.forEach(({ picker, hex, key }) => {
       if (temaActual === 'personalizado') {
         aplicarTema('personalizado');
       }
+      // Guardado automático con debounce (espera 500ms después del último cambio)
+      clearTimeout(input._saveTimeout);
+      input._saveTimeout = setTimeout(() => {
+        guardarTema();
+      }, 500);
     });
   }
 });
 
+// Guardar tema en localStorage
+function guardarTema() {
+  try {
+    localStorage.setItem(STORAGE_KEY_TEMA, JSON.stringify({
+      tema: temaActual,
+      customColores: customColores
+    }));
+  } catch (e) {
+    console.warn('No se pudo guardar el tema:', e);
+    showToast('No se pudo guardar el tema', 'error');
+  }
+}
+
 // Guardar tema
 document.getElementById('btnGuardarTema').addEventListener('click', () => {
-  localStorage.setItem(STORAGE_KEY_TEMA, JSON.stringify({
-    tema: temaActual,
-    customColores: customColores
-  }));
-  showToast('Tema guardado');
+  guardarTema();
+  showToast('Tema guardado correctamente');
 });
 
-// Restablecer tema
+// ============================================================
+// MODAL DE VISTA PREVIA DE LA TIENDA
+// ============================================================
+
+const btnVerPreview = document.getElementById('btnVerPreview');
+const previewModalOverlay = document.getElementById('previewModalOverlay');
+const previewModalClose = document.getElementById('previewModalClose');
+
+if (btnVerPreview && previewModalOverlay) {
+  btnVerPreview.addEventListener('click', () => {
+    previewModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+}
+
+if (previewModalClose && previewModalOverlay) {
+  previewModalClose.addEventListener('click', () => {
+    previewModalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+
+  // Cerrar al tocar fuera del modal
+  previewModalOverlay.addEventListener('click', (e) => {
+    if (e.target === previewModalOverlay) {
+      previewModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Cerrar con tecla Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && previewModalOverlay.classList.contains('active')) {
+      previewModalOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+}
+
+// Restablecer tema — con confirmación
 document.getElementById('btnRestablecerTema').addEventListener('click', () => {
+  // Usar el overlay de confirmación existente
+  const confirmOverlay = document.getElementById('confirmOverlay');
+  if (confirmOverlay) {
+    // Cambiar el contenido del diálogo de confirmación
+    const icon = confirmOverlay.querySelector('.confirm-icon');
+    const title = confirmOverlay.querySelector('.confirm-title');
+    const message = confirmOverlay.querySelector('.confirm-message');
+    const btnConfirmar = document.getElementById('btnConfirmarEliminar');
+    const btnCancelar = document.getElementById('btnCancelarEliminar');
+
+    if (icon) {
+      icon.innerHTML = '<i class="fas fa-undo"></i>';
+      icon.style.background = 'rgba(201, 169, 110, 0.15)';
+      icon.style.color = 'var(--dorado)';
+    }
+    if (title) title.textContent = '¿Restablecer tema?';
+    if (message) message.textContent = 'Se volverá al tema por defecto (Bosque). Se perderán los colores personalizados.';
+
+    // Guardar referencia al botón original
+    const originalOnclick = btnConfirmar.onclick;
+
+    btnConfirmar.onclick = () => {
+      restablecerTema();
+      confirmOverlay.classList.remove('active');
+      // Restaurar el comportamiento original del botón
+      setTimeout(() => {
+        btnConfirmar.onclick = originalOnclick;
+        if (icon) {
+          icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          icon.style.background = '';
+          icon.style.color = '';
+        }
+        if (title) title.textContent = '¿Eliminar producto?';
+        if (message) message.textContent = 'Esta acción no se puede deshacer. El producto será eliminado permanentemente.';
+      }, 300);
+    };
+
+    btnCancelar.onclick = () => {
+      confirmOverlay.classList.remove('active');
+      // Restaurar el comportamiento original
+      setTimeout(() => {
+        btnConfirmar.onclick = originalOnclick;
+        if (icon) {
+          icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          icon.style.background = '';
+          icon.style.color = '';
+        }
+        if (title) title.textContent = '¿Eliminar producto?';
+        if (message) message.textContent = 'Esta acción no se puede deshacer. El producto será eliminado permanentemente.';
+      }, 300);
+    };
+
+    confirmOverlay.classList.add('active');
+  }
+});
+
+function restablecerTema() {
   temaActual = 'bosque';
   customColores = {
     primario: '#2a2a2a',
@@ -946,7 +1082,12 @@ document.getElementById('btnRestablecerTema').addEventListener('click', () => {
     texto: '#ffffff'
   };
   aplicarTema('bosque');
-  localStorage.removeItem(STORAGE_KEY_TEMA);
+
+  try {
+    localStorage.removeItem(STORAGE_KEY_TEMA);
+  } catch (e) {
+    console.warn('No se pudo eliminar el tema guardado:', e);
+  }
 
   // Ocultar panel personalizado
   const panel = document.getElementById('customColorsPanel');
@@ -954,8 +1095,8 @@ document.getElementById('btnRestablecerTema').addEventListener('click', () => {
     panel.classList.remove('visible');
   }
 
-  showToast('Tema restablecido');
-});
+  showToast('Tema restablecido al valor por defecto');
+}
 
 /* ============================================================
  *  FUNCIONES DE WHATSAPP (para index.html)
