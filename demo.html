@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Belleza Natural | Lociones Premium</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-banner {
+            background: linear-gradient(90deg, #c9a96e 0%, #b8860b 100%);
+            color: #0a0a0a;
+            text-align: center;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .demo-banner a {
+            color: #0a0a0a;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .product-card:hover .product-image img {
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- DEMO BANNER -->
+    <div class="demo-banner">
+        <i class="fas fa-eye"></i> MODO DEMO — Así se vería tu tienda con imágenes reales de productos
+        <a href="index.html">Volver a la tienda</a>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-spa"></i>
+                Belleza Natural
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                <li><a href="#productos" class="nav-link">Productos</a></li>
+                <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="cart-btn" aria-label="Abrir carrito">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count">0</span>
+                </button>
+                <button class="hamburger" aria-label="Abrir menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h1 class="hero-title">Descubre el Secreto de una <span class="text-accent">Piel Radiante</span></h1>
+            <p class="hero-subtitle">Lociones artesanales con ingredientes 100% naturales. Nutre, hidrata y realza tu belleza natural.</p>
+            <a href="#productos" class="btn btn-primary btn-lg">Ver Colección <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-decoration">
+            <div class="floating-circle circle-1"></div>
+            <div class="floating-circle circle-2"></div>
+            <div class="floating-circle circle-3"></div>
+        </div>
+    </section>
+
+    <!-- BENEFICIOS -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-leaf"></i></div>
+                    <h3>100% Natural</h3>
+                    <p>Ingredientes orgánicos y esenciales</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h3>Hecho a Mano</h3>
+                    <p>Producción artesanal en pequeños lotes</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-paw"></i></div>
+                    <h3>Cruelty Free</h3>
+                    <p>No testeamos en animales</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+                    <h3>Envío Gratis</h3>
+                    <p>En pedidos mayores a $500</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTOS CON IMÁGENES REALES -->
+    <section class="products" id="productos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nuestra Colección</h2>
+                <p class="section-subtitle">Encuentra la loción perfecta para tu tipo de piel</p>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active">Todos</button>
+                <button class="filter-btn">Hidratantes</button>
+                <button class="filter-btn">Antiedad</button>
+                <button class="filter-btn">Corporal</button>
+                <button class="filter-btn">Facial</button>
+            </div>
+
+            <div class="products-grid">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge bestseller">Más vendido</span>
+                        <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&h=400&fit=crop" alt="Loción de Rosas" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Hidratante</div>
+                        <h3 class="product-name">Loción de Rosas</h3>
+                        <p class="product-desc">Hidratación profunda con extracto de rosas damascenas.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$350.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=400&h=400&fit=crop" alt="Loción de Lavanda" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Corporal</div>
+                        <h3 class="product-name">Loción de Lavanda</h3>
+                        <p class="product-desc">Relaja tu piel y tu mente con aroma de lavanda francesa.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$320.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge new">Nuevo</span>
+                        <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=400&fit=crop" alt="Sérum Facial Vitamina C" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Facial</div>
+                        <h3 class="product-name">Sérum Facial Vitamina C</h3>
+                        <p class="product-desc">Ilumina y unifica el tono de la piel con vitamina C pura.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$480.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 4 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge sale">Oferta</span>
+                        <img src="https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?w=400&h=400&fit=crop" alt="Loción Antiedad Colágeno" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Antiedad</div>
+                        <h3 class="product-name">Loción Antiedad Colágeno</h3>
+                        <p class="product-desc">Reduce líneas de expresión y firmeza con colágeno marino.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$550.00 <span class="old-price">$650.00</span></div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 5 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=400&fit=crop" alt="Loción de Aloe Vera" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Hidratante</div>
+                        <h3 class="product-name">Loción de Aloe Vera</h3>
+                        <p class="product-desc">Calma e hidrata las pieles sensibles con aloe vera orgánico.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$290.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 6 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1601049676869-702ea24cfd58?w=400&h=400&fit=crop" alt="Loción Corporal de Coco" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Corporal</div>
+                        <h3 class="product-name">Loción Corporal de Coco</h3>
+                        <p class="product-desc">Nutrición intensa con aceite de coco extra virgen.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$340.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 7 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge new">Nuevo</span>
+                        <img src="https://images.unsplash.com/photo-1617897903246-719242758050?w=400&h=400&fit=crop" alt="Crema Facial Retinol" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Facial</div>
+                        <h3 class="product-name">Crema Facial Retinol</h3>
+                        <p class="product-desc">Regeneración celular nocturna con retinol encapsulado.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$620.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 8 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge sale">Oferta</span>
+                        <img src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&h=400&fit=crop" alt="Loción Reafirmante Q10" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Antiedad</div>
+                        <h3 class="product-name">Loción Reafirmante Q10</h3>
+                        <p class="product-desc">Efecto lifting natural con coenzima Q10 y elastina.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$580.00 <span class="old-price">$700.00</span></div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 9 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=400&fit=crop" alt="Loción de Manzanilla" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Hidratante</div>
+                        <h3 class="product-name">Loción de Manzanilla</h3>
+                        <p class="product-desc">Suaviza y protege las pieles delicadas con manzanilla.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$310.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 10 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=400&h=400&fit=crop" alt="Loción Corporal de Karité" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Corporal</div>
+                        <h3 class="product-name">Loción Corporal de Karité</h3>
+                        <p class="product-desc">Máxima nutrición para pieles secas con manteca de karité.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$360.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 11 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <span class="product-badge bestseller">Más vendido</span>
+                        <img src="https://images.unsplash.com/photo-1620756236308-65c3ef5d25f8?w=400&h=400&fit=crop" alt="Gel Facial Hialurónico" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Facial</div>
+                        <h3 class="product-name">Gel Facial Hialurónico</h3>
+                        <p class="product-desc">Hidratación ligera y refrescante con ácido hialurónico.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$450.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 12 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop" alt="Loción Noche Regeneradora" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-category">Antiedad</div>
+                        <h3 class="product-name">Loción Noche Regeneradora</h3>
+                        <p class="product-desc">Repara y regenera tu piel mientras duermes.</p>
+                        <div class="product-footer">
+                            <div class="product-price">$590.00</div>
+                            <button class="add-to-cart"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOSOTROS -->
+    <section class="about" id="nosotros">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&h=450&fit=crop" alt="Nuestro laboratorio" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" loading="lazy">
+                </div>
+                <div class="about-content">
+                    <h2 class="section-title">Nuestra Historia</h2>
+                    <p>Nacimos en 2020 con la pasión de crear productos de cuidado personal que realmente funcionen. Cada loción es elaborada a mano con los mejores ingredientes naturales.</p>
+                    <p>Nuestro compromiso es ofrecer productos de alta calidad que nutran tu piel y respeten el medio ambiente. Creemos que la verdadera belleza viene de cuidarte con productos puros y genuinos.</p>
+                    <a href="#productos" class="btn btn-secondary">Conoce Nuestros Productos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Lo Que Dicen Nuestras Clientas</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Mi piel nunca se había sentido tan suave. La loción de rosas es absolutamente increíble. ¡La recomiendo a todas!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MG</div>
+                        <div>
+                            <strong>María García</strong>
+                            <span>Cliente verificada</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Llevo 6 meses usando sus productos y mi piel luce completamente diferente. Se nota la calidad de los ingredientes naturales."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">LR</div>
+                        <div>
+                            <strong>Laura Rodríguez</strong>
+                            <span>Cliente verificada</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"El aroma de la loción de lavanda es espectacular. Además el envío fue rapidísimo. ¡Volveré a comprar seguro!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">CM</div>
+                        <div>
+                            <strong>Carolina Méndez</strong>
+                            <span>Cliente verificada</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Recibe un 10% de Descuento</h2>
+                <p>Suscríbete a nuestro boletín y obtén un cupón de bienvenida</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Tu correo electrónico" required>
+                    <button type="submit" class="btn btn-primary">Suscribirme</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contáctanos</h2>
+                <p class="section-subtitle">Estamos para ayudarte</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Dirección</h4>
+                            <p>Av. Reforma 123, Col. Centro, CDMX</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Teléfono</h4>
+                            <p>+52 (55) 1234-5678</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>hola@bellezanatural.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horario</h4>
+                            <p>Lun - Sáb: 9:00 AM - 7:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Tu correo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Asunto">
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Tu mensaje" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enviar Mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo footer-logo">
+                        <i class="fas fa-spa"></i>
+                        Belleza Natural
+                    </a>
+                    <p>Lociones artesanales con ingredientes 100% naturales para el cuidado de tu piel.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Tienda</h4>
+                    <ul>
+                        <li><a href="#">Hidratantes</a></li>
+                        <li><a href="#">Antiedad</a></li>
+                        <li><a href="#">Corporales</a></li>
+                        <li><a href="#">Faciales</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Ayuda</h4>
+                    <ul>
+                        <li><a href="#">Envíos</a></li>
+                        <li><a href="#">Devoluciones</a></li>
+                        <li><a href="#">Preguntas frecuentes</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Aviso de privacidad</a></li>
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Belleza Natural. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

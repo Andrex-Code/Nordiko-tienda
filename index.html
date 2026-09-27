@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NØRDIKO | Productos Masculinos Premium</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-mountain"></i>
+                NØRDIKO
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio" class="nav-link">Inicio</a></li>
+                <li><a href="#productos" class="nav-link">Productos</a></li>
+                <li><a href="#nosotros" class="nav-link">Nosotros</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="cart-btn" id="cartBtn" aria-label="Abrir carrito">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h1 class="hero-title">Productos para el hombre que <span class="text-accent">no se conforma</span></h1>
+            <p class="hero-subtitle">Ingredientes del Eje Cafetero, resultados que se notan. Loción, cuidado personal y estilo con estándar mundial.</p>
+            <a href="#productos" class="btn btn-primary btn-lg">Ver Colección <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="hero-decoration">
+            <div class="floating-circle circle-1"></div>
+            <div class="floating-circle circle-2"></div>
+            <div class="floating-circle circle-3"></div>
+        </div>
+    </section>
+
+    <!-- BENEFICIOS -->
+    <section class="benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-leaf"></i></div>
+                    <h3>100% Natural</h3>
+                    <p>Ingredientes del Eje Cafetero</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-mountain"></i></div>
+                    <h3>Origen Premium</h3>
+                    <p>Café arábica y karité puro</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-award"></i></div>
+                    <h3>Calidad Garantizada</h3>
+                    <p>Estándar mundial</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+                    <h3>Envío Gratis</h3>
+                    <p>En pedidos desde $500</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section class="products" id="productos">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nuestra Colección</h2>
+                <p class="section-subtitle">Productos diseñados para el hombre moderno</p>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <button class="filter-btn active" data-filter="todos">Todos</button>
+                <button class="filter-btn" data-filter="hidratante">Hidratantes</button>
+                <button class="filter-btn" data-filter="corporal">Corporales</button>
+                <button class="filter-btn" data-filter="facial">Facial</button>
+                <button class="filter-btn" data-filter="ante-envejecimiento">Antiedad</button>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Productos insertados por JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- NOSOTROS -->
+    <section class="about" id="nosotros">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <div class="about-image-placeholder">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                </div>
+                <div class="about-content">
+                    <h2 class="section-title">Del Eje Cafetero para el Mundo</h2>
+                    <p>Nacimos en el corazón del Eje Cafetero colombiano, donde la tierra, el café y la naturaleza nos inspiran a crear productos masculinos de la más alta calidad.</p>
+                    <p>Cada loción es elaborada con ingredientes locales: café arábica, manteca de karité y uva de la región. Nuestro estándar es mundial, nuestras raíces son colombianas.</p>
+                    <a href="#productos" class="btn btn-secondary">Conoce Nuestros Productos</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Desde que uso la hidratante Montaña, mi piel se siente diferente. Se nota la calidad de los ingredientes."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RC</div>
+                        <div>
+                            <strong>Ricardo Cardona</strong>
+                            <span>Cliente verificado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"El aroma es fuerte pero elegante. Exactamente lo que buscaba en un producto masculino."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JM</div>
+                        <div>
+                            <strong>Jorge Martínez</strong>
+                            <span>Cliente verificado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"La calidad del producto y el empaque son de primer nivel. Se nota que hay detrás hay un trabajo serio."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AL</div>
+                        <div>
+                            <strong>Andrés López</strong>
+                            <span>Cliente verificado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Recibe un 10% de Descuento</h2>
+                <p>Únete a nuestra lista y obtén un cupón de bienvenida</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Tu correo electrónico" required>
+                    <button type="submit" class="btn btn-primary">Suscribirme</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="contact" id="contacto">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contáctanos</h2>
+                <p class="section-subtitle">Estamos para ayudarte</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Dirección</h4>
+                            <p>Armenia, Quindío, Colombia</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>WhatsApp</h4>
+                            <p>+57 300 123 4567</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>hola@onix.com.co</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horario</h4>
+                            <p>Lun - Sáb: 8:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Tu correo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Asunto">
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Tu mensaje" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Enviar Mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo footer-logo">
+                        <i class="fas fa-mountain"></i>
+                        NØRDIKO
+                    </a>
+                    <p>Productos masculinos premium del Eje Cafetero colombiano. Calidad que se nota, estilo que perdura.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Tienda</h4>
+                    <ul>
+                        <li><a href="#">Hidratantes</a></li>
+                        <li><a href="#">Corporales</a></li>
+                        <li><a href="#">Facial</a></li>
+                        <li><a href="#">Antiedad</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Ayuda</h4>
+                    <ul>
+                        <li><a href="#">Envíos</a></li>
+                        <li><a href="#">Devoluciones</a></li>
+                        <li><a href="#">Preguntas frecuentes</a></li>
+                        <li><a href="#">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Aviso de privacidad</a></li>
+                        <li><a href="#">Términos y condiciones</a></li>
+                        <li><a href="#">Política de cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 NØRDIKO. Todos los derechos reservados.</p>
+                <p style="margin-top: 8px;"><a href="admin.html" style="color: var(--color-primary); font-size: 0.85rem;">Panel de Administración</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CARRITO (SIDEBAR) -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-bag"></i> Tu Carrito</h3>
+            <button class="cart-close" id="cartClose" aria-label="Cerrar carrito">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Items insertados por JS -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <strong id="cartTotal">$0.00</strong>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkoutBtn">Proceder al Pago</button>
+        </div>
+    </aside>
+
+    <!-- MODAL DE CHECKOUT -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar modal">&times;</button>
+            <h2><i class="fas fa-credit-card"></i> Finalizar Compra</h2>
+            <form id="checkoutForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" placeholder="Nombre completo" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="email" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Teléfono" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Dirección de envío" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" placeholder="Ciudad" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Código postal" required>
+                    </div>
+                </div>
+                <hr>
+                <h3><i class="fas fa-lock"></i> Información de Pago</h3>
+                <div class="form-group">
+                    <input type="text" placeholder="Número de tarjeta" required maxlength="19">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" placeholder="MM/AA" required maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="CVV" required maxlength="4">
+                    </div>
+                </div>
+                <div class="cart-total">
+                    <span>Total a pagar:</span>
+                    <strong id="modalTotal">$0.00</strong>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-lock"></i> Pagar Ahora</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
