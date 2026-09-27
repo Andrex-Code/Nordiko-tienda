@@ -1,185 +1,112 @@
 {
   "proyecto": {
-    "nombre": "Belleza Natural - Tienda de Lociones",
-    "objetivo": "Crear una página web premium para vender lociones, con panel de administración y estrategia de marketing completa",
-    "publico_objetivo": "Hombre que vende lociones, quiere estilo elegante y moderno",
-    "estilo": "Premium, masculino, oscuro con acentos dorados",
+    "nombre": "NØRDIKO - Productos Masculinos Premium",
+    "objetivo": "Tienda online de lociones masculinas del Eje Cafetero, con panel de administración súper intuitivo para móvil",
+    "publico_objetivo": "Hombre colombiano, dueño no técnico, usa Android",
+    "estilo": "Masculino, rústico-elegante, verde oscuro + dorado",
     "estado": "completado"
   },
   "decisiones": [
     {
       "fecha": "2026-09-27",
-      "decision": "Paleta de colores: negro profundo (#0a0a0a), dorado (#c9a96e), grises sofisticados",
-      "razon": "Estética masculina premium y elegante"
+      "decision": "Nombre: NØRDIKO (con O nórdica)",
+      "razon": "Moderno, elegante, masculino, versátil para expansión futura"
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Tipografía: Playfair Display (títulos) + Inter (cuerpo)",
-      "razon": "Moderna y masculina, más limpia que Lato"
+      "decision": "Paleta: verde oscuro (#1a2e1a), café (#3e2723), dorado (#c9a96e)",
+      "razon": "Inspirado en el Eje Cafetero: montaña, café, naturaleza"
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Persistencia de datos con localStorage",
-      "razon": "No requiere backend, el admin puede editar todo desde el navegador"
+      "decision": "Móvil primero + simplicidad extrema",
+      "razon": "El dueño usa Android y no es técnico"
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Productos con campo 'imagen' (URL) y 'icono' (emoji) como fallback",
-      "razon": "Permite fotos reales o emojis si no hay imagen"
+      "decision": "localStorage para datos (sin backend)",
+      "razon": "No requiere base de datos por ahora, fácil de usar"
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Categorías: hidratante, corporal, facial, ante-envejecimiento",
-      "razon": "Cobertura completa de tipos de lociones"
+      "decision": "Git + Netlify para despliegue",
+      "razon": "Gratis, automático, fácil de mantener"
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Cerebro compartido en team-brain.json + dashboard visual en team-status.html",
-      "razon": "Permite monitorear agentes en tiempo real y mantener memoria del proyecto"
-    },
-    {
-      "fecha": "2026-09-27",
-      "decision": "Demo con imágenes reales de Unsplash en demo.html",
-      "razon": "Permite visualizar cómo quedaría la tienda con fotos reales de productos"
-    },
-    {
-      "fecha": "2026-09-27",
-      "decision": "Equipo multidisciplinario: dev + marketing + branding + SEO + community + copywriting + devops",
-      "razon": "Un proyecto exitoso necesita más que solo código"
-    },
-    {
-      "fecha": "2026-09-27",
-      "decision": "Despliegue recomendado en Netlify (gratis, drag-and-drop, HTTPS incluido)",
-      "razon": "La opción más fácil para alguien sin experiencia técnica"
+      "decision": "Panel admin con botones gigantes y confirmaciones claras",
+      "razon": "Evitar errores del usuario no técnico"
     }
   ],
   "agentes": [
     {
       "id": "css-designer",
       "nombre": "Diseñador UI",
-      "tarea": "Rediseñar styles.css con estética premium oscura masculina",
+      "tarea": "Rediseñar styles.css con estética masculina rústica-elegante",
       "archivo": "styles.css",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "CSS con glassmorphism, gradientes oscuros, scrollbar personalizada, efectos de brillo"
+      "resultado": "Verde oscuro + café + dorado, brushed metal, texturas sutiles"
     },
     {
       "id": "html-developer",
       "nombre": "Dev Frontend",
-      "tarea": "Crear panel de administración HTML completo",
+      "tarea": "Crear panel de administración HTML",
       "archivo": "admin.html",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "Panel con Dashboard, Productos, Pedidos, Clientes, Configuración + Modal de producto"
+      "resultado": "Panel móvil con botones gigantes, menú lateral, confirmaciones claras"
     },
     {
       "id": "js-developer",
       "nombre": "Dev JavaScript",
-      "tarea": "Lógica CRUD del panel de administración",
+      "tarea": "Lógica CRUD del panel",
       "archivo": "admin.js",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "CRUD completo, exportar/importar JSON, estadísticas, validaciones, toast notifications"
+      "resultado": "CRUD completo, exportar/importar JSON, estadísticas"
     },
     {
-      "id": "marketing-strategist",
-      "nombre": "Estratega Marketing",
-      "tarea": "Estrategia de marketing digital completa",
-      "archivo": "estrategia-marketing.md",
+      "id": "mobile-store",
+      "nombre": "Dev Móvil Tienda",
+      "tarea": "Rediseñar app.js para móvil intuitivo",
+      "archivo": "app.js",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "UVP, buyer persona, canales, campañas 30 días, influencers, email marketing, presupuesto, KPIs"
-    },
-    {
-      "id": "brand-manager",
-      "nombre": "Brand Manager",
-      "tarea": "Manual de identidad de marca",
-      "archivo": "brand-book.md",
-      "estado": "completado",
-      "progreso": 100,
-      "resultado": "Historia, personalidad, tono de voz, identidad visual, mensajes, empaque, aplicaciones"
-    },
-    {
-      "id": "seo-specialist",
-      "nombre": "SEO Specialist",
-      "tarea": "Estrategia SEO completa",
-      "archivo": "estrategia-seo.md",
-      "estado": "completado",
-      "progreso": 100,
-      "resultado": "Keywords, SEO on-page/técnico, 15 artículos blog, link building, calendario 3 meses"
-    },
-    {
-      "id": "niche-specialist",
-      "nombre": "Especialista Nicho",
-      "tarea": "Análisis profundo del nicho de belleza",
-      "archivo": "analisis-nicho.md",
-      "estado": "completado",
-      "progreso": 100,
-      "resultado": "Mercado, tendencias, competencia, opportunities, precios, regulaciones, temporadas"
-    },
-    {
-      "id": "community-manager",
-      "nombre": "Community Manager",
-      "tarea": "Estrategia de redes sociales",
-      "archivo": "estrategia-redes.md",
-      "estado": "completado",
-      "progreso": 100,
-      "resultado": "Estrategia por plataforma, calendario semanal, hashtags, influencers, métricas"
-    },
-    {
-      "id": "copywriter",
-      "nombre": "Copywriter",
-      "tarea": "Textos persuasivos para la tienda",
-      "archivo": "copywriting-tienda.md",
-      "estado": "completado",
-      "progreso": 100,
-      "resultado": "Hero, descripciones, emails, redes sociales, landing, FAQ, CTAs"
+      "resultado": "Botones 50px+, carrito simple, confirmaciones, textos en español simple"
     },
     {
       "id": "devops",
       "nombre": "DevOps",
-      "tarea": "Guía de despliegue a producción",
-      "archivo": "guia-despliegue.md",
+      "tarea": "Guía de despliegue Git + Netlify",
+      "archivo": "devops-setup.md",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "Comparativa hosting, paso a paso, dominio, SSL, optimización, backup, mantenimiento, costos"
+      "resultado": "Guía paso a paso, comandos exactos, costos $0-1.25/mes"
     }
   ],
   "archivos": {
-    "index.html": { "descripcion": "Página principal de la tienda", "responsable": "Coordinador", "estado": "completado" },
-    "styles.css": { "descripcion": "Estilos CSS premium oscuro con glassmorphism", "responsable": "Diseñador UI", "estado": "completado" },
-    "app.js": { "descripcion": "Lógica de la tienda (carrito, productos, filtros) + localStorage", "responsable": "Coordinador", "estado": "completado" },
-    "admin.html": { "descripcion": "Panel de administración HTML completo", "responsable": "Dev Frontend", "estado": "completado" },
-    "admin.js": { "descripcion": "Lógica CRUD del panel de administración", "responsable": "Dev JavaScript", "estado": "completado" },
-    "demo.html": { "descripcion": "Demo visual con imágenes reales de lociones (Unsplash)", "responsable": "Coordinador", "estado": "completado" },
+    "index.html": { "descripcion": "Tienda NØRDIKO móvil", "responsable": "Coordinador", "estado": "completado" },
+    "styles.css": { "descripcion": "Estilos masculinos rústico-elegantes", "responsable": "Diseñador UI", "estado": "completado" },
+    "app.js": { "descripcion": "Lógica tienda móvil intuitiva", "responsable": "Dev Móvil", "estado": "completado" },
+    "admin.html": { "descripcion": "Panel admin móvil súper intuitivo", "responsable": "Dev Frontend", "estado": "completado" },
+    "admin.js": { "descripcion": "Lógica CRUD panel admin", "responsable": "Dev JavaScript", "estado": "completado" },
+    "demo.html": { "descripcion": "Demo con imágenes reales", "responsable": "Coordinador", "estado": "completado" },
+    "devops-setup.md": { "descripcion": "Guía de despliegue Git + Netlify", "responsable": "DevOps", "estado": "completado" },
     "team-brain.json": { "descripcion": "Memoria compartida del equipo", "responsable": "Coordinador", "estado": "activo" },
-    "team-status.html": { "descripcion": "Dashboard visual del estado del equipo", "responsable": "Coordinador", "estado": "activo" },
-    "estrategia-marketing.md": { "descripcion": "Estrategia de marketing digital completa", "responsable": "Estratega Marketing", "estado": "completado" },
-    "brand-book.md": { "descripcion": "Manual de identidad de marca", "responsable": "Brand Manager", "estado": "completado" },
-    "estrategia-seo.md": { "descripcion": "Estrategia SEO completa con calendario", "responsable": "SEO Specialist", "estado": "completado" },
-    "analisis-nicho.md": { "descripcion": "Análisis profundo del nicho de belleza", "responsable": "Especialista Nicho", "estado": "completado" },
-    "estrategia-redes.md": { "descripcion": "Estrategia de redes sociales", "responsable": "Community Manager", "estado": "completado" },
-    "copywriting-tienda.md": { "descripcion": "Textos persuasivos para la tienda", "responsable": "Copywriter", "estado": "completado" },
-    "guia-despliegue.md": { "descripcion": "Guía de despliegue a producción", "responsable": "DevOps", "estado": "completado" }
-  },
-  "convenciones": {
-    "idioma_codigo": "Español (comentarios y variables)",
-    "formato_precio": "Número con 2 decimales, sin símbolo $ en el valor",
-    "almacenamiento": "localStorage con clave 'belleza_productos'",
-    "ids_productos": "Números enteros únicos (Date.now() o incrementales)",
-    "estilos": "CSS con variables, clases BEM-like, responsive mobile-first"
+    "team-status.html": { "descripcion": "Dashboard visual del equipo", "responsable": "Coordinador", "estado": "activo" }
   },
   "pendientes": [
-    "Integrar los textos del copywriter en la tienda",
-    "Desplegar a producción siguiendo la guía",
-    "Configurar dominio personalizado"
+    "Subir a GitHub",
+    "Conectar con Netlify",
+    "Configurar dominio personalizado",
+    "Probar en celular de Daniel"
   ],
   "lecciones_aprendidas": [
-    "localStorage permite persistencia sin backend",
-    "Los agentes trabajan mejor con especificaciones claras y detalladas",
-    "El cerebro compartido evita repetir contexto entre agentes",
-    "El dashboard visual permite monitorear el progreso en tiempo real",
-    "Un equipo multidisciplinario produce resultados más completos",
-    "La demo con imágenes reales ayuda a visualizar el producto final"
+    "Móvil primero es clave cuando el usuario no es técnico",
+    "Botones grandes y confirmaciones claras evitan errores",
+    "localStorage es suficiente para empezar sin backend",
+    "Git + Netlify es la forma más fácil de desplegar",
+    "El cerebro compartido del equipo evita repetir contexto"
   ]
 }
