@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Panel de Administración | Lumière</title>
+    <title>Panel de Administración | NØRDIKO</title>
 
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Google Fonts: Playfair Display (logo), Inter (UI) -->
+    <!-- Google Fonts: Inter (UI) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* ===== VARIABLES DE TEMA ===== */
@@ -37,7 +37,7 @@
             --rojo-peligro-hover: #b91c1c;
             --sidebar-width: 280px;
             --header-height: 64px;
-            --min-touch: 48px;
+            --min-touch: 50px;
             --radius: 12px;
             --radius-lg: 16px;
         }
@@ -151,7 +151,6 @@
         }
 
         .logo-text {
-            font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--blanco);
@@ -310,7 +309,6 @@
         }
 
         .page-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
             font-weight: 600;
             color: var(--blanco);
@@ -456,7 +454,6 @@
         }
 
         .panel-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
             font-weight: 600;
         }
@@ -848,7 +845,6 @@
         }
 
         .modal-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
             font-weight: 600;
         }
@@ -1251,6 +1247,383 @@
         .mb-1 { margin-bottom: 8px; }
         .mb-2 { margin-bottom: 16px; }
         .mb-3 { margin-bottom: 24px; }
+
+        /* ===== ZONA DE FOTO ===== */
+        .foto-upload-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            background: var(--verde-2);
+            border: 2px dashed var(--verde-3);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .foto-upload-zone:active {
+            border-color: var(--dorado);
+            background: rgba(201, 169, 110, 0.1);
+        }
+
+        .foto-upload-zone i {
+            font-size: 2.5rem;
+            color: var(--dorado);
+        }
+
+        .foto-upload-zone p {
+            font-size: 0.9rem;
+            color: var(--gris-texto);
+        }
+
+        .foto-preview-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .foto-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius);
+            object-fit: cover;
+            border: 3px solid var(--dorado);
+        }
+
+        .foto-remove-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--error);
+            color: var(--blanco);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: 2px solid var(--verde-oscuro);
+        }
+
+        .foto-remove-btn:active {
+            background: var(--rojo-peligro-hover);
+        }
+
+        /* ===== SISTEMA DE TEMAS ===== */
+        .temas-section {
+            margin-top: 24px;
+        }
+
+        .temas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tema-card {
+            position: relative;
+            border-radius: var(--radius-lg);
+            padding: 16px 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: 3px solid transparent;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tema-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .tema-card.active {
+            border-color: var(--dorado);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
+        }
+
+        .tema-card.active::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: var(--dorado);
+            color: var(--verde-oscuro);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .tema-preview {
+            width: 100%;
+            height: 50px;
+            border-radius: var(--radius);
+            display: flex;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .tema-preview-color {
+            flex: 1;
+        }
+
+        .tema-nombre {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--blanco);
+        }
+
+        .tema-card[data-tema="bosque"] {
+            background: linear-gradient(135deg, #1a2e1a, #243824);
+        }
+
+        .tema-card[data-tema="cafe"] {
+            background: linear-gradient(135deg, #3e2723, #5d4037);
+        }
+
+        .tema-card[data-tema="noche"] {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+        }
+
+        .tema-card[data-tema="tierra"] {
+            background: linear-gradient(135deg, #2d1f1a, #4a2c1a);
+        }
+
+        .tema-card[data-tema="personalizado"] {
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+        }
+
+        .tema-preview-bosque {
+            background: linear-gradient(90deg, #1a2e1a 0%, #243824 33%, #c9a96e 66%, #e0c896 100%);
+        }
+
+        .tema-preview-cafe {
+            background: linear-gradient(90deg, #3e2723 0%, #5d4037 33%, #d4a574 66%, #f5f0e8 100%);
+        }
+
+        .tema-preview-noche {
+            background: linear-gradient(90deg, #0a0a0a 0%, #1a1a2e 33%, #2563eb 66%, #60a5fa 100%);
+        }
+
+        .tema-preview-tierra {
+            background: linear-gradient(90deg, #2d1f1a 0%, #4a2c1a 33%, #c2410c 66%, #f59e0b 100%);
+        }
+
+        .tema-preview-personalizado {
+            background: linear-gradient(90deg, var(--custom-primario, #2a2a2a) 0%, var(--custom-fondo, #3a3a3a) 33%, var(--custom-acento, #c9a96e) 66%, var(--custom-texto, #ffffff) 100%);
+        }
+
+        /* Pickers de color personalizado */
+        .custom-colors-panel {
+            background: var(--verde-2);
+            border: 2px solid var(--verde-3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .custom-colors-panel.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .custom-colors-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--blanco);
+            margin-bottom: 16px;
+        }
+
+        .custom-colors-title span {
+            color: var(--dorado);
+        }
+
+        .color-pickers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .color-picker-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .color-picker-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--blanco);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--verde-oscuro);
+            border: 2px solid var(--verde-3);
+            border-radius: var(--radius);
+            padding: 8px 12px;
+            min-height: var(--min-touch);
+            transition: border-color 0.2s ease;
+        }
+
+        .color-picker-wrapper:focus-within {
+            border-color: var(--dorado);
+        }
+
+        .color-picker-wrapper input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            background: transparent;
+            padding: 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .color-picker-wrapper input[type="color"]::-moz-color-swatch {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        .color-hex-value {
+            font-size: 0.85rem;
+            color: var(--gris-texto);
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+        }
+
+        .tema-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .tema-actions .btn {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        /* Preview en tiempo real */
+        .tema-preview-banner {
+            background: var(--verde-2);
+            border: 2px solid var(--verde-3);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .tema-preview-banner h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--blanco);
+            margin-bottom: 12px;
+        }
+
+        .tema-preview-banner h4 span {
+            color: var(--dorado);
+        }
+
+        .preview-mini {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .preview-mini-card {
+            flex: 1;
+            background: var(--preview-fondo, var(--verde-oscuro));
+            border: 1px solid var(--preview-borde, var(--verde-2));
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .preview-mini-card .preview-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--preview-acento, var(--dorado));
+            margin: 0 auto 8px;
+        }
+
+        .preview-mini-card .preview-text {
+            font-size: 0.7rem;
+            color: var(--preview-texto, var(--blanco));
+        }
+
+        .preview-mini-btn {
+            background: var(--preview-primario, var(--dorado));
+            color: var(--preview-primario-texto, var(--verde-oscuro));
+            border: none;
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .temas-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .tema-card {
+                min-height: 100px;
+                padding: 12px 8px;
+            }
+
+            .color-pickers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tema-actions {
+                flex-direction: column;
+            }
+
+            .tema-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .temas-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1265,7 +1638,7 @@
                 <div class="logo-icon">
                     <i class="fas fa-spa"></i>
                 </div>
-                <div class="logo-text">Lumière</div>
+                <div class="logo-text">NØRDIKO</div>
             </div>
 
             <!-- Navegación -->
@@ -1373,7 +1746,7 @@
 
                     <!-- Actividad reciente -->
                     <div class="settings-card">
-                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 16px;">Actividad <span style="color: var(--dorado);">Reciente</span></h3>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 16px;">Actividad <span style="color: var(--dorado);">Reciente</span></h3>
                         <div id="dashboardActivity">
                             <!-- Se llena con JS -->
                         </div>
@@ -1433,16 +1806,22 @@
                     <div class="settings-card">
                         <form id="configForm">
                             <div class="form-group">
-                                <label class="form-label">Nombre de la Tienda</label>
-                                <input type="text" class="form-input" id="configNombre" placeholder="Ej: Lumière Cosméticos">
+                                <label class="form-label">Nombre del Negocio</label>
+                                <input type="text" class="form-input" id="configNombre" placeholder="Ej: NØRDIKO Cosméticos">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Número de WhatsApp <span class="required">*</span></label>
+                                <input type="tel" class="form-input" id="configWhatsapp" placeholder="Ej: 300 123 4567">
+                                <span class="form-hint">Con indicativo de Colombia, ej: 300 123 4567</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Mensaje Personalizado para Pedidos</label>
+                                <textarea class="form-textarea" id="configMensaje" placeholder="Ej: ¡Gracias por tu pedido! Te contactaremos pronto."></textarea>
+                                <span class="form-hint">Este mensaje se agregará al final del pedido por WhatsApp</span>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Email de Contacto</label>
                                 <input type="email" class="form-input" id="configEmail" placeholder="correo@tienda.com">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Teléfono</label>
-                                <input type="tel" class="form-input" id="configTelefono" placeholder="+52 123 456 7890">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Dirección</label>
@@ -1453,6 +1832,129 @@
                                 GUARDAR CAMBIOS
                             </button>
                         </form>
+                    </div>
+
+                    <!-- ===== SECCIÓN: TEMAS ===== -->
+                    <div class="settings-card temas-section">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Tema de la <span style="color: var(--dorado);">Tienda</span></h3>
+                        <p style="color: var(--gris-texto); font-size: 0.85rem; margin-bottom: 16px;">
+                            Elige un tema para personalizar los colores de tu tienda. Se aplica automáticamente en la tienda.
+                        </p>
+
+                        <!-- Selector de temas como tarjetas visuales -->
+                        <div class="temas-grid" id="temasGrid">
+                            <div class="tema-card" data-tema="bosque">
+                                <div class="tema-preview tema-preview-bosque">
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                </div>
+                                <span class="tema-nombre">Bosque</span>
+                            </div>
+                            <div class="tema-card" data-tema="cafe">
+                                <div class="tema-preview tema-preview-cafe">
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                </div>
+                                <span class="tema-nombre">Café</span>
+                            </div>
+                            <div class="tema-card" data-tema="noche">
+                                <div class="tema-preview tema-preview-noche">
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                </div>
+                                <span class="tema-nombre">Noche</span>
+                            </div>
+                            <div class="tema-card" data-tema="tierra">
+                                <div class="tema-preview tema-preview-tierra">
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                </div>
+                                <span class="tema-nombre">Tierra</span>
+                            </div>
+                            <div class="tema-card" data-tema="personalizado">
+                                <div class="tema-preview tema-preview-personalizado">
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                    <div class="tema-preview-color"></div>
+                                </div>
+                                <span class="tema-nombre">Personalizado</span>
+                            </div>
+                        </div>
+
+                        <!-- Panel de colores personalizados -->
+                        <div class="custom-colors-panel" id="customColorsPanel">
+                            <div class="custom-colors-title">Colores <span>Personalizados</span></div>
+                            <div class="color-pickers-grid">
+                                <div class="color-picker-item">
+                                    <label class="color-picker-label">
+                                        <i class="fas fa-palette"></i>
+                                        Color Primario
+                                    </label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="customPrimario" value="#2a2a2a">
+                                        <span class="color-hex-value" id="hexPrimario">#2A2A2A</span>
+                                    </div>
+                                </div>
+                                <div class="color-picker-item">
+                                    <label class="color-picker-label">
+                                        <i class="fas fa-star"></i>
+                                        Color de Acento
+                                    </label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="customAcento" value="#c9a96e">
+                                        <span class="color-hex-value" id="hexAcento">#C9A96E</span>
+                                    </div>
+                                </div>
+                                <div class="color-picker-item">
+                                    <label class="color-picker-label">
+                                        <i class="fas fa-image"></i>
+                                        Color de Fondo
+                                    </label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="customFondo" value="#0a0a0a">
+                                        <span class="color-hex-value" id="hexFondo">#0A0A0A</span>
+                                    </div>
+                                </div>
+                                <div class="color-picker-item">
+                                    <label class="color-picker-label">
+                                        <i class="fas fa-font"></i>
+                                        Color de Texto
+                                    </label>
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="customTexto" value="#ffffff">
+                                        <span class="color-hex-value" id="hexTexto">#FFFFFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview en tiempo real -->
+                        <div class="tema-preview-banner">
+                            <h4>Vista <span>Previa</span></h4>
+                            <div class="preview-mini">
+                                <div class="preview-mini-card">
+                                    <div class="preview-dot"></div>
+                                    <div class="preview-text">Tarjeta</div>
+                                </div>
+                                <button class="preview-mini-btn" type="button">Botón</button>
+                            </div>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div class="tema-actions">
+                            <button class="btn btn-primary" id="btnGuardarTema" type="button">
+                                <i class="fas fa-save"></i>
+                                GUARDAR TEMA
+                            </button>
+                            <button class="btn btn-secondary" id="btnRestablecerTema" type="button">
+                                <i class="fas fa-undo"></i>
+                                RESTABLECER
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -1510,10 +2012,31 @@
                         <input type="number" class="form-input" id="prodStock" placeholder="0" min="0" required>
                     </div>
 
+                    <!-- ===== CAMPO DE FOTO DESDE EL CELULAR ===== -->
                     <div class="form-group">
-                        <label class="form-label">URL de Imagen</label>
-                        <input type="url" class="form-input" id="prodImagen" placeholder="https://ejemplo.com/imagen.jpg">
+                        <label class="form-label">Foto del Producto</label>
+                        <input type="file" id="prodFotoInput" accept="image/*" style="display: none;">
+                        
+                        <!-- Zona de carga (visible cuando no hay foto) -->
+                        <div class="foto-upload-zone" id="fotoUploadZone">
+                            <i class="fas fa-camera"></i>
+                            <p>TOCA PARA SUBIR FOTO</p>
+                            <p style="font-size: 0.75rem; color: var(--gris-texto);">Desde tu galería</p>
+                        </div>
+
+                        <!-- Vista previa (visible cuando hay foto) -->
+                        <div class="foto-preview-container" id="fotoPreviewContainer" style="display: none;">
+                            <img class="foto-preview" id="fotoPreview" src="" alt="Vista previa">
+                            <button type="button" class="foto-remove-btn" id="fotoRemoveBtn" aria-label="Quitar foto">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <span class="form-hint">Si no subes foto, se usará un emoji como imagen</span>
                     </div>
+
+                    <!-- Campo oculto para guardar la imagen en base64 -->
+                    <input type="hidden" id="prodImagenBase64">
                 </form>
             </div>
             <div class="modal-footer">
@@ -1554,15 +2077,27 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ===== DATOS DE EJEMPLO =====
-        let productos = [
-            { id: 1, nombre: 'Loción de Rosas', descripcion: 'Hidratante con extracto de rosa', precio: 25.99, precioAnterior: null, categoria: 'hidratante', stock: 15, imagen: '' },
-            { id: 2, nombre: 'Crema Facial Antiedad', descripcion: 'Reduce arrugas y líneas de expresión', precio: 45.50, precioAnterior: 55.00, categoria: 'facial', stock: 8, imagen: '' },
-            { id: 3, nombre: 'Aceite Corporal de Almendras', descripcion: 'Nutrición profunda para la piel', precio: 32.00, precioAnterior: null, categoria: 'corporal', stock: 20, imagen: '' },
-            { id: 4, nombre: 'Sérum Vitamina C', descripcion: 'Ilumina y unifica el tono', precio: 38.99, precioAnterior: null, categoria: 'facial', stock: 5, imagen: '' },
-            { id: 5, nombre: 'Manteca de Karité', descripcion: 'Hidratación intensa natural', precio: 18.50, precioAnterior: 22.00, categoria: 'corporal', stock: 12, imagen: '' }
-        ];
+        // ============================================================
+        // ===== CONFIGURACIÓN Y DATOS =====
+        // ============================================================
 
+        // Claves de localStorage
+        const STORAGE_KEY_CONFIG = 'nordiko_config';
+        const STORAGE_KEY_PRODUCTOS = 'nordiko_productos';
+
+        // Configuración por defecto
+        let config = {
+            nombre: 'NØRDIKO',
+            whatsapp: '',
+            mensaje: '¡Gracias por tu pedido! Te contactaremos pronto.',
+            email: '',
+            direccion: ''
+        };
+
+        // Productos (se cargan desde localStorage o se usan ejemplos)
+        let productos = [];
+
+        // Pedidos de ejemplo
         let pedidos = [
             { id: 1001, cliente: 'María García', fecha: '2026-09-25', total: 51.98, estado: 'pendiente' },
             { id: 1002, cliente: 'Carlos López', fecha: '2026-09-24', total: 45.50, estado: 'enviado' },
@@ -1572,8 +2107,60 @@
         ];
 
         let productoAEliminar = null;
+        let productoEditando = null;
 
+        // ============================================================
+        // ===== CARGAR DATOS DESDE LOCALSTORAGE =====
+        // ============================================================
+
+        function cargarDatos() {
+            // Cargar configuración
+            const configGuardada = localStorage.getItem(STORAGE_KEY_CONFIG);
+            if (configGuardada) {
+                try {
+                    config = { ...config, ...JSON.parse(configGuardada) };
+                } catch (e) {
+                    console.error('Error al cargar configuración:', e);
+                }
+            }
+
+            // Cargar productos
+            const productosGuardados = localStorage.getItem(STORAGE_KEY_PRODUCTOS);
+            if (productosGuardados) {
+                try {
+                    productos = JSON.parse(productosGuardados);
+                } catch (e) {
+                    console.error('Error al cargar productos:', e);
+                    productos = obtenerProductosEjemplo();
+                }
+            } else {
+                productos = obtenerProductosEjemplo();
+                guardarProductos();
+            }
+        }
+
+        function obtenerProductosEjemplo() {
+            return [
+                { id: 1, nombre: 'Loción de Rosas', descripcion: 'Hidratante con extracto de rosa', precio: 25.99, precioAnterior: null, categoria: 'hidratante', stock: 15, imagenBase64: '', emoji: '🌹' },
+                { id: 2, nombre: 'Crema Facial Antiedad', descripcion: 'Reduce arrugas y líneas de expresión', precio: 45.50, precioAnterior: 55.00, categoria: 'facial', stock: 8, imagenBase64: '', emoji: '✨' },
+                { id: 3, nombre: 'Aceite Corporal de Almendras', descripcion: 'Nutrición profunda para la piel', precio: 32.00, precioAnterior: null, categoria: 'corporal', stock: 20, imagenBase64: '', emoji: '🌰' },
+                { id: 4, nombre: 'Sérum Vitamina C', descripcion: 'Ilumina y unifica el tono', precio: 38.99, precioAnterior: null, categoria: 'facial', stock: 5, imagenBase64: '', emoji: '🍊' },
+                { id: 5, nombre: 'Manteca de Karité', descripcion: 'Hidratación intensa natural', precio: 18.50, precioAnterior: 22.00, categoria: 'corporal', stock: 12, imagenBase64: '', emoji: '🧈' }
+            ];
+        }
+
+        function guardarProductos() {
+            localStorage.setItem(STORAGE_KEY_PRODUCTOS, JSON.stringify(productos));
+        }
+
+        function guardarConfig() {
+            localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+        }
+
+        // ============================================================
         // ===== ELEMENTOS DEL DOM =====
+        // ============================================================
+
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1581,7 +2168,10 @@
         const sectionContents = document.querySelectorAll('.section-content');
         const pageTitle = document.getElementById('pageTitle');
 
+        // ============================================================
         // ===== NAVEGACIÓN =====
+        // ============================================================
+
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 const section = item.dataset.section;
@@ -1609,7 +2199,10 @@
             });
         });
 
+        // ============================================================
         // ===== MENÚ MÓVIL =====
+        // ============================================================
+
         mobileMenuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('mobile-open');
             sidebarOverlay.classList.toggle('active');
@@ -1620,7 +2213,10 @@
             sidebarOverlay.classList.remove('active');
         });
 
+        // ============================================================
         // ===== TOAST =====
+        // ============================================================
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1641,7 +2237,10 @@
             }, 3000);
         }
 
+        // ============================================================
         // ===== RENDERIZAR PRODUCTOS =====
+        // ============================================================
+
         function renderProductos(filtro = '') {
             const lista = document.getElementById('productosLista');
             const productosFiltrados = productos.filter(p =>
@@ -1653,51 +2252,62 @@
                 lista.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-box-open"></i>
-                        <p>No se encontraron productos</p>
+                        <p>No hay productos</p>
                     </div>
                 `;
                 return;
             }
 
-            lista.innerHTML = productosFiltrados.map(p => `
-                <div class="producto-card" data-id="${p.id}">
-                    <div class="producto-foto">
-                        ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}">` : '<i class="fas fa-spa"></i>'}
-                    </div>
-                    <div class="producto-info">
-                        <div class="producto-nombre">${p.nombre}</div>
-                        <div class="producto-categoria">${getCategoriaLabel(p.categoria)}</div>
-                        <div class="producto-precio">
-                            $${p.precio.toFixed(2)}
-                            ${p.precioAnterior ? `<span class="producto-precio-anterior">$${p.precioAnterior.toFixed(2)}</span>` : ''}
+            lista.innerHTML = productosFiltrados.map(p => {
+                // Determinar qué mostrar: foto o emoji
+                let imagenHTML;
+                if (p.imagenBase64) {
+                    imagenHTML = `<img src="${p.imagenBase64}" alt="${p.nombre}">`;
+                } else {
+                    const emoji = p.emoji || '📦';
+                    imagenHTML = `<span>${emoji}</span>`;
+                }
+
+                return `
+                    <div class="producto-card" data-id="${p.id}">
+                        <div class="producto-foto">
+                            ${imagenHTML}
+                        </div>
+                        <div class="producto-info">
+                            <div class="producto-nombre">${p.nombre}</div>
+                            <div class="producto-categoria">${obtenerNombreCategoria(p.categoria)}</div>
+                            <div class="producto-precio">
+                                $${p.precio.toFixed(2)}
+                                ${p.precioAnterior ? `<span class="producto-precio-anterior">$${p.precioAnterior.toFixed(2)}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="producto-acciones">
+                            <button class="producto-btn edit" onclick="editarProducto(${p.id})" aria-label="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="producto-btn delete" onclick="confirmarEliminar(${p.id})" aria-label="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
-                    <div class="producto-acciones">
-                        <button class="producto-btn edit" onclick="editarProducto(${p.id})" aria-label="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="producto-btn delete" onclick="confirmarEliminar(${p.id})" aria-label="Eliminar">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-
-            // Actualizar contador
-            document.getElementById('productCount').textContent = productos.length;
+                `;
+            }).join('');
         }
 
-        function getCategoriaLabel(cat) {
-            const labels = {
+        function obtenerNombreCategoria(cat) {
+            const categorias = {
                 'hidratante': 'Hidratante',
                 'corporal': 'Corporal',
                 'facial': 'Facial',
                 'ante-envejecimiento': 'Antiedad'
             };
-            return labels[cat] || cat;
+            return categorias[cat] || cat;
         }
 
+        // ============================================================
         // ===== RENDERIZAR PEDIDOS =====
+        // ============================================================
+
         function renderPedidos() {
             const lista = document.getElementById('pedidosLista');
 
@@ -1705,147 +2315,307 @@
                 lista.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-shopping-cart"></i>
-                        <p>No hay pedidos aún</p>
+                        <p>No hay pedidos</p>
                     </div>
                 `;
                 return;
             }
 
-            lista.innerHTML = pedidos.map(p => `
-                <div class="pedido-card">
-                    <div class="pedido-icono">
-                        <i class="fas fa-shopping-bag"></i>
+            lista.innerHTML = pedidos.map(p => {
+                const estadoClase = {
+                    'completado': 'estado-completado',
+                    'pendiente': 'estado-pendiente',
+                    'enviado': 'estado-enviado',
+                    'cancelado': 'estado-cancelado'
+                };
+
+                const estadoTexto = {
+                    'completado': 'Completado',
+                    'pendiente': 'Pendiente',
+                    'enviado': 'Enviado',
+                    'cancelado': 'Cancelado'
+                };
+
+                return `
+                    <div class="pedido-card">
+                        <div class="pedido-icono">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="pedido-info">
+                            <div class="pedido-numero">Pedido #${p.id}</div>
+                            <div class="pedido-cliente">${p.cliente}</div>
+                            <div class="pedido-fecha">${formatearFecha(p.fecha)}</div>
+                            <span class="pedido-estado ${estadoClase[p.estado]}">${estadoTexto[p.estado]}</span>
+                        </div>
+                        <div class="pedido-total">$${p.total.toFixed(2)}</div>
                     </div>
-                    <div class="pedido-info">
-                        <div class="pedido-numero">Pedido #${p.id}</div>
-                        <div class="pedido-cliente">${p.cliente}</div>
-                        <div class="pedido-fecha">${formatFecha(p.fecha)}</div>
-                        <span class="pedido-estado estado-${p.estado}">${getEstadoLabel(p.estado)}</span>
-                    </div>
-                    <div class="pedido-total">$${p.total.toFixed(2)}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function getEstadoLabel(estado) {
-            const labels = {
-                'pendiente': 'Pendiente',
-                'enviado': 'Enviado',
-                'completado': 'Completado',
-                'cancelado': 'Cancelado'
-            };
-            return labels[estado] || estado;
+        function formatearFecha(fechaStr) {
+            const fecha = new Date(fechaStr);
+            return fecha.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
-        function formatFecha(fecha) {
-            const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(fecha).toLocaleDateString('es-MX', opciones);
-        }
-
+        // ============================================================
         // ===== RENDERIZAR DASHBOARD =====
+        // ============================================================
+
         function renderDashboard() {
+            // Estadísticas
             document.getElementById('statProductos').textContent = productos.length;
             document.getElementById('statPedidos').textContent = pedidos.filter(p => p.estado === 'pendiente').length;
-            document.getElementById('statVentas').textContent = '$' + pedidos.reduce((sum, p) => sum + p.total, 0).toFixed(0);
-            document.getElementById('statIngresos').textContent = '$' + pedidos.filter(p => p.estado === 'completado').reduce((sum, p) => sum + p.total, 0).toFixed(0);
+            
+            const ventasMes = pedidos
+                .filter(p => p.estado === 'completado')
+                .reduce((sum, p) => sum + p.total, 0);
+            document.getElementById('statVentas').textContent = '$' + ventasMes.toFixed(2);
+            document.getElementById('statIngresos').textContent = '$' + ventasMes.toFixed(2);
+
+            // Badge de productos
+            document.getElementById('productCount').textContent = productos.length;
 
             // Actividad reciente
             const actividad = document.getElementById('dashboardActivity');
-            const pedidosRecientes = pedidos.slice(0, 5);
-            actividad.innerHTML = pedidosRecientes.map(p => `
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--verde-2);">
-                    <div>
-                        <div style="font-weight: 600; color: var(--blanco);">Pedido #${p.id}</div>
-                        <div style="font-size: 0.8rem; color: var(--gris-texto);">${p.cliente}</div>
-                    </div>
-                    <div style="text-align: right;">
+            const pedidosRecientes = pedidos.slice(0, 3);
+            
+            if (pedidosRecientes.length === 0) {
+                actividad.innerHTML = '<p style="color: var(--gris-texto);">Sin actividad reciente</p>';
+            } else {
+                actividad.innerHTML = pedidosRecientes.map(p => `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--verde-2);">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(201, 169, 110, 0.15); display: flex; align-items: center; justify-content: center; color: var(--dorado);">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.9rem;">${p.cliente}</div>
+                            <div style="font-size: 0.8rem; color: var(--gris-texto);">Pedido #${p.id} - ${formatearFecha(p.fecha)}</div>
+                        </div>
                         <div style="font-weight: 700; color: var(--dorado);">$${p.total.toFixed(2)}</div>
-                        <span class="pedido-estado estado-${p.estado}" style="font-size: 0.7rem; padding: 3px 8px;">${getEstadoLabel(p.estado)}</span>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
-        // ===== MODAL PRODUCTO =====
+        // ============================================================
+        // ===== MODAL DE PRODUCTO =====
+        // ============================================================
+
         const productoModal = document.getElementById('productoModal');
         const modalTitle = document.getElementById('modalTitle');
         const productoForm = document.getElementById('productoForm');
         const btnAgregarProducto = document.getElementById('btnAgregarProducto');
-        const modalClose = document.getElementById('modalClose');
         const btnCancelar = document.getElementById('btnCancelar');
+        const modalClose = document.getElementById('modalClose');
 
-        function openModal(producto = null) {
-            if (producto) {
-                modalTitle.innerHTML = 'Editar <span>Producto</span>';
-                document.getElementById('productoId').value = producto.id;
-                document.getElementById('prodNombre').value = producto.nombre;
-                document.getElementById('prodDescripcion').value = producto.descripcion || '';
-                document.getElementById('prodPrecio').value = producto.precio;
-                document.getElementById('prodPrecioAnterior').value = producto.precioAnterior || '';
-                document.getElementById('prodCategoria').value = producto.categoria;
-                document.getElementById('prodStock').value = producto.stock;
-                document.getElementById('prodImagen').value = producto.imagen || '';
-            } else {
-                modalTitle.innerHTML = 'Agregar <span>Producto</span>';
-                productoForm.reset();
-                document.getElementById('productoId').value = '';
+        // Elementos de foto
+        const fotoUploadZone = document.getElementById('fotoUploadZone');
+        const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
+        const fotoPreview = document.getElementById('fotoPreview');
+        const fotoRemoveBtn = document.getElementById('fotoRemoveBtn');
+        const prodFotoInput = document.getElementById('prodFotoInput');
+        const prodImagenBase64 = document.getElementById('prodImagenBase64');
+
+        // Abrir modal para agregar
+        btnAgregarProducto.addEventListener('click', () => {
+            productoEditando = null;
+            modalTitle.innerHTML = 'Agregar <span>Producto</span>';
+            productoForm.reset();
+            document.getElementById('productoId').value = '';
+            prodImagenBase64.value = '';
+            mostrarZonaSubida();
+            productoModal.classList.add('active');
+        });
+
+        // Cerrar modal
+        function cerrarModal() {
+            productoModal.classList.remove('active');
+            productoEditando = null;
+        }
+
+        modalClose.addEventListener('click', cerrarModal);
+        btnCancelar.addEventListener('click', cerrarModal);
+
+        // Cerrar modal al tocar fuera
+        productoModal.addEventListener('click', (e) => {
+            if (e.target === productoModal) {
+                cerrarModal();
             }
+        });
+
+        // ============================================================
+        // ===== SUBIR FOTO DESDE EL CELULAR =====
+        // ============================================================
+
+        // Al tocar la zona de subida, abrir la galería
+        fotoUploadZone.addEventListener('click', () => {
+            prodFotoInput.click();
+        });
+
+        // Cuando se selecciona una foto
+        prodFotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Verificar que sea una imagen
+            if (!file.type.startsWith('image/')) {
+                showToast('Por favor selecciona una imagen', 'error');
+                return;
+            }
+
+            // Usar FileReader para convertir a base64
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+                const base64 = event.target.result;
+                
+                // Mostrar vista previa
+                fotoPreview.src = base64;
+                prodImagenBase64.value = base64;
+                mostrarVistaPrevia();
+                
+                showToast('Foto cargada correctamente');
+            };
+
+            reader.onerror = () => {
+                showToast('Error al cargar la imagen', 'error');
+            };
+
+            // Leer el archivo como base64
+            reader.readAsDataURL(file);
+        });
+
+        // Quitar foto
+        fotoRemoveBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prodFotoInput.value = '';
+            prodImagenBase64.value = '';
+            fotoPreview.src = '';
+            mostrarZonaSubida();
+        });
+
+        // Mostrar zona de subida (sin foto)
+        function mostrarZonaSubida() {
+            fotoUploadZone.style.display = 'flex';
+            fotoPreviewContainer.style.display = 'none';
+        }
+
+        // Mostrar vista previa (con foto)
+        function mostrarVistaPrevia() {
+            fotoUploadZone.style.display = 'none';
+            fotoPreviewContainer.style.display = 'block';
+        }
+
+        // ============================================================
+        // ===== EDITAR PRODUCTO =====
+        // ============================================================
+
+        function editarProducto(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) return;
+
+            productoEditando = producto;
+            modalTitle.innerHTML = 'Editar <span>Producto</span>';
+            
+            // Llenar formulario
+            document.getElementById('productoId').value = producto.id;
+            document.getElementById('prodNombre').value = producto.nombre;
+            document.getElementById('prodDescripcion').value = producto.descripcion || '';
+            document.getElementById('prodPrecio').value = producto.precio;
+            document.getElementById('prodPrecioAnterior').value = producto.precioAnterior || '';
+            document.getElementById('prodCategoria').value = producto.categoria;
+            document.getElementById('prodStock').value = producto.stock;
+            
+            // Manejar foto
+            if (producto.imagenBase64) {
+                fotoPreview.src = producto.imagenBase64;
+                prodImagenBase64.value = producto.imagenBase64;
+                mostrarVistaPrevia();
+            } else {
+                prodImagenBase64.value = '';
+                mostrarZonaSubida();
+            }
+
             productoModal.classList.add('active');
         }
 
-        function closeModal() {
-            productoModal.classList.remove('active');
-        }
-
-        btnAgregarProducto.addEventListener('click', () => openModal());
-        modalClose.addEventListener('click', closeModal);
-        btnCancelar.addEventListener('click', closeModal);
-
-        productoModal.addEventListener('click', (e) => {
-            if (e.target === productoModal) closeModal();
-        });
-
+        // ============================================================
         // ===== GUARDAR PRODUCTO =====
+        // ============================================================
+
         productoForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
             const id = document.getElementById('productoId').value;
-            const productoData = {
-                nombre: document.getElementById('prodNombre').value,
-                descripcion: document.getElementById('prodDescripcion').value,
-                precio: parseFloat(document.getElementById('prodPrecio').value),
-                precioAnterior: parseFloat(document.getElementById('prodPrecioAnterior').value) || null,
-                categoria: document.getElementById('prodCategoria').value,
-                stock: parseInt(document.getElementById('prodStock').value),
-                imagen: document.getElementById('prodImagen').value
-            };
+            const nombre = document.getElementById('prodNombre').value.trim();
+            const descripcion = document.getElementById('prodDescripcion').value.trim();
+            const precio = parseFloat(document.getElementById('prodPrecio').value);
+            const precioAnterior = parseFloat(document.getElementById('prodPrecioAnterior').value) || null;
+            const categoria = document.getElementById('prodCategoria').value;
+            const stock = parseInt(document.getElementById('prodStock').value);
+            const imagenBase64 = prodImagenBase64.value;
 
-            if (id) {
-                // Editar
-                const index = productos.findIndex(p => p.id === parseInt(id));
-                if (index !== -1) {
-                    productos[index] = { ...productos[index], ...productoData };
-                    showToast('Producto actualizado correctamente');
-                }
-            } else {
-                // Agregar
-                const nuevoId = Math.max(...productos.map(p => p.id), 0) + 1;
-                productos.push({ id: nuevoId, ...productoData });
-                showToast('Producto agregado correctamente');
+            // Validaciones
+            if (!nombre) {
+                showToast('El nombre es obligatorio', 'error');
+                return;
+            }
+            if (!precio || precio <= 0) {
+                showToast('El precio debe ser mayor a 0', 'error');
+                return;
+            }
+            if (!categoria) {
+                showToast('Selecciona una categoría', 'error');
+                return;
             }
 
-            closeModal();
+            if (id) {
+                // Editar producto existente
+                const index = productos.findIndex(p => p.id === parseInt(id));
+                if (index !== -1) {
+                    productos[index] = {
+                        ...productos[index],
+                        nombre,
+                        descripcion,
+                        precio,
+                        precioAnterior,
+                        categoria,
+                        stock,
+                        imagenBase64
+                    };
+                    showToast('Producto actualizado');
+                }
+            } else {
+                // Agregar nuevo producto
+                const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
+                const emojis = ['🌹', '✨', '🌰', '🍊', '🧈', '🌸', '💎', '🌿', '⭐', '🔮'];
+                const emojiAleatorio = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                productos.push({
+                    id: nuevoId,
+                    nombre,
+                    descripcion,
+                    precio,
+                    precioAnterior,
+                    categoria,
+                    stock,
+                    imagenBase64,
+                    emoji: emojiAleatorio
+                });
+                showToast('Producto agregado');
+            }
+
+            guardarProductos();
             renderProductos();
             renderDashboard();
+            cerrarModal();
         });
 
-        // ===== EDITAR PRODUCTO =====
-        function editarProducto(id) {
-            const producto = productos.find(p => p.id === id);
-            if (producto) openModal(producto);
-        }
-
+        // ============================================================
         // ===== ELIMINAR PRODUCTO =====
+        // ============================================================
+
         const confirmOverlay = document.getElementById('confirmOverlay');
         const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
         const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
@@ -1858,9 +2628,10 @@
         btnConfirmarEliminar.addEventListener('click', () => {
             if (productoAEliminar) {
                 productos = productos.filter(p => p.id !== productoAEliminar);
-                showToast('Producto eliminado correctamente');
+                guardarProductos();
                 renderProductos();
                 renderDashboard();
+                showToast('Producto eliminado');
             }
             confirmOverlay.classList.remove('active');
             productoAEliminar = null;
@@ -1871,6 +2642,7 @@
             productoAEliminar = null;
         });
 
+        // Cerrar confirmación al tocar fuera
         confirmOverlay.addEventListener('click', (e) => {
             if (e.target === confirmOverlay) {
                 confirmOverlay.classList.remove('active');
@@ -1878,21 +2650,415 @@
             }
         });
 
-        // ===== BUSCADOR =====
+        // ============================================================
+        // ===== BUSCADOR DE PRODUCTOS =====
+        // ============================================================
+
         document.getElementById('searchProductos').addEventListener('input', (e) => {
             renderProductos(e.target.value);
         });
 
-        // ===== CONFIGURACIÓN =====
-        document.getElementById('configForm').addEventListener('submit', (e) => {
+        // ============================================================
+        // ===== CONFIGURACIÓN (AJUSTES) =====
+        // ============================================================
+
+        const configForm = document.getElementById('configForm');
+
+        // Cargar configuración en el formulario
+        function cargarConfigEnFormulario() {
+            document.getElementById('configNombre').value = config.nombre;
+            document.getElementById('configWhatsapp').value = config.whatsapp;
+            document.getElementById('configMensaje').value = config.mensaje;
+            document.getElementById('configEmail').value = config.email;
+            document.getElementById('configDireccion').value = config.direccion;
+        }
+
+        // Guardar configuración
+        configForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            showToast('Configuración guardada correctamente');
+
+            config.nombre = document.getElementById('configNombre').value.trim() || 'NØRDIKO';
+            config.whatsapp = document.getElementById('configWhatsapp').value.trim();
+            config.mensaje = document.getElementById('configMensaje').value.trim();
+            config.email = document.getElementById('configEmail').value.trim();
+            config.direccion = document.getElementById('configDireccion').value.trim();
+
+            // Validar WhatsApp
+            if (!config.whatsapp) {
+                showToast('El número de WhatsApp es obligatorio', 'error');
+                return;
+            }
+
+            guardarConfig();
+            showToast('Configuración guardada');
         });
 
-        // ===== INICIALIZAR =====
-        renderProductos();
-        renderPedidos();
-        renderDashboard();
+        // ============================================================
+        // ===== FUNCIONES DE WHATSAPP (para index.html) =====
+        // ============================================================
+
+        /**
+         * Genera el mensaje de WhatsApp con el pedido
+         * @param {Array} items - Array de productos con cantidad
+         * @param {Object} cliente - Datos del cliente
+         * @returns {string} - Mensaje formateado para WhatsApp
+         */
+        function generarMensajeWhatsApp(items, cliente) {
+            const nombreNegocio = config.nombre || 'NØRDIKO';
+            
+            let mensaje = `Hola ${nombreNegocio}, quiero hacer un pedido:\n\n`;
+            
+            let total = 0;
+            items.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                mensaje += `${item.emoji || '📦'} ${item.nombre} x${item.cantidad} - $${subtotal.toFixed(2)}\n`;
+            });
+            
+            mensaje += `\nTotal: $${total.toFixed(2)}\n\n`;
+            mensaje += `Nombre: ${cliente.nombre}\n`;
+            mensaje += `Teléfono: ${cliente.telefono}\n`;
+            mensaje += `Dirección: ${cliente.direccion}\n\n`;
+            
+            if (config.mensaje) {
+                mensaje += `${config.mensaje}\n`;
+            }
+            
+            mensaje += '¡Gracias!';
+            
+            return mensaje;
+        }
+
+        /**
+         * Abre WhatsApp con el mensaje prellenado
+         * @param {string} numero - Número de WhatsApp (sin +57)
+         * @param {string} mensaje - Mensaje a enviar
+         */
+        function abrirWhatsApp(numero, mensaje) {
+            // Limpiar número (espacios, guiones, paréntesis)
+            const numeroLimpio = numero.replace(/[\s\-\(\)]/g, '');
+            
+            // Codificar mensaje para URL
+            const mensajeCodificado = encodeURIComponent(mensaje);
+            
+            // URL de WhatsApp
+            const url = `https://wa.me/57${numeroLimpio}?text=${mensajeCodificado}`;
+            
+            // Abrir en nueva pestaña
+            window.open(url, '_blank');
+        }
+
+        // ============================================================
+        // ===== SISTEMA DE TEMAS =====
+        // ============================================================
+
+        const STORAGE_KEY_TEMA = 'nordiko_tema';
+
+        // Definición de temas con sus paletas de colores
+        const TEMAS = {
+            bosque: {
+                nombre: 'Bosque',
+                primario: '#1a2e1a',
+                primarioClaro: '#243824',
+                primarioOscuro: '#0f1f0f',
+                acento: '#c9a96e',
+                acentoClaro: '#e0c896',
+                acentoOscuro: '#a88b52',
+                fondo: '#0a0a0a',
+                fondoAlt: '#141210',
+                fondoCard: '#1c1916',
+                texto: '#f5f0e8',
+                textoClaro: '#b8b0a0',
+                textoMuted: '#7a7268',
+                borde: '#3a342e',
+                exito: '#6b8f5e',
+                error: '#c0392b',
+                advertencia: '#fbbf24'
+            },
+            cafe: {
+                nombre: 'Café',
+                primario: '#3e2723',
+                primarioClaro: '#5d4037',
+                primarioOscuro: '#2d1a17',
+                acento: '#d4a574',
+                acentoClaro: '#e8c9a0',
+                acentoOscuro: '#b8865c',
+                fondo: '#1a1210',
+                fondoAlt: '#251a17',
+                fondoCard: '#2d201c',
+                texto: '#f5f0e8',
+                textoClaro: '#c4b8a8',
+                textoMuted: '#8a7a6a',
+                borde: '#4a3a32',
+                exito: '#7a9a6d',
+                error: '#c0392b',
+                advertencia: '#fbbf24'
+            },
+            noche: {
+                nombre: 'Noche',
+                primario: '#0a0a0a',
+                primarioClaro: '#1a1a2e',
+                primarioOscuro: '#050508',
+                acento: '#2563eb',
+                acentoClaro: '#60a5fa',
+                acentoOscuro: '#1d4ed8',
+                fondo: '#050508',
+                fondoAlt: '#0f0f1a',
+                fondoCard: '#151525',
+                texto: '#e2e8f0',
+                textoClaro: '#94a3b8',
+                textoMuted: '#64748b',
+                borde: '#2a2a4a',
+                exito: '#22c55e',
+                error: '#ef4444',
+                advertencia: '#f59e0b'
+            },
+            tierra: {
+                nombre: 'Tierra',
+                primario: '#2d1f1a',
+                primarioClaro: '#4a2c1a',
+                primarioOscuro: '#1a100d',
+                acento: '#c2410c',
+                acentoClaro: '#f59e0b',
+                acentoOscuro: '#9a3412',
+                fondo: '#120a08',
+                fondoAlt: '#1a100d',
+                fondoCard: '#221510',
+                texto: '#fef3c7',
+                textoClaro: '#d4c4a8',
+                textoMuted: '#8a7a68',
+                borde: '#3d2a22',
+                exito: '#84cc16',
+                error: '#ef4444',
+                advertencia: '#fbbf24'
+            },
+            personalizado: {
+                nombre: 'Personalizado',
+                primario: '#2a2a2a',
+                primarioClaro: '#3a3a3a',
+                primarioOscuro: '#1a1a1a',
+                acento: '#c9a96e',
+                acentoClaro: '#e0c896',
+                acentoOscuro: '#a88b52',
+                fondo: '#0a0a0a',
+                fondoAlt: '#141414',
+                fondoCard: '#1c1c1c',
+                texto: '#ffffff',
+                textoClaro: '#b0b0b0',
+                textoMuted: '#707070',
+                borde: '#3a3a3a',
+                exito: '#4ade80',
+                error: '#f87171',
+                advertencia: '#fbbf24'
+            }
+        };
+
+        // Estado actual del tema
+        let temaActual = 'bosque';
+        let customColores = {
+            primario: '#2a2a2a',
+            acento: '#c9a96e',
+            fondo: '#0a0a0a',
+            texto: '#ffffff'
+        };
+
+        // Cargar tema desde localStorage
+        function cargarTema() {
+            const temaGuardado = localStorage.getItem(STORAGE_KEY_TEMA);
+            if (temaGuardado) {
+                try {
+                    const datos = JSON.parse(temaGuardado);
+                    temaActual = datos.tema || 'bosque';
+                    if (datos.customColores) {
+                        customColores = { ...customColores, ...datos.customColores };
+                    }
+                } catch (e) {
+                    console.error('Error al cargar tema:', e);
+                }
+            }
+            aplicarTema(temaActual, false);
+            actualizarUI();
+        }
+
+        // Guardar tema en localStorage
+        function guardarTema() {
+            const datos = {
+                tema: temaActual,
+                customColores: customColores
+            };
+            localStorage.setItem(STORAGE_KEY_TEMA, JSON.stringify(datos));
+        }
+
+        // Aplicar tema al documento
+        function aplicarTema(nombreTema, guardar = true) {
+            const tema = TEMAS[nombreTema];
+            if (!tema) return;
+
+            temaActual = nombreTema;
+
+            // Si es personalizado, usar los colores personalizados
+            const colores = nombreTema === 'personalizado' ? {
+                ...tema,
+                primario: customColores.primario,
+                acento: customColores.acento,
+                fondo: customColores.fondo,
+                texto: customColores.texto
+            } : tema;
+
+            // Aplicar variables CSS al documento
+            const root = document.documentElement;
+            root.style.setProperty('--tema-primario', colores.primario);
+            root.style.setProperty('--tema-primario-claro', colores.primarioClaro);
+            root.style.setProperty('--tema-primario-oscuro', colores.primarioOscuro);
+            root.style.setProperty('--tema-acento', colores.acento);
+            root.style.setProperty('--tema-acento-claro', colores.acentoClaro);
+            root.style.setProperty('--tema-acento-oscuro', colores.acentoOscuro);
+            root.style.setProperty('--tema-fondo', colores.fondo);
+            root.style.setProperty('--tema-fondo-alt', colores.fondoAlt);
+            root.style.setProperty('--tema-fondo-card', colores.fondoCard);
+            root.style.setProperty('--tema-texto', colores.texto);
+            root.style.setProperty('--tema-texto-claro', colores.textoClaro);
+            root.style.setProperty('--tema-texto-muted', colores.textoMuted);
+            root.style.setProperty('--tema-borde', colores.borde);
+            root.style.setProperty('--tema-exito', colores.exito);
+            root.style.setProperty('--tema-error', colores.error);
+            root.style.setProperty('--tema-advertencia', colores.advertencia);
+
+            // Actualizar variables existentes para compatibilidad
+            // Calcular tonos intermedios entre fondo y tarjetas
+            const fondo1 = colores.fondoCard; // tono más claro que fondo
+            const fondo2 = colores.fondoCard; // tono de tarjeta
+
+            root.style.setProperty('--verde-oscuro', colores.primario);
+            root.style.setProperty('--verde-1', colores.primarioClaro);
+            root.style.setProperty('--verde-2', fondo1);
+            root.style.setProperty('--verde-3', colores.borde);
+            root.style.setProperty('--dorado', colores.acento);
+            root.style.setProperty('--dorado-claro', colores.acentoClaro);
+            root.style.setProperty('--dorado-oscuro', colores.acentoOscuro);
+            root.style.setProperty('--negro', colores.fondo);
+            root.style.setProperty('--gris-1', fondo1);
+            root.style.setProperty('--gris-2', fondo2);
+            root.style.setProperty('--gris-3', colores.borde);
+            root.style.setProperty('--blanco', colores.texto);
+            root.style.setProperty('--gris-texto', colores.textoClaro);
+            root.style.setProperty('--gris-borde', colores.borde);
+            root.style.setProperty('--exito', colores.exito);
+            root.style.setProperty('--error', colores.error);
+            root.style.setProperty('--advertencia', colores.advertencia);
+
+            // Actualizar preview personalizado
+            root.style.setProperty('--custom-primario', customColores.primario);
+            root.style.setProperty('--custom-fondo', customColores.fondo);
+            root.style.setProperty('--custom-acento', customColores.acento);
+            root.style.setProperty('--custom-texto', customColores.texto);
+
+            // Actualizar preview banner
+            root.style.setProperty('--preview-fondo', colores.fondoCard);
+            root.style.setProperty('--preview-borde', colores.borde);
+            root.style.setProperty('--preview-acento', colores.acento);
+            root.style.setProperty('--preview-texto', colores.texto);
+            root.style.setProperty('--preview-primario', colores.acento);
+            root.style.setProperty('--preview-primario-texto', colores.primario);
+
+            if (guardar) {
+                guardarTema();
+            }
+        }
+
+        // Actualizar UI del selector de temas
+        function actualizarUI() {
+            // Actualizar tarjetas activas
+            document.querySelectorAll('.tema-card').forEach(card => {
+                card.classList.toggle('active', card.dataset.tema === temaActual);
+            });
+
+            // Mostrar/ocultar panel de colores personalizados
+            const panel = document.getElementById('customColorsPanel');
+            if (panel) {
+                panel.classList.toggle('visible', temaActual === 'personalizado');
+            }
+
+            // Actualizar valores de los pickers
+            document.getElementById('customPrimario').value = customColores.primario;
+            document.getElementById('customAcento').value = customColores.acento;
+            document.getElementById('customFondo').value = customColores.fondo;
+            document.getElementById('customTexto').value = customColores.texto;
+
+            // Actualizar valores hex
+            document.getElementById('hexPrimario').textContent = customColores.primario.toUpperCase();
+            document.getElementById('hexAcento').textContent = customColores.acento.toUpperCase();
+            document.getElementById('hexFondo').textContent = customColores.fondo.toUpperCase();
+            document.getElementById('hexTexto').textContent = customColores.texto.toUpperCase();
+        }
+
+        // Inicializar eventos del selector de temas
+        function initTemas() {
+            // Click en tarjetas de tema
+            document.querySelectorAll('.tema-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const tema = card.dataset.tema;
+                    aplicarTema(tema, false);
+                    actualizarUI();
+                });
+            });
+
+            // Pickers de color personalizado
+            const pickers = [
+                { id: 'customPrimario', key: 'primario', hexId: 'hexPrimario' },
+                { id: 'customAcento', key: 'acento', hexId: 'hexAcento' },
+                { id: 'customFondo', key: 'fondo', hexId: 'hexFondo' },
+                { id: 'customTexto', key: 'texto', hexId: 'hexTexto' }
+            ];
+
+            pickers.forEach(({ id, key, hexId }) => {
+                const input = document.getElementById(id);
+                const hexLabel = document.getElementById(hexId);
+
+                input.addEventListener('input', (e) => {
+                    customColores[key] = e.target.value;
+                    hexLabel.textContent = e.target.value.toUpperCase();
+                    aplicarTema('personalizado', false);
+                });
+            });
+
+            // Botón guardar tema
+            document.getElementById('btnGuardarTema').addEventListener('click', () => {
+                guardarTema();
+                showToast('Tema guardado correctamente');
+            });
+
+            // Botón restablecer tema
+            document.getElementById('btnRestablecerTema').addEventListener('click', () => {
+                temaActual = 'bosque';
+                customColores = {
+                    primario: '#2a2a2a',
+                    acento: '#c9a96e',
+                    fondo: '#0a0a0a',
+                    texto: '#ffffff'
+                };
+                aplicarTema('bosque', false);
+                actualizarUI();
+                showToast('Tema restablecido a Bosque');
+            });
+        }
+
+        // ============================================================
+        // ===== INICIALIZACIÓN =====
+        // ============================================================
+
+        function init() {
+            cargarDatos();
+            renderProductos();
+            renderPedidos();
+            renderDashboard();
+            cargarConfigEnFormulario();
+            cargarTema();
+            initTemas();
+        }
+
+        // Iniciar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
