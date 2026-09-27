@@ -230,6 +230,33 @@
       "estado": "completado",
       "progreso": 100,
       "resultado": "5 temas con preview en vivo, modal de vista previa, aplicación automática en tienda"
+    },
+    {
+      "id": "categorias-admin",
+      "nombre": "Dev Categorías",
+      "tarea": "Sección de categorías en admin: crear, editar, eliminar, activar/desactivar",
+      "archivo": "admin/index.html",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Tarjetas visuales, toggle activar/desactivar, select dinámico, preview en tienda"
+    },
+    {
+      "id": "recomendaciones-consultor",
+      "nombre": "Consultor Funciones",
+      "tarea": "Recomendar funciones útiles para el admin",
+      "archivo": "recomendaciones-admin.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "28 funciones: P0 (10 críticas), P1 (10 útiles), P2 (8 futuras)"
+    },
+    {
+      "id": "mejoras-temas",
+      "nombre": "Dev Mejoras Temas",
+      "tarea": "Revisar y mejorar el sistema de temas",
+      "archivo": "admin/index.html, index.html",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T17:15:00"
     }
   ],
   "archivos": {
