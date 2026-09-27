@@ -2404,6 +2404,222 @@
             outline-offset: 2px;
         }
 
+        /* ===== SECCIÓN: CATEGORÍAS ===== */
+        .categorias-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .categoria-card {
+            background: var(--verde-oscuro);
+            border: 1px solid var(--verde-2);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .categoria-card.inactiva {
+            opacity: 0.55;
+        }
+
+        .categoria-icono {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius);
+            background: rgba(201, 169, 110, 0.15);
+            color: var(--dorado);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .categoria-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .categoria-nombre {
+            font-weight: 600;
+            color: var(--blanco);
+            font-size: 1rem;
+        }
+
+        .categoria-codigo {
+            font-size: 0.8rem;
+            color: var(--gris-texto);
+            margin-top: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .categoria-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+
+        .categoria-badge::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .categoria-badge.activa {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--exito);
+        }
+
+        .categoria-badge.inactiva {
+            background: rgba(176, 176, 176, 0.15);
+            color: var(--gris-texto);
+        }
+
+        .categoria-acciones {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .categoria-btn {
+            width: var(--min-touch);
+            height: var(--min-touch);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            border: none;
+        }
+
+        .categoria-btn.toggle {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--exito);
+        }
+
+        .categoria-btn.toggle:active {
+            background: var(--exito);
+            color: var(--verde-oscuro);
+        }
+
+        .categoria-btn.delete {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--error);
+        }
+
+        .categoria-btn.delete:active {
+            background: var(--error);
+            color: var(--blanco);
+        }
+
+        /* Toggle switch grande */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--gris-3);
+            border-radius: 34px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            left: 4px;
+            top: 4px;
+            background: var(--blanco);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--exito);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(26px);
+        }
+
+        /* Banner de preview de filtros en la tienda */
+        .categorias-preview-banner {
+            background: var(--verde-2);
+            border: 2px solid var(--verde-3);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .categorias-preview-banner h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--blanco);
+            margin-bottom: 6px;
+        }
+
+        .categorias-preview-banner h4 span {
+            color: var(--dorado);
+        }
+
+        .categorias-preview-banner p {
+            font-size: 0.85rem;
+            color: var(--gris-texto);
+            margin-bottom: 16px;
+        }
+
+        .preview-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .preview-filter-btn {
+            padding: 14px 24px;
+            border-radius: 30px;
+            border: 2px solid var(--preview-acento, var(--dorado));
+            background: transparent;
+            color: var(--preview-texto, var(--blanco));
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: default;
+            transition: all 0.2s ease;
+            min-height: var(--min-touch);
+        }
+
+        .preview-filter-btn.active {
+            background: var(--preview-acento, var(--dorado));
+            color: var(--preview-primario, var(--verde-oscuro));
+        }
+
         /* Reducir movimiento si el usuario lo prefiere */
         @media (prefers-reduced-motion: reduce) {
             *,
@@ -2441,6 +2657,12 @@
                     <i class="fas fa-box"></i>
                     <span>Productos</span>
                     <span class="nav-badge" id="productCount">0</span>
+                </a>
+
+                <a class="nav-item" data-section="categorias">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Categorías</span>
+                    <span class="nav-badge" id="categoriaCount">0</span>
                 </a>
 
                 <a class="nav-item" data-section="ajustes">
@@ -2563,6 +2785,36 @@
                     <!-- Lista de productos -->
                     <div class="productos-lista" id="productosLista">
                         <!-- Se llena con JS -->
+                    </div>
+                </div>
+
+                <!-- ===== SECCIÓN: CATEGORÍAS ===== -->
+                <div class="section-content" id="section-categorias">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Categorías de <span>Productos</span></h2>
+                            <p class="panel-subtitle">Las categorías activas aparecen como filtros en tu tienda</p>
+                        </div>
+                    </div>
+
+                    <!-- Botón agregar gigante -->
+                    <button class="btn btn-primary btn-lg btn-block" id="btnAgregarCategoria" style="margin-bottom: 16px;">
+                        <i class="fas fa-plus"></i>
+                        AGREGAR CATEGORÍA
+                    </button>
+
+                    <!-- Lista de categorías -->
+                    <div class="categorias-lista" id="categoriasLista">
+                        <!-- Se llena con JS -->
+                    </div>
+
+                    <!-- Preview de cómo se verá en la tienda -->
+                    <div class="categorias-preview-banner">
+                        <h4>Así se ve en la <span>tienda</span></h4>
+                        <p>Estos son los botones de filtro que verán tus clientes</p>
+                        <div class="preview-filters" id="previewFiltros">
+                            <!-- Se llena con JS -->
+                        </div>
                     </div>
                 </div>
 
@@ -2826,11 +3078,8 @@
                         <label class="form-label">Categoría <span class="required">*</span></label>
                         <select class="form-select" id="prodCategoria" required>
                             <option value="">Seleccionar...</option>
-                            <option value="hidratante">Hidratante</option>
-                            <option value="corporal">Corporal</option>
-                            <option value="facial">Facial</option>
-                            <option value="ante-envejecimiento">Antiedad</option>
                         </select>
+                        <span class="form-hint">Las categorías se crean en la sección Categorías</span>
                     </div>
 
                     <div class="form-group">
@@ -2878,14 +3127,53 @@
         </div>
     </div>
 
+    <!-- ===== MODAL: AGREGAR/EDITAR CATEGORÍA ===== -->
+    <div class="modal-overlay" id="categoriaModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="categoriaModalTitle">Agregar <span>Categoría</span></h3>
+                <button class="modal-close" id="categoriaModalClose" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="categoriaForm">
+                    <input type="hidden" id="categoriaEditandoId">
+
+                    <div class="form-group">
+                        <label class="form-label">Nombre <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="catNombre" placeholder="Ej: Hidratante" required>
+                        <span class="form-hint">Este nombre es el que verán los clientes en la tienda</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Código interno <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="catCodigo" placeholder="Ej: hidratante" required>
+                        <span class="form-hint">Se usa para organizar los productos. Solo letras minúsculas, sin espacios ni ñ</span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="categoriaForm" class="btn btn-primary btn-lg btn-block">
+                    <i class="fas fa-save"></i>
+                    GUARDAR CATEGORÍA
+                </button>
+                <button type="button" class="btn btn-secondary btn-lg btn-block" id="btnCancelarCategoria">
+                    <i class="fas fa-times"></i>
+                    CANCELAR
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== CONFIRMACIÓN DE ELIMINACIÓN ===== -->
     <div class="confirm-overlay" id="confirmOverlay">
         <div class="confirm-dialog">
             <div class="confirm-icon">
                 <i class="fas fa-trash-alt"></i>
             </div>
-            <h3 class="confirm-title">¿Eliminar producto?</h3>
-            <p class="confirm-message">Esta acción no se puede deshacer. El producto será eliminado permanentemente.</p>
+            <h3 class="confirm-title" id="confirmTitle">¿Eliminar producto?</h3>
+            <p class="confirm-message" id="confirmMessage">Esta acción no se puede deshacer. El producto será eliminado permanentemente.</p>
             <div class="confirm-actions">
                 <button class="btn btn-danger btn-lg btn-block" id="btnConfirmarEliminar">
                     <i class="fas fa-trash-alt"></i>
@@ -2995,7 +3283,13 @@
             whatsapp: '',
             mensaje: '¡Gracias por tu pedido! Te contactaremos pronto.',
             email: '',
-            direccion: ''
+            direccion: '',
+            categorias: [
+                { id: 'hidratante', nombre: 'Hidratante', activa: true },
+                { id: 'corporal', nombre: 'Corporal', activa: true },
+                { id: 'facial', nombre: 'Facial', activa: true },
+                { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true }
+            ]
         };
 
         // Productos (se cargan desde localStorage o se usan ejemplos)
@@ -3092,6 +3386,7 @@
                 const titulos = {
                     'inicio': 'Inicio',
                     'productos': 'Mis Productos',
+                    'categorias': 'Categorías',
                     'pedidos': 'Mis Pedidos',
                     'ajustes': 'Ajustes'
                 };
@@ -3199,13 +3494,9 @@
         }
 
         function obtenerNombreCategoria(cat) {
-            const categorias = {
-                'hidratante': 'Hidratante',
-                'corporal': 'Corporal',
-                'facial': 'Facial',
-                'ante-envejecimiento': 'Antiedad'
-            };
-            return categorias[cat] || cat;
+            if (!cat) return '';
+            const encontrada = (config.categorias || []).find(c => c.id === cat);
+            return encontrada ? encontrada.nombre : cat;
         }
 
         // ============================================================
@@ -3329,6 +3620,7 @@
             document.getElementById('productoId').value = '';
             prodImagenBase64.value = '';
             mostrarZonaSubida();
+            actualizarSelectCategorias();
             productoModal.classList.add('active');
         });
 
@@ -3521,38 +3813,257 @@
         // ============================================================
 
         const confirmOverlay = document.getElementById('confirmOverlay');
+        const confirmTitle = document.getElementById('confirmTitle');
+        const confirmMessage = document.getElementById('confirmMessage');
         const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
         const btnCancelarEliminar = document.getElementById('btnCancelarEliminar');
 
-        function confirmarEliminar(id) {
-            productoAEliminar = id;
+        let callbackConfirmacion = null;
+
+        // Sistema de confirmación genérico (productos y categorías)
+        function pedirConfirmacion(titulo, mensaje, callback) {
+            confirmTitle.textContent = titulo;
+            confirmMessage.textContent = mensaje;
+            callbackConfirmacion = callback;
             confirmOverlay.classList.add('active');
         }
 
+        function confirmarEliminar(id) {
+            const producto = productos.find(p => p.id === id);
+            if (!producto) return;
+
+            pedirConfirmacion(
+                '¿Eliminar producto?',
+                `Se eliminará "${producto.nombre}". Esta acción no se puede deshacer.`,
+                () => {
+                    productos = productos.filter(p => p.id !== id);
+                    guardarProductos();
+                    renderProductos();
+                    renderDashboard();
+                    showToast('Producto eliminado');
+                }
+            );
+        }
+
         btnConfirmarEliminar.addEventListener('click', () => {
-            if (productoAEliminar) {
-                productos = productos.filter(p => p.id !== productoAEliminar);
-                guardarProductos();
-                renderProductos();
-                renderDashboard();
-                showToast('Producto eliminado');
+            if (callbackConfirmacion) {
+                callbackConfirmacion();
+                callbackConfirmacion = null;
             }
             confirmOverlay.classList.remove('active');
-            productoAEliminar = null;
         });
 
         btnCancelarEliminar.addEventListener('click', () => {
             confirmOverlay.classList.remove('active');
-            productoAEliminar = null;
+            callbackConfirmacion = null;
         });
 
         // Cerrar confirmación al tocar fuera
         confirmOverlay.addEventListener('click', (e) => {
             if (e.target === confirmOverlay) {
                 confirmOverlay.classList.remove('active');
-                productoAEliminar = null;
+                callbackConfirmacion = null;
             }
         });
+
+        // ============================================================
+        // ===== CATEGORÍAS =====
+        // ============================================================
+
+        const categoriaModal = document.getElementById('categoriaModal');
+        const categoriaForm = document.getElementById('categoriaForm');
+        const btnAgregarCategoria = document.getElementById('btnAgregarCategoria');
+        const btnCancelarCategoria = document.getElementById('btnCancelarCategoria');
+        const categoriaModalClose = document.getElementById('categoriaModalClose');
+        const categoriaModalTitle = document.getElementById('categoriaModalTitle');
+
+        let categoriaEditando = null;
+
+        // Renderizar lista de categorías
+        function renderCategorias() {
+            const lista = document.getElementById('categoriasLista');
+            const categorias = config.categorias || [];
+
+            // Actualizar badge del menú
+            document.getElementById('categoriaCount').textContent = categorias.length;
+
+            if (categorias.length === 0) {
+                lista.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No hay categorías. Agrega la primera.</p>
+                    </div>
+                `;
+                renderPreviewFiltros();
+                return;
+            }
+
+            lista.innerHTML = categorias.map(cat => `
+                <div class="categoria-card ${cat.activa ? '' : 'inactiva'}" data-id="${escapeHtml(cat.id)}">
+                    <div class="categoria-icono">
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    <div class="categoria-info">
+                        <div class="categoria-nombre">${escapeHtml(cat.nombre)}</div>
+                        <div class="categoria-codigo">${escapeHtml(cat.id)}</div>
+                        <span class="categoria-badge ${cat.activa ? 'activa' : 'inactiva'}">
+                            ${cat.activa ? 'Activa' : 'Oculta'}
+                        </span>
+                    </div>
+                    <div class="categoria-acciones">
+                        <label class="toggle-switch" title="${cat.activa ? 'Ocultar de la tienda' : 'Mostrar en la tienda'}">
+                            <input type="checkbox" ${cat.activa ? 'checked' : ''} onchange="toggleCategoria('${escapeHtml(cat.id)}')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <button class="categoria-btn delete" onclick="confirmarEliminarCategoria('${escapeHtml(cat.id)}')" aria-label="Eliminar categoría">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            renderPreviewFiltros();
+        }
+
+        // Renderizar preview de filtros como se ven en la tienda
+        function renderPreviewFiltros() {
+            const contenedor = document.getElementById('previewFiltros');
+            const categorias = (config.categorias || []).filter(c => c.activa);
+
+            let html = '<button class="preview-filter-btn active">Todos</button>';
+            categorias.forEach(cat => {
+                html += `<button class="preview-filter-btn">${escapeHtml(cat.nombre)}</button>`;
+            });
+
+            contenedor.innerHTML = html;
+        }
+
+        // Actualizar el select de categorías en el formulario de producto
+        function actualizarSelectCategorias() {
+            const select = document.getElementById('prodCategoria');
+            const valorActual = select.value;
+            const categorias = config.categorias || [];
+
+            select.innerHTML = '<option value="">Seleccionar...</option>' +
+                categorias.map(cat =>
+                    `<option value="${escapeHtml(cat.id)}">${escapeHtml(cat.nombre)}</option>`
+                ).join('');
+
+            // Mantener el valor seleccionado si aún existe
+            if (valorActual && categorias.some(c => c.id === valorActual)) {
+                select.value = valorActual;
+            }
+        }
+
+        // Abrir modal para agregar categoría
+        btnAgregarCategoria.addEventListener('click', () => {
+            categoriaEditando = null;
+            categoriaModalTitle.innerHTML = 'Agregar <span>Categoría</span>';
+            categoriaForm.reset();
+            document.getElementById('categoriaEditandoId').value = '';
+            categoriaModal.classList.add('active');
+        });
+
+        // Cerrar modal de categoría
+        function cerrarCategoriaModal() {
+            categoriaModal.classList.remove('active');
+            categoriaEditando = null;
+        }
+
+        categoriaModalClose.addEventListener('click', cerrarCategoriaModal);
+        btnCancelarCategoria.addEventListener('click', cerrarCategoriaModal);
+
+        categoriaModal.addEventListener('click', (e) => {
+            if (e.target === categoriaModal) {
+                cerrarCategoriaModal();
+            }
+        });
+
+        // Guardar categoría (crear o actualizar)
+        categoriaForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nombre = document.getElementById('catNombre').value.trim();
+            let codigo = document.getElementById('catCodigo').value.trim().toLowerCase();
+            const editandoId = document.getElementById('categoriaEditandoId').value;
+
+            // Validaciones
+            if (!nombre) {
+                showToast('El nombre es obligatorio', 'error');
+                return;
+            }
+            if (!codigo) {
+                showToast('El código interno es obligatorio', 'error');
+                return;
+            }
+
+            // Limpiar código: solo letras, números y guiones
+            codigo = codigo.replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+            if (!codigo) {
+                showToast('El código interno debe tener letras o números', 'error');
+                return;
+            }
+
+            // Verificar que el código no esté repetido (excepto si es la misma categoría que se edita)
+            const repetido = (config.categorias || []).some(c => c.id === codigo && c.id !== editandoId);
+            if (repetido) {
+                showToast('Ya existe una categoría con ese código', 'error');
+                return;
+            }
+
+            if (editandoId) {
+                // Editar categoría existente
+                const cat = (config.categorias || []).find(c => c.id === editandoId);
+                if (cat) {
+                    cat.nombre = nombre;
+                    cat.id = codigo;
+                    showToast('Categoría actualizada');
+                }
+            } else {
+                // Agregar nueva categoría
+                if (!config.categorias) config.categorias = [];
+                config.categorias.push({ id: codigo, nombre, activa: true });
+                showToast('Categoría agregada');
+            }
+
+            guardarConfig();
+            renderCategorias();
+            actualizarSelectCategorias();
+            cerrarCategoriaModal();
+        });
+
+        // Activar / desactivar categoría
+        function toggleCategoria(id) {
+            const cat = (config.categorias || []).find(c => c.id === id);
+            if (!cat) return;
+
+            cat.activa = !cat.activa;
+            guardarConfig();
+            renderCategorias();
+            showToast(cat.activa ? ` "${cat.nombre}" ahora es visible en la tienda` : `"${cat.nombre}" está oculta en la tienda`);
+        }
+
+        // Confirmar eliminación de categoría
+        function confirmarEliminarCategoria(id) {
+            const cat = (config.categorias || []).find(c => c.id === id);
+            if (!cat) return;
+
+            const productosEnCategoria = productos.filter(p => p.categoria === id).length;
+            let mensaje = `Se eliminará la categoría "${cat.nombre}".`;
+
+            if (productosEnCategoria > 0) {
+                mensaje += ` Hay ${productosEnCategoria} producto(s) con esta categoría. Quedarán sin categoría.`;
+            }
+
+            pedirConfirmacion('¿Eliminar categoría?', mensaje, () => {
+                config.categorias = (config.categorias || []).filter(c => c.id !== id);
+                guardarConfig();
+                renderCategorias();
+                actualizarSelectCategorias();
+                showToast('Categoría eliminada');
+            });
+        }
 
         // ============================================================
         // ===== BUSCADOR DE PRODUCTOS =====
@@ -4017,6 +4528,8 @@
             renderProductos();
             renderPedidos();
             renderDashboard();
+            renderCategorias();
+            actualizarSelectCategorias();
             cargarConfigEnFormulario();
             cargarTema();
             initTemas();

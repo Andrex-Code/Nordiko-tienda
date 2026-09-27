@@ -51,6 +51,26 @@
     --transition-fast: all 0.2s ease;
 }
 
+/* ===== TRANSICIÓN GLOBAL DE COLORES =====
+   Permite que el cambio de tema sea suave y instantáneo */
+body,
+.navbar,
+.hero,
+.section,
+.card,
+.btn,
+input,
+textarea,
+select,
+footer,
+.sidebar,
+.modal {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
 /* ===== SCROLLBAR PERSONALIZADA ===== */
 ::-webkit-scrollbar {
     width: 10px;
@@ -429,9 +449,14 @@ input, textarea, select, button {
     justify-content: center;
     position: relative;
     overflow: hidden;
-    /* Fondo terroso: verde oscuro → café → negro */
+    /* Fondo dinámico: usa las variables del tema activo */
     background:
-        linear-gradient(160deg, #0a0a0a 0%, #1a2e1a 25%, #2d1f1a 50%, #3e2723 75%, #0a0a0a 100%);
+        linear-gradient(160deg,
+            var(--color-black) 0%,
+            var(--color-forest) 25%,
+            var(--color-coffee) 50%,
+            var(--color-forest-light) 75%,
+            var(--color-black) 100%);
     padding-top: 76px;
 }
 
@@ -724,7 +749,7 @@ input, textarea, select, button {
     position: relative;
     height: 280px;
     overflow: hidden;
-    background: linear-gradient(135deg, #2a2018 0%, #1c1916 100%);
+    background: linear-gradient(135deg, var(--color-coffee-light) 0%, var(--color-bg-card) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -886,7 +911,7 @@ input, textarea, select, button {
 .about-image-placeholder {
     width: 100%;
     height: 480px;
-    background: linear-gradient(135deg, #2d1f1a 0%, #1a2e1a 100%);
+    background: linear-gradient(135deg, var(--color-coffee-light) 0%, var(--color-forest) 100%);
     border: 1px solid var(--color-border-bronze);
     border-radius: var(--radius);
     display: flex;
@@ -998,8 +1023,8 @@ input, textarea, select, button {
 /* ===== NEWSLETTER ===== */
 .newsletter {
     padding: 110px 0;
-    background: linear-gradient(135deg, #1a2e1a 0%, #2d1f1a 50%, #0a0a0a 100%);
-    border-top: 1px solid rgba(201, 169, 110, 0.12);
+    background: linear-gradient(135deg, var(--color-forest) 0%, var(--color-coffee) 50%, var(--color-black) 100%);
+    border-top: 1px solid var(--color-border-bronze);
     position: relative;
     overflow: hidden;
 }
@@ -1349,7 +1374,7 @@ input, textarea, select, button {
     width: 78px;
     height: 78px;
     border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, #2a2018 0%, #1c1916 100%);
+    background: linear-gradient(135deg, var(--color-coffee-light) 0%, var(--color-bg-card) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
