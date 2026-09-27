@@ -2,13 +2,62 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NØRDIKO | Productos Masculinos Premium</title>
+    <meta name="description" content="Productos masculinos premium del Eje Cafetero colombiano. Loción, cuidado personal y estilo con estándar mundial. Café arábica, manteca de karité y uva de la región.">
+    <meta name="theme-color" content="#0a0a0a">
+    
+    <!-- Preconnect para recursos externos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="NØRDIKO | Productos Masculinos Premium">
+    <meta property="og:description" content="Ingredientes del Eje Cafetero, resultados que se notan. Loción, cuidado personal y estilo con estándar mundial.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:site_name" content="NØRDIKO">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="NØRDIKO | Productos Masculinos Premium">
+    <meta name="twitter:description" content="Ingredientes del Eje Cafetero, resultados que se notan.">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NØRDIKO">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "NØRDIKO",
+        "description": "Productos masculinos premium del Eje Cafetero colombiano",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Armenia",
+            "addressRegion": "Quindío",
+            "addressCountry": "CO"
+        },
+        "telephone": "+57-3001234567",
+        "email": "hola@onix.com.co",
+        "openingHours": "Mo-Sa 08:00-18:00",
+        "priceRange": "$"
+    }
+    </script>
 </head>
 <body>
+    <!-- Skip link para accesibilidad -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
     <!-- NAVBAR -->
     <nav class="navbar" id="navbar">
@@ -36,6 +85,9 @@
             </div>
         </div>
     </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main id="main-content">
 
     <!-- HERO -->
     <section class="hero" id="inicio">
@@ -242,6 +294,8 @@
         </div>
     </section>
 
+    </main><!-- /#main-content -->
+
     <!-- FOOTER -->
     <footer class="footer">
         <div class="container">
@@ -288,7 +342,8 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2026 NØRDIKO. Todos los derechos reservados.</p>
-                <p style="margin-top: 8px;"><a href="/admin" style="color: var(--color-primary); font-size: 0.85rem;">Panel de Administración</a></p>
+                <!-- Enlace al panel admin oculto por seguridad - accesible solo por URL directa -->
+                <p style="margin-top: 8px;"><a href="/admin" style="color: var(--color-text-muted); font-size: 0.85rem; opacity: 0.3;" aria-hidden="true" tabindex="-1">Admin</a></p>
             </div>
         </div>
     </footer>
@@ -320,6 +375,18 @@
             <p style="color: #888; margin-bottom: 20px; font-size: 0.95rem;">
                 Completa tus datos y te enviaremos a WhatsApp para confirmar tu pedido.
             </p>
+            <!-- Indicador de progreso -->
+            <div class="checkout-progress">
+                <div class="progress-step active">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Tus datos</span>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step">
+                    <span class="step-number">2</span>
+                    <span class="step-label">WhatsApp</span>
+                </div>
+            </div>
             <form id="checkoutForm">
                 <div class="form-group">
                     <input type="text" id="customerName" placeholder="Tu nombre completo" required>
@@ -352,6 +419,25 @@
 
     <script src="app.js"></script>
     <script>
+        // Función para escapar HTML y prevenir XSS
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        // Función para validar URLs seguras
+        function isValidUrl(url) {
+            if (!url || typeof url !== 'string') return false;
+            try {
+                const parsed = new URL(url);
+                return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+            } catch {
+                return false;
+            }
+        }
+
         // Cargar configuración de categorías y redes sociales desde localStorage
         (function cargarConfiguracion() {
             try {
@@ -365,8 +451,8 @@
                         if (filtersContainer) {
                             let html = '<button class="filter-btn active" data-filter="todos">Todos</button>';
                             config.categorias.forEach(cat => {
-                                if (cat.activa) {
-                                    html += `<button class="filter-btn" data-filter="${cat.id}">${cat.nombre}</button>`;
+                                if (cat.activa && cat.id && cat.nombre) {
+                                    html += `<button class="filter-btn" data-filter="${escapeHtml(cat.id)}">${escapeHtml(cat.nombre)}</button>`;
                                 }
                             });
                             filtersContainer.innerHTML = html;
@@ -390,8 +476,8 @@
                         if (socialContainer) {
                             let html = '';
                             config.redes.forEach(red => {
-                                if (red.activa && red.url) {
-                                    html += `<a href="${red.url}" target="_blank" aria-label="${red.nombre}"><i class="${red.icono}"></i></a>`;
+                                if (red.activa && red.url && isValidUrl(red.url)) {
+                                    html += `<a href="${encodeURIComponent(red.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(red.nombre || '')}"><i class="${escapeHtml(red.icono || '')}"></i></a>`;
                                 }
                             });
                             socialContainer.innerHTML = html;

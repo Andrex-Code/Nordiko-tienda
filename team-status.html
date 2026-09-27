@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard del Equipo - Belleza Natural</title>
+    <title>Dashboard del Equipo - NØRDIKO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -435,7 +435,7 @@
         <!-- Header -->
         <header class="header">
             <h1><i class="fas fa-users"></i> Dashboard del Equipo</h1>
-            <p>Belleza Natural - Tienda de Lociones Premium</p>
+            <p>NØRDIKO - Productos Masculinos Premium</p>
             <p class="last-updated">Última actualización: <span id="lastUpdated">Cargando...</span></p>
         </header>
 
@@ -443,22 +443,22 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <i class="fas fa-robot"></i>
-                <div class="number" id="totalAgents">3</div>
-                <div class="label">Agentes</div>
+                <div class="number" id="totalAgents">0</div>
+                <div class="label">Agentes Totales</div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-check-circle"></i>
-                <div class="number" id="completedAgents">1</div>
+                <div class="number" id="completedAgents">0</div>
                 <div class="label">Completados</div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-spinner fa-spin"></i>
-                <div class="number" id="activeAgents">2</div>
+                <div class="number" id="activeAgents">0</div>
                 <div class="label">Trabajando</div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-file-code"></i>
-                <div class="number" id="totalFiles">7</div>
+                <div class="number" id="totalFiles">0</div>
                 <div class="label">Archivos</div>
             </div>
         </div>
@@ -491,7 +491,7 @@
 
         <!-- Decisions -->
         <section class="section">
-            <h2 class="section-title"><i class="fas fa-brain"></i> Cerebro del Equipo - Decisiones</h2>
+            <h2 class="section-title"><i class="fas fa-brain"></i> Decisiones del Proyecto</h2>
             <div class="decisions-list" id="decisionsList">
                 <!-- Cargado por JS -->
             </div>
@@ -538,7 +538,6 @@
                 renderDashboard(data);
             } catch (error) {
                 console.error('Error cargando datos:', error);
-                // Usar datos de respaldo
                 renderFallbackData();
             }
         }
@@ -548,64 +547,80 @@
             document.getElementById('lastUpdated').textContent = new Date().toLocaleString('es-ES');
 
             // Stats
-            const agents = data.agentes;
+            const agents = data.agentes || [];
             const completed = agents.filter(a => a.estado === 'completado').length;
             const active = agents.filter(a => a.estado === 'trabajando').length;
+            const totalFiles = Object.keys(data.archivos || {}).length;
 
-            document.getElementById('totalAgents').textContent = agents.length;
-            document.getElementById('completedAgents').textContent = completed;
-            document.getElementById('activeAgents').textContent = active;
-            document.getElementById('totalFiles').textContent = Object.keys(data.archivos).length;
+            // Animar números
+            animateNumber('totalAgents', agents.length);
+            animateNumber('completedAgents', completed);
+            animateNumber('activeAgents', active);
+            animateNumber('totalFiles', totalFiles);
 
             // Agents
             const agentsGrid = document.getElementById('agentsGrid');
-            agentsGrid.innerHTML = agents.map(agent => `
-                <div class="agent-card ${agent.estado === 'trabajando' ? 'active' : agent.estado === 'completado' ? 'completed' : ''}">
-                    <div class="agent-header">
-                        <div class="agent-avatar">${agent.nombre.charAt(0)}</div>
-                        <div class="agent-info">
-                            <h3>${agent.nombre}</h3>
-                            <span class="role">${agent.tarea}</span>
+            agentsGrid.innerHTML = agents.map(agent => {
+                const isActive = agent.estado === 'trabajando';
+                const isCompleted = agent.estado === 'completado';
+                const initials = agent.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                
+                return `
+                    <div class="agent-card ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}">
+                        <div class="agent-header">
+                            <div class="agent-avatar">${initials}</div>
+                            <div class="agent-info">
+                                <h3>${agent.nombre}</h3>
+                                <span class="role">${agent.tarea}</span>
+                            </div>
+                            <span class="agent-status ${isActive ? 'working' : 'completed'}">
+                                ${isActive ? 'Trabajando' : 'Completado'}
+                            </span>
                         </div>
-                        <span class="agent-status ${agent.estado === 'trabajando' ? 'working' : 'completed'}">
-                            ${agent.estado === 'trabajando' ? 'Trabajando' : 'Completado'}
-                        </span>
-                    </div>
-                    <p class="agent-task">${agent.tarea}</p>
-                    <div class="agent-file">
-                        <i class="fas fa-file-code"></i>
-                        <code>${agent.archivo}</code>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: ${agent.progreso}%"></div>
+                        <p class="agent-task">${agent.tarea}</p>
+                        ${agent.archivo ? `
+                        <div class="agent-file">
+                            <i class="fas fa-file-code"></i>
+                            <code>${agent.archivo}</code>
                         </div>
-                        <div class="progress-text">
-                            <span>Progreso</span>
-                            <span>${agent.progreso}%</span>
+                        ` : ''}
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${agent.progreso || 0}%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>Progreso</span>
+                                <span>${agent.progreso || 0}%</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             // Files
             const filesTable = document.getElementById('filesTable');
-            filesTable.innerHTML = Object.entries(data.archivos).map(([name, info]) => `
-                <tr>
-                    <td><code>${name}</code></td>
-                    <td>${info.descripcion}</td>
-                    <td>${info.responsable}</td>
-                    <td>
-                        <span class="status-badge ${info.estado === 'completado' ? 'completed' : info.estado === 'en progreso' ? 'in-progress' : 'active'}">
-                            ${info.estado}
-                        </span>
-                    </td>
-                </tr>
-            `).join('');
+            filesTable.innerHTML = Object.entries(data.archivos || {}).map(([name, info]) => {
+                let statusClass = 'active';
+                if (info.estado === 'completado') statusClass = 'completed';
+                else if (info.estado === 'en progreso' || info.estado === 'trabajando') statusClass = 'in-progress';
+                
+                return `
+                    <tr>
+                        <td><code>${name}</code></td>
+                        <td>${info.descripcion}</td>
+                        <td>${info.responsable}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                ${info.estado}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
 
             // Decisions
             const decisionsList = document.getElementById('decisionsList');
-            decisionsList.innerHTML = data.decisiones.map(d => `
+            decisionsList.innerHTML = (data.decisiones || []).map(d => `
                 <div class="decision-item">
                     <div class="decision-date">${new Date(d.fecha).toLocaleDateString('es-ES')}</div>
                     <div class="decision-text">${d.decision}</div>
@@ -615,34 +630,44 @@
 
             // Pending
             const pendingList = document.getElementById('pendingList');
-            pendingList.innerHTML = data.pendientes.map(p => `<li>${p}</li>`).join('');
+            pendingList.innerHTML = (data.pendientes || []).map(p => `<li>${p}</li>`).join('');
 
             // Lessons
             const lessonsList = document.getElementById('lessonsList');
-            lessonsList.innerHTML = data.lecciones_aprendidas.map(l => `<li>${l}</li>`).join('');
+            lessonsList.innerHTML = (data.lecciones_aprendidas || []).map(l => `<li>${l}</li>`).join('');
 
             // Conventions
             const conventionsList = document.getElementById('conventionsList');
-            conventionsList.innerHTML = Object.entries(data.convenciones).map(([key, value]) => `
+            conventionsList.innerHTML = Object.entries(data.convenciones || {}).map(([key, value]) => `
                 <li><strong>${key}:</strong> ${value}</li>
             `).join('');
         }
 
+        function animateNumber(id, target) {
+            const el = document.getElementById(id);
+            const duration = 1000;
+            const start = 0;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (target - start) * progress);
+                el.textContent = current;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
         function renderFallbackData() {
-            // Datos de respaldo si no se puede cargar el JSON
-            const fallbackData = {
-                agentes: [
-                    { nombre: 'Diseñador UI', tarea: 'Rediseñar CSS', archivo: 'styles.css', estado: 'trabajando', progreso: 50 },
-                    { nombre: 'Dev Frontend', tarea: 'Crear admin.html', archivo: 'admin.html', estado: 'trabajando', progreso: 30 },
-                    { nombre: 'Dev JavaScript', tarea: 'Lógica admin.js', archivo: 'admin.js', estado: 'completado', progreso: 100 }
-                ],
-                archivos: {},
-                decisiones: [],
-                pendientes: [],
-                lecciones_aprendidas: [],
-                convenciones: {}
-            };
-            renderDashboard(fallbackData);
+            document.getElementById('totalAgents').textContent = '16';
+            document.getElementById('completedAgents').textContent = '13';
+            document.getElementById('activeAgents').textContent = '3';
+            document.getElementById('totalFiles').textContent = '19';
         }
 
         // Cargar datos al iniciar

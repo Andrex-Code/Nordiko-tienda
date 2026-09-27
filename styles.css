@@ -2094,3 +2094,23 @@ textarea:focus-visible {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ===== SKIP LINK — ACCESIBILIDAD ===== */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-bronze);
+    color: var(--color-black);
+    padding: 12px 24px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    font-weight: 700;
+    font-size: 0.9rem;
+    z-index: 10000;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 0;
+}

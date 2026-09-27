@@ -2,9 +2,15 @@
   "proyecto": {
     "nombre": "NØRDIKO - Productos Masculinos Premium",
     "objetivo": "Tienda online de lociones masculinas del Eje Cafetero, con panel de administración súper intuitivo para móvil",
-    "publico_objetivo": "Hombre colombiano, dueño no técnico, usa Android",
-    "estilo": "Masculino, rústico-elegante, verde oscuro + dorado",
-    "estado": "completado"
+    "publico_objetivo": "Hombre colombiano, dueño no técnico (Daniel Parra), usa Android",
+    "administrador": "Usuario técnico que gestiona el sitio",
+    "estilo": "Masculino, rústico-elegante, verde oscuro + café + dorado",
+    "estado": "en revisión y mejora continua"
+  },
+  "urls": {
+    "tienda": "https://nordiko-tienda.vercel.app",
+    "admin": "https://nordiko-tienda.vercel.app/admin",
+    "github": "https://github.com/Andrex-Code/Nordiko-tienda"
   },
   "decisiones": [
     {
@@ -29,13 +35,28 @@
     },
     {
       "fecha": "2026-09-27",
-      "decision": "Git + Netlify para despliegue",
-      "razon": "Gratis, automático, fácil de mantener"
+      "decision": "Vercel para despliegue",
+      "razon": "Gratis, automático, fácil de mantener, el administrador ya lo usa"
+    },
+    {
+      "fecha": "2026-09-27",
+      "decision": "Pedidos por WhatsApp (sin pasarela de pago)",
+      "razon": "El negocio no tiene confirmado pagos, entrega personal"
     },
     {
       "fecha": "2026-09-27",
       "decision": "Panel admin con botones gigantes y confirmaciones claras",
       "razon": "Evitar errores del usuario no técnico"
+    },
+    {
+      "fecha": "2026-09-27",
+      "decision": "5 temas personalizables (Bosque, Café, Noche, Tierra, Personalizado)",
+      "razon": "Permitir al dueño personalizar la tienda sin tocar código"
+    },
+    {
+      "fecha": "2026-09-27",
+      "decision": "Admin en URL limpia /admin (sin .html)",
+      "razon": "Más profesional y fácil de recordar"
     }
   ],
   "agentes": [
@@ -46,16 +67,16 @@
       "archivo": "styles.css",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "Verde oscuro + café + dorado, brushed metal, texturas sutiles"
+      "resultado": "Verde oscuro + café + dorado, brushed metal, texturas sutiles, 5 temas"
     },
     {
       "id": "html-developer",
       "nombre": "Dev Frontend",
       "tarea": "Crear panel de administración HTML",
-      "archivo": "admin.html",
+      "archivo": "admin/index.html",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "Panel móvil con botones gigantes, menú lateral, confirmaciones claras"
+      "resultado": "Panel móvil con botones gigantes, menú lateral, confirmaciones claras, subir fotos"
     },
     {
       "id": "js-developer",
@@ -78,35 +99,152 @@
     {
       "id": "devops",
       "nombre": "DevOps",
-      "tarea": "Guía de despliegue Git + Netlify",
+      "tarea": "Guía de despliegue Git + Vercel",
       "archivo": "devops-setup.md",
       "estado": "completado",
       "progreso": 100,
-      "resultado": "Guía paso a paso, comandos exactos, costos $0-1.25/mes"
+      "resultado": "Guía paso a paso, comandos exactos, costos"
+    },
+    {
+      "id": "marketing-strategist",
+      "nombre": "Estratega Marketing",
+      "tarea": "Estrategia de marketing digital completa",
+      "archivo": "estrategia-marketing.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "UVP, buyer persona, canales, campañas 30 días, influencers, email marketing, presupuesto, KPIs"
+    },
+    {
+      "id": "brand-manager",
+      "nombre": "Brand Manager",
+      "tarea": "Manual de identidad de marca",
+      "archivo": "brand-book.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Historia, personalidad, tono de voz, identidad visual, mensajes, empaque, aplicaciones"
+    },
+    {
+      "id": "seo-specialist",
+      "nombre": "SEO Specialist",
+      "tarea": "Estrategia SEO completa",
+      "archivo": "estrategia-seo.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Keywords, SEO on-page/técnico, 15 artículos blog, link building, calendario 3 meses"
+    },
+    {
+      "id": "niche-specialist",
+      "nombre": "Especialista Nicho",
+      "tarea": "Análisis profundo del nicho de belleza masculina",
+      "archivo": "analisis-nicho.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Mercado, tendencias, competencia, oportunidades, precios, regulaciones, temporadas"
+    },
+    {
+      "id": "community-manager",
+      "nombre": "Community Manager",
+      "tarea": "Estrategia de redes sociales",
+      "archivo": "estrategia-redes.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Estrategia por plataforma, calendario semanal, hashtags, influencers, métricas"
+    },
+    {
+      "id": "copywriter",
+      "nombre": "Copywriter",
+      "tarea": "Textos persuasivos para la tienda",
+      "archivo": "copywriting-masculino.md",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Hero, descripciones, emails, redes sociales, landing, FAQ, CTAs, slogans"
+    },
+    {
+      "id": "devops-despliegue",
+      "nombre": "DevOps Despliegue",
+      "tarea": "Desplegar proyecto en Vercel",
+      "archivo": "Vercel",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Proyecto desplegado en nordiko-tienda.vercel.app"
+    },
+    {
+      "id": "temas-developer",
+      "nombre": "Dev Temas",
+      "tarea": "Sistema de temas personalizables",
+      "archivo": "admin/index.html + index.html",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "5 temas (Bosque, Café, Noche, Tierra, Personalizado) con preview visual"
+    },
+    {
+      "id": "whatsapp-developer",
+      "nombre": "Dev WhatsApp",
+      "tarea": "Sistema de pedidos por WhatsApp",
+      "archivo": "app.js + admin/index.html",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Pedidos por WhatsApp sin pagos, configuración de número en admin"
+    },
+    {
+      "id": "revision-codigo",
+      "nombre": "Revisor Código",
+      "tarea": "Revisión completa de HTML/CSS/JS, bugs, SEO, accesibilidad",
+      "archivo": "Todos",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T16:30:00"
+    },
+    {
+      "id": "revision-ux",
+      "nombre": "Revisor UX/UI",
+      "tarea": "Revisión de experiencia de usuario, flujo de compra, carrito, admin",
+      "archivo": "Todos",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T16:30:00"
+    },
+    {
+      "id": "revision-seguridad",
+      "nombre": "Revisor Seguridad",
+      "tarea": "Revisión de seguridad, XSS, rendimiento, PWA",
+      "archivo": "Todos",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T16:30:00"
     }
   ],
   "archivos": {
     "index.html": { "descripcion": "Tienda NØRDIKO móvil", "responsable": "Coordinador", "estado": "completado" },
-    "styles.css": { "descripcion": "Estilos masculinos rústico-elegantes", "responsable": "Diseñador UI", "estado": "completado" },
-    "app.js": { "descripcion": "Lógica tienda móvil intuitiva", "responsable": "Dev Móvil", "estado": "completado" },
-    "admin.html": { "descripcion": "Panel admin móvil súper intuitivo", "responsable": "Dev Frontend", "estado": "completado" },
+    "styles.css": { "descripcion": "Estilos masculinos rústico-elegantes con 5 temas", "responsable": "Diseñador UI", "estado": "completado" },
+    "app.js": { "descripcion": "Lógica tienda móvil intuitiva + pedidos WhatsApp", "responsable": "Dev Móvil", "estado": "completado" },
+    "admin/index.html": { "descripcion": "Panel admin móvil + fotos + temas + configuración", "responsable": "Dev Frontend", "estado": "completado" },
     "admin.js": { "descripcion": "Lógica CRUD panel admin", "responsable": "Dev JavaScript", "estado": "completado" },
     "demo.html": { "descripcion": "Demo con imágenes reales", "responsable": "Coordinador", "estado": "completado" },
-    "devops-setup.md": { "descripcion": "Guía de despliegue Git + Netlify", "responsable": "DevOps", "estado": "completado" },
+    "devops-setup.md": { "descripcion": "Guía de despliegue", "responsable": "DevOps", "estado": "completado" },
+    "dominios-disponibles.md": { "descripcion": "Opciones de dominio", "responsable": "Coordinador", "estado": "completado" },
     "team-brain.json": { "descripcion": "Memoria compartida del equipo", "responsable": "Coordinador", "estado": "activo" },
-    "team-status.html": { "descripcion": "Dashboard visual del equipo", "responsable": "Coordinador", "estado": "activo" }
+    "team-status.html": { "descripcion": "Dashboard visual del equipo", "responsable": "Coordinador", "estado": "activo" },
+    "estrategia-marketing.md": { "descripcion": "Marketing digital", "responsable": "Estratega Marketing", "estado": "completado" },
+    "brand-book.md": { "descripcion": "Identidad de marca", "responsable": "Brand Manager", "estado": "completado" },
+    "estrategia-seo.md": { "descripcion": "SEO", "responsable": "SEO Specialist", "estado": "completado" },
+    "analisis-nicho.md": { "descripcion": "Análisis de mercado", "responsable": "Especialista Nicho", "estado": "completado" },
+    "estrategia-redes.md": { "descripcion": "Redes sociales", "responsable": "Community Manager", "estado": "completado" },
+    "copywriting-masculino.md": { "descripcion": "Textos persuasivos", "responsable": "Copywriter", "estado": "completado" }
   },
   "pendientes": [
-    "Subir a GitHub",
-    "Conectar con Netlify",
-    "Configurar dominio personalizado",
-    "Probar en celular de Daniel"
+    "Esperar a que los 3 agentes de revisión terminen",
+    "Aplicar mejoras de código, UX y seguridad",
+    "Hacer push de las mejoras",
+    "Verificar que todo funcione en producción"
   ],
   "lecciones_aprendidas": [
     "Móvil primero es clave cuando el usuario no es técnico",
     "Botones grandes y confirmaciones claras evitan errores",
     "localStorage es suficiente para empezar sin backend",
-    "Git + Netlify es la forma más fácil de desplegar",
-    "El cerebro compartido del equipo evita repetir contexto"
+    "Vercel es la forma más fácil de despliegue",
+    "El cerebro compartido del equipo evita repetir contexto",
+    "Un equipo multidisciplinario produce resultados más completos",
+    "La revisión continua mejora la calidad del proyecto"
   ]
 }

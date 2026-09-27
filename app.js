@@ -199,6 +199,29 @@ const checkoutForm = document.getElementById('checkoutForm');
 // ============================================
 
 /**
+ * Escapa texto para prevenir XSS al insertar en HTML.
+ */
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
+
+/**
+ * Valida que una URL sea segura (http/https).
+ */
+function isValidUrl(url) {
+    if (!url || typeof url !== 'string') return false;
+    try {
+        const parsed = new URL(url);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+/**
  * Convierte el código de categoría a un nombre bonito y simple.
  */
 function obtenerNombreCategoria(categoria) {
@@ -225,9 +248,47 @@ function obtenerTextoBadge(badge) {
 
 /**
  * Formatea un número como precio en pesos colombianos.
+ * Ej: 350000 → $350.000
  */
 function formatearPrecio(precio) {
-    return '$' + precio.toFixed(2);
+    const num = Math.round(Number(precio));
+    return '$' + num.toLocaleString('es-CO');
+}
+
+/**
+ * Guarda el carrito en localStorage para que no se pierda al recargar.
+ */
+function guardarCarrito() {
+    try {
+        localStorage.setItem('nordiko_carrito', JSON.stringify(carrito));
+    } catch (e) {
+        console.warn('No se pudo guardar el carrito');
+    }
+}
+
+/**
+ * Carga el carrito guardado en localStorage al iniciar.
+ */
+function cargarCarrito() {
+    try {
+        const guardado = localStorage.getItem('nordiko_carrito');
+        if (guardado) {
+            const items = JSON.parse(guardado);
+            if (Array.isArray(items) && items.length > 0) {
+                carrito = items.filter(item => productos.some(p => p.id === item.id));
+            }
+        }
+    } catch (e) {
+        console.warn('No se pudo cargar el carrito');
+    }
+}
+
+/**
+ * Valida un teléfono colombiano (mínimo 10 dígitos, empezando en 3).
+ */
+function validarTelefonoColombiano(telefono) {
+    const limpio = telefono.replace(/[\s\-\(\)]/g, '');
+    return limpio.length >= 10 && /^3\d{9}$/.test(limpio);
 }
 
 // ============================================
@@ -302,19 +363,19 @@ function renderizarProductos(filtro = 'todos', busqueda = '') {
     productsGrid.innerHTML = productosFiltrados.map(producto => {
         const textoBadge = obtenerTextoBadge(producto.badge);
         const badgeHTML = textoBadge 
-            ? `<span class="product-badge ${producto.badge}">${textoBadge}</span>` 
+            ? `<span class="product-badge ${escapeHtml(producto.badge)}">${textoBadge}</span>` 
             : '';
         
-        const imagenHTML = producto.imagen
-            ? `<img src="${producto.imagen}" alt="${producto.nombre}" style="width:100%;height:100%;object-fit:cover;">`
-            : `<span style="font-size: 5rem;">${producto.icono || '🧴'}</span>`;
+        const imagenHTML = producto.imagen && isValidUrl(producto.imagen)
+            ? `<img src="${encodeURIComponent(producto.imagen)}" alt="${escapeHtml(producto.nombre)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">`
+            : `<span style="font-size: 5rem;">${escapeHtml(producto.icono || '🧴')}</span>`;
         
         const precioAnteriorHTML = producto.precioAnterior 
             ? `<span class="old-price">${formatearPrecio(producto.precioAnterior)}</span>` 
             : '';
         
         return `
-            <div class="product-card" data-id="${producto.id}">
+            <div class="product-card" data-id="${escapeHtml(producto.id)}">
                 <div class="product-image">
                     ${badgeHTML}
                     <button class="product-wishlist" aria-label="Me gusta">
@@ -323,15 +384,15 @@ function renderizarProductos(filtro = 'todos', busqueda = '') {
                     ${imagenHTML}
                 </div>
                 <div class="product-info">
-                    <div class="product-category">${obtenerNombreCategoria(producto.categoria)}</div>
-                    <h3 class="product-name">${producto.nombre}</h3>
-                    <p class="product-desc">${producto.descripcion}</p>
+                    <div class="product-category">${escapeHtml(obtenerNombreCategoria(producto.categoria))}</div>
+                    <h3 class="product-name">${escapeHtml(producto.nombre)}</h3>
+                    <p class="product-desc">${escapeHtml(producto.descripcion)}</p>
                     <div class="product-footer">
                         <div class="product-price">
                             ${formatearPrecio(producto.precio)}
                             ${precioAnteriorHTML}
                         </div>
-                        <button class="add-to-cart" data-id="${producto.id}" aria-label="Agregar al carrito">
+                        <button class="add-to-cart" data-id="${escapeHtml(producto.id)}" aria-label="Agregar al carrito">
                             <i class="fas fa-plus"></i>
                             <span style="font-size: 0.75rem; font-weight: 700; margin-left: 4px;">Agregar</span>
                         </button>
@@ -464,9 +525,9 @@ function actualizarCarrito() {
         `;
     } else {
         cartItems.innerHTML = carrito.map(item => {
-            const imagenHTML = item.imagen
-                ? `<img src="${item.imagen}" alt="${item.nombre}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`
-                : `<span style="font-size: 2.5rem;">${item.icono || '🧴'}</span>`;
+            const imagenHTML = item.imagen && isValidUrl(item.imagen)
+                ? `<img src="${encodeURIComponent(item.imagen)}" alt="${escapeHtml(item.nombre)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" loading="lazy">`
+                : `<span style="font-size: 2.5rem;">${escapeHtml(item.icono || '🧴')}</span>`;
             
             return `
                 <div class="cart-item">
@@ -474,15 +535,15 @@ function actualizarCarrito() {
                         ${imagenHTML}
                     </div>
                     <div class="cart-item-info">
-                        <div class="cart-item-name">${item.nombre}</div>
+                        <div class="cart-item-name">${escapeHtml(item.nombre)}</div>
                         <div class="cart-item-price">${formatearPrecio(item.precio)}</div>
                         <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="cambiarCantidad(${item.id}, -1)" aria-label="Quitar uno">−</button>
-                            <span style="font-size: 1.1rem; font-weight: 700; min-width: 30px; text-align: center;">${item.cantidad}</span>
-                            <button class="qty-btn" onclick="cambiarCantidad(${item.id}, 1)" aria-label="Agregar uno">+</button>
+                            <button class="qty-btn" onclick="cambiarCantidad(${escapeHtml(item.id)}, -1)" aria-label="Quitar uno">−</button>
+                            <span style="font-size: 1.1rem; font-weight: 700; min-width: 30px; text-align: center;">${escapeHtml(item.cantidad)}</span>
+                            <button class="qty-btn" onclick="cambiarCantidad(${escapeHtml(item.id)}, 1)" aria-label="Agregar uno">+</button>
                         </div>
                     </div>
-                    <button class="cart-item-remove" onclick="eliminarDelCarrito(${item.id})" aria-label="Quitar del carrito">
+                    <button class="cart-item-remove" onclick="eliminarDelCarrito(${escapeHtml(item.id)})" aria-label="Quitar del carrito">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -494,6 +555,9 @@ function actualizarCarrito() {
     const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
     cartTotal.textContent = formatearPrecio(total);
     modalTotal.textContent = formatearPrecio(total);
+    
+    // Guardar carrito en localStorage
+    guardarCarrito();
 }
 
 // ============================================
@@ -597,6 +661,12 @@ checkoutForm.addEventListener('submit', (e) => {
         return;
     }
     
+    // Validar teléfono colombiano
+    if (!validarTelefonoColombiano(telefono)) {
+        mostrarToast('Ingresa un teléfono válido (10 dígitos, empezando en 3)', 'error');
+        return;
+    }
+    
     // Obtener número de WhatsApp configurado
     let config = {};
     try {
@@ -610,27 +680,33 @@ checkoutForm.addEventListener('submit', (e) => {
     
     const whatsappNumber = config.whatsapp || '573001234567';
     
-    // Construir mensaje de WhatsApp
-    let mensaje = `Hola NØRDIKO, quiero hacer un pedido:%0A%0A`;
+    // Construir mensaje de WhatsApp con formato claro y profesional
+    let mensaje = '🛒 *NUEVO PEDIDO — NØRDIKO*\n\n';
+    mensaje += '📦 *PRODUCTOS:*\n';
+    mensaje += '─────────────────────\n';
     
     carrito.forEach(item => {
-        mensaje += `${item.icono || ''} ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}%0A`;
+        const subtotal = item.precio * item.cantidad;
+        mensaje += `${item.icono || ''} ${item.nombre}\n`;
+        mensaje += `   ${item.cantidad} x ${formatearPrecio(item.precio)} = ${formatearPrecio(subtotal)}\n`;
     });
     
     const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-    mensaje += `%0A💰 Total: $${total.toFixed(2)}%0A%0A`;
-    mensaje += `👤 Nombre: ${nombre}%0A`;
-    mensaje += `📱 Teléfono: ${telefono}%0A`;
-    mensaje += `📍 Dirección: ${direccion}%0A`;
+    mensaje += '─────────────────────\n';
+    mensaje += `💰 *TOTAL: ${formatearPrecio(total)}*\n\n`;
+    mensaje += '👤 *DATOS DEL CLIENTE:*\n';
+    mensaje += `Nombre: ${nombre}\n`;
+    mensaje += `Teléfono: ${telefono}\n`;
+    mensaje += `Dirección: ${direccion}\n`;
     
     if (notas) {
-        mensaje += `📝 Notas: ${notas}%0A`;
+        mensaje += `📝 Notas: ${notas}\n`;
     }
     
-    mensaje += `%0A¡Gracias! 🙌`;
+    mensaje += `\n¡Gracias! 🙌`;
     
-    // Abrir WhatsApp
-    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${mensaje}`;
+    // Abrir WhatsApp con mensaje codificado correctamente
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
     window.open(whatsappURL, '_blank');
     
     // Limpiar carrito
@@ -638,7 +714,7 @@ checkoutForm.addEventListener('submit', (e) => {
     document.body.style.overflow = '';
     carrito = [];
     actualizarCarrito();
-    mostrarToast('¡Redirigiendo a WhatsApp para confirmar tu pedido!', 'success');
+    mostrarToast('¡Listo! Se abrió WhatsApp con tu pedido. Envíalo para confirmar.', 'success');
 });
 
 // ============================================
@@ -730,10 +806,13 @@ function mejorarBotonesMovil() {
 // 17. INICIALIZACIÓN
 // ============================================
 
+// Cargar carrito guardado antes de renderizar
+cargarCarrito();
+
 // Dibujar productos al cargar
 renderizarProductos();
 
-// Dibujar carrito vacío al inicio
+// Dibujar carrito (cargado o vacío)
 actualizarCarrito();
 
 // Mejorar botones para móvil
