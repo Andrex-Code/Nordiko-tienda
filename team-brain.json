@@ -5,7 +5,7 @@
     "publico_objetivo": "Hombre colombiano, dueño no técnico (Daniel Parra), usa Android",
     "administrador": "Usuario técnico que gestiona el sitio",
     "estilo": "Masculino, rústico-elegante, verde oscuro + café + dorado",
-    "estado": "en revisión y mejora continua"
+    "estado": "completado"
   },
   "urls": {
     "tienda": "https://nordiko-tienda.vercel.app",
@@ -218,18 +218,18 @@
       "nombre": "Revisor Responsive",
       "tarea": "Corregir botones, tipografía, carrito y admin en móvil",
       "archivo": "index.html, styles.css, app.js, admin/index.html",
-      "estado": "trabajando",
-      "progreso": 0,
-      "iniciado": "2026-09-27T16:45:00"
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "Botones 50px+, carrito 100vw, admin móvil, touch-friendly, media queries 360px"
     },
     {
       "id": "revision-temas",
       "nombre": "Revisor Temas",
       "tarea": "Temas aplicados a tienda principal + vista previa en admin",
       "archivo": "admin/index.html, index.html",
-      "estado": "trabajando",
-      "progreso": 0,
-      "iniciado": "2026-09-27T16:45:00"
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "5 temas con preview en vivo, modal de vista previa, aplicación automática en tienda"
     }
   ],
   "archivos": {
