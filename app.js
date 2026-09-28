@@ -24,6 +24,8 @@
  * - Lazy loading en imágenes
  */
 
+import { productosCollection, getDocs } from './firebase-config.js';
+
 (function () {
     'use strict';
 
@@ -179,21 +181,20 @@
      * usa los 12 productos por defecto.
      * Valida que cada producto tenga los campos mínimos.
      */
-    function cargarProductos() {
+    async function cargarProductos() {
         try {
-            const productosGuardados = localStorage.getItem('nordiko_productos');
-            if (productosGuardados) {
-                const productos = JSON.parse(productosGuardados);
-                // Verificar que sea un array válido con productos bien formados
-                if (Array.isArray(productos) && productos.length > 0) {
-                    return productos.filter(p =>
-                        p && p.id && p.nombre && p.precio && p.categoria
-                    );
-                }
+            // Intentar cargar desde Firebase
+            const querySnapshot = await getDocs(productosCollection);
+            if (!querySnapshot.empty) {
+                const productosFirebase = [];
+                querySnapshot.forEach((doc) => {
+                    productosFirebase.push({ id: doc.id, ...doc.data() });
+                });
+                console.log('Productos cargados desde Firebase:', productosFirebase.length);
+                return productosFirebase;
             }
         } catch (e) {
-            // Si algo falla, avisar suavemente y continuar con los datos por defecto
-            console.warn('No se pudieron cargar los productos guardados. Usando los de siempre.');
+            console.warn('No se pudieron cargar productos desde Firebase. Usando productos por defecto.', e);
         }
         return productosDefault;
     }

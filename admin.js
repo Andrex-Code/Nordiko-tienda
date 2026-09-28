@@ -20,6 +20,8 @@
  * ============================================================
  */
 
+import { productosCollection, configCollection, getDocs, setDoc, addDoc, updateDoc, deleteDoc, doc } from '../firebase-config.js';
+
 'use strict';
 
 /* ============================================================
@@ -114,19 +116,41 @@ function obtenerProductosEjemplo() {
  *  CARGAR Y GUARDAR DATOS
  * ============================================================ */
 
-function cargarDatos() {
-  // Cargar configuración
-  const configGuardada = localStorage.getItem(STORAGE_KEY_CONFIG);
-  if (configGuardada) {
-    try {
-      config = { ...config, ...JSON.parse(configGuardada) };
-    } catch (e) {
-      console.error('Error al cargar configuración:', e);
+async function cargarDatos() {
+  // Cargar productos desde Firebase
+  try {
+    const querySnapshot = await getDocs(productosCollection);
+    if (!querySnapshot.empty) {
+      const productosFirebase = [];
+      querySnapshot.forEach((doc) => {
+        productosFirebase.push({ id: doc.id, ...doc.data() });
+      });
+      productos = productosFirebase;
+      console.log('Productos cargados desde Firebase:', productos.length);
+    } else {
+      productos = obtenerProductosEjemplo();
+      guardarProductos();
     }
+  } catch (e) {
+    console.error('Error al cargar productos desde Firebase:', e);
+    productos = obtenerProductosEjemplo();
   }
 
-  // Validar categorías: si la config guardada no contiene un array válido,
-  // restaurar las categorías por defecto y reparar localStorage
+  // Cargar configuración desde Firebase
+  try {
+    const configDoc = await getDocs(configCollection);
+    if (!configDoc.empty) {
+      configDoc.forEach((doc) => {
+        if (doc.id === 'tienda') {
+          config = { ...config, ...doc.data() };
+        }
+      });
+    }
+  } catch (e) {
+    console.error('Error al cargar configuración desde Firebase:', e);
+  }
+
+  // Validar categorías
   if (!Array.isArray(config.categorias)) {
     config.categorias = [
       { id: 'hidratante', nombre: 'Hidratante', activa: true },
@@ -136,33 +160,29 @@ function cargarDatos() {
     ];
     guardarConfig();
   }
+}
 
-  // Cargar productos
-  const productosGuardados = localStorage.getItem(STORAGE_KEY_PRODUCTOS);
-  if (productosGuardados) {
-    try {
-      const datos = JSON.parse(productosGuardados);
-      if (Array.isArray(datos)) {
-        productos = datos;
-      } else {
-        productos = obtenerProductosEjemplo();
-      }
-    } catch (e) {
-      console.error('Error al cargar productos:', e);
-      productos = obtenerProductosEjemplo();
+async function guardarProductos() {
+  try {
+    // Guardar cada producto en Firebase
+    for (const producto of productos) {
+      const productoData = { ...producto };
+      delete productoData.id;
+      await setDoc(doc(productosCollection, producto.id), productoData);
     }
-  } else {
-    productos = obtenerProductosEjemplo();
-    guardarProductos();
+    console.log('Productos guardados en Firebase');
+  } catch (e) {
+    console.error('Error al guardar productos en Firebase:', e);
   }
 }
 
-function guardarProductos() {
-  localStorage.setItem(STORAGE_KEY_PRODUCTOS, JSON.stringify(productos));
-}
-
-function guardarConfig() {
-  localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+async function guardarConfig() {
+  try {
+    await setDoc(doc(configCollection, 'tienda'), config);
+    console.log('Configuración guardada en Firebase');
+  } catch (e) {
+    console.error('Error al guardar configuración en Firebase:', e);
+  }
 }
 
 /* ============================================================
