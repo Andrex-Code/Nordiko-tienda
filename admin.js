@@ -84,7 +84,13 @@ let config = {
   whatsapp: '',
   mensaje: '¡Gracias por tu pedido! Te contactaremos pronto.',
   email: '',
-  direccion: ''
+  direccion: '',
+  categorias: [
+    { id: 'hidratante', nombre: 'Hidratante', activa: true },
+    { id: 'corporal', nombre: 'Corporal', activa: true },
+    { id: 'facial', nombre: 'Facial', activa: true },
+    { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true }
+  ]
 };
 
 let pedidos = [
@@ -482,13 +488,9 @@ function renderProductos(filtro = '') {
 }
 
 function obtenerNombreCategoria(cat) {
-  const categorias = {
-    'hidratante': 'Hidratante',
-    'corporal': 'Corporal',
-    'facial': 'Facial',
-    'ante-envejecimiento': 'Antiedad'
-  };
-  return categorias[cat] || cat;
+  if (!cat) return '';
+  const encontrada = (config.categorias || []).find(c => c.id === cat);
+  return encontrada ? encontrada.nombre : cat;
 }
 
 /* ============================================================
@@ -985,93 +987,54 @@ const btnVerPreview = document.getElementById('btnVerPreview');
 const previewModalOverlay = document.getElementById('previewModalOverlay');
 const previewModalClose = document.getElementById('previewModalClose');
 
-if (btnVerPreview && previewModalOverlay) {
-  btnVerPreview.addEventListener('click', () => {
+function abrirPreviewModal() {
+  if (previewModalOverlay) {
     previewModalOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
-  });
+  }
 }
 
-if (previewModalClose && previewModalOverlay) {
-  previewModalClose.addEventListener('click', () => {
+function cerrarPreviewModal() {
+  if (previewModalOverlay) {
     previewModalOverlay.classList.remove('active');
     document.body.style.overflow = '';
-  });
+  }
+}
 
-  // Cerrar al tocar fuera del modal
+if (btnVerPreview) {
+  btnVerPreview.addEventListener('click', abrirPreviewModal);
+}
+
+if (previewModalClose) {
+  previewModalClose.addEventListener('click', cerrarPreviewModal);
+}
+
+if (previewModalOverlay) {
   previewModalOverlay.addEventListener('click', (e) => {
-    if (e.target === previewModalOverlay) {
-      previewModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
-  });
-
-  // Cerrar con tecla Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && previewModalOverlay.classList.contains('active')) {
-      previewModalOverlay.classList.remove('active');
-      document.body.style.overflow = '';
+    if (e.target === e.currentTarget) {
+      cerrarPreviewModal();
     }
   });
 }
 
-// Restablecer tema — con confirmación
-document.getElementById('btnRestablecerTema').addEventListener('click', () => {
-  // Usar el overlay de confirmación existente
-  const confirmOverlay = document.getElementById('confirmOverlay');
-  if (confirmOverlay) {
-    // Cambiar el contenido del diálogo de confirmación
-    const icon = confirmOverlay.querySelector('.confirm-icon');
-    const title = confirmOverlay.querySelector('.confirm-title');
-    const message = confirmOverlay.querySelector('.confirm-message');
-    const btnConfirmar = document.getElementById('btnConfirmarEliminar');
-    const btnCancelar = document.getElementById('btnCancelarEliminar');
-
-    if (icon) {
-      icon.innerHTML = '<i class="fas fa-undo"></i>';
-      icon.style.background = 'rgba(201, 169, 110, 0.15)';
-      icon.style.color = 'var(--dorado)';
-    }
-    if (title) title.textContent = '¿Restablecer tema?';
-    if (message) message.textContent = 'Se volverá al tema por defecto (Bosque). Se perderán los colores personalizados.';
-
-    // Guardar referencia al botón original
-    const originalOnclick = btnConfirmar.onclick;
-
-    btnConfirmar.onclick = () => {
-      restablecerTema();
-      confirmOverlay.classList.remove('active');
-      // Restaurar el comportamiento original del botón
-      setTimeout(() => {
-        btnConfirmar.onclick = originalOnclick;
-        if (icon) {
-          icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
-          icon.style.background = '';
-          icon.style.color = '';
-        }
-        if (title) title.textContent = '¿Eliminar producto?';
-        if (message) message.textContent = 'Esta acción no se puede deshacer. El producto será eliminado permanentemente.';
-      }, 300);
-    };
-
-    btnCancelar.onclick = () => {
-      confirmOverlay.classList.remove('active');
-      // Restaurar el comportamiento original
-      setTimeout(() => {
-        btnConfirmar.onclick = originalOnclick;
-        if (icon) {
-          icon.innerHTML = '<i class="fas fa-trash-alt"></i>';
-          icon.style.background = '';
-          icon.style.color = '';
-        }
-        if (title) title.textContent = '¿Eliminar producto?';
-        if (message) message.textContent = 'Esta acción no se puede deshacer. El producto será eliminado permanentemente.';
-      }, 300);
-    };
-
-    confirmOverlay.classList.add('active');
+// Cerrar con tecla Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    cerrarPreviewModal();
   }
 });
+
+// Restablecer tema — con confirmación
+const btnRestablecerTema = document.getElementById('btnRestablecerTema');
+if (btnRestablecerTema) {
+  btnRestablecerTema.addEventListener('click', () => {
+    pedirConfirmacion(
+      '¿Restablecer tema?',
+      'Se volverá al tema por defecto (Bosque). Se perderán los colores personalizados.',
+      restablecerTema
+    );
+  });
+}
 
 function restablecerTema() {
   temaActual = 'bosque';
@@ -1154,6 +1117,259 @@ function abrirWhatsApp(numero, mensaje) {
 }
 
 /* ============================================================
+ *  CATEGORÍAS
+ * ============================================================ */
+
+const categoriaModal = document.getElementById('categoriaModal');
+const categoriaForm = document.getElementById('categoriaForm');
+const btnAgregarCategoria = document.getElementById('btnAgregarCategoria');
+const btnCancelarCategoria = document.getElementById('btnCancelarCategoria');
+const categoriaModalClose = document.getElementById('categoriaModalClose');
+const categoriaModalTitle = document.getElementById('categoriaModalTitle');
+
+let categoriaEditando = null;
+let callbackConfirmacion = null;
+
+// Sistema de confirmación genérico (productos y categorías)
+function pedirConfirmacion(titulo, mensaje, callback) {
+  const confirmTitle = document.getElementById('confirmTitle');
+  const confirmMessage = document.getElementById('confirmMessage');
+  confirmTitle.textContent = titulo;
+  confirmMessage.textContent = mensaje;
+  callbackConfirmacion = callback;
+  confirmOverlay.classList.add('active');
+}
+
+// Renderizar lista de categorías
+function renderCategorias() {
+  const lista = document.getElementById('categoriasLista');
+  const categorias = config.categorias || [];
+
+  // Actualizar badge del menú
+  const categoriaCount = document.getElementById('categoriaCount');
+  if (categoriaCount) categoriaCount.textContent = categorias.length;
+
+  if (categorias.length === 0) {
+    lista.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-folder-open"></i>
+        <p>No hay categorías. Agrega la primera.</p>
+      </div>
+    `;
+    renderPreviewFiltros();
+    return;
+  }
+
+  lista.innerHTML = categorias.map(cat => `
+    <div class="categoria-card ${cat.activa ? '' : 'inactiva'}" data-id="${escapeHtml(cat.id)}">
+      <div class="categoria-icono">
+        <i class="fas fa-tag"></i>
+      </div>
+      <div class="categoria-info">
+        <div class="categoria-nombre">${escapeHtml(cat.nombre)}</div>
+        <div class="categoria-codigo">${escapeHtml(cat.id)}</div>
+        <span class="categoria-badge ${cat.activa ? 'activa' : 'inactiva'}">
+          ${cat.activa ? 'Activa' : 'Oculta'}
+        </span>
+      </div>
+      <div class="categoria-acciones">
+        <label class="toggle-switch" title="${cat.activa ? 'Ocultar de la tienda' : 'Mostrar en la tienda'}">
+          <input type="checkbox" ${cat.activa ? 'checked' : ''} onchange="toggleCategoria('${escapeHtml(cat.id)}')">
+          <span class="toggle-slider"></span>
+        </label>
+        <button class="categoria-btn edit" onclick="editarCategoria('${escapeHtml(cat.id)}')" aria-label="Editar categoría">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="categoria-btn delete" onclick="confirmarEliminarCategoria('${escapeHtml(cat.id)}')" aria-label="Eliminar categoría">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `).join('');
+
+  renderPreviewFiltros();
+}
+
+// Renderizar preview de filtros como se ven en la tienda
+function renderPreviewFiltros() {
+  const contenedor = document.getElementById('previewFiltros');
+  if (!contenedor) return;
+  const categorias = (config.categorias || []).filter(c => c.activa);
+
+  let html = '<button class="preview-filter-btn active">Todos</button>';
+  categorias.forEach(cat => {
+    html += `<button class="preview-filter-btn">${escapeHtml(cat.nombre)}</button>`;
+  });
+
+  contenedor.innerHTML = html;
+}
+
+// Actualizar el select de categorías en el formulario de producto
+function actualizarSelectCategorias() {
+  const select = document.getElementById('prodCategoria');
+  if (!select) return;
+  const valorActual = select.value;
+  const categorias = config.categorias || [];
+
+  select.innerHTML = '<option value="">Seleccionar...</option>' +
+    categorias.map(cat =>
+      `<option value="${escapeHtml(cat.id)}">${escapeHtml(cat.nombre)}</option>`
+    ).join('');
+
+  // Mantener el valor seleccionado si aún existe
+  if (valorActual && categorias.some(c => c.id === valorActual)) {
+    select.value = valorActual;
+  }
+}
+
+// Abrir modal para agregar categoría
+if (btnAgregarCategoria) {
+  btnAgregarCategoria.addEventListener('click', () => {
+    categoriaEditando = null;
+    categoriaModalTitle.innerHTML = 'Agregar <span>Categoría</span>';
+    categoriaForm.reset();
+    document.getElementById('categoriaEditandoId').value = '';
+    const catCodigo = document.getElementById('catCodigo');
+    catCodigo.readOnly = false;
+    catCodigo.style.opacity = '1';
+    catCodigo.style.cursor = 'text';
+    categoriaModal.classList.add('active');
+  });
+}
+
+// Cerrar modal de categoría
+function cerrarCategoriaModal() {
+  categoriaModal.classList.remove('active');
+  categoriaEditando = null;
+}
+
+if (categoriaModalClose) categoriaModalClose.addEventListener('click', cerrarCategoriaModal);
+if (btnCancelarCategoria) btnCancelarCategoria.addEventListener('click', cerrarCategoriaModal);
+
+if (categoriaModal) {
+  categoriaModal.addEventListener('click', (e) => {
+    if (e.target === categoriaModal) {
+      cerrarCategoriaModal();
+    }
+  });
+}
+
+// Guardar categoría (crear o actualizar)
+if (categoriaForm) {
+  categoriaForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const nombre = document.getElementById('catNombre').value.trim();
+    let codigo = document.getElementById('catCodigo').value.trim().toLowerCase();
+    const editandoId = document.getElementById('categoriaEditandoId').value;
+
+    // Validaciones
+    if (!nombre) {
+      showToast('El nombre es obligatorio', 'error');
+      return;
+    }
+    if (!codigo) {
+      showToast('El código interno es obligatorio', 'error');
+      return;
+    }
+
+    // Limpiar código: solo letras, números y guiones
+    codigo = codigo.replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+
+    if (!codigo) {
+      showToast('El código interno debe tener letras o números', 'error');
+      return;
+    }
+
+    // Verificar que el código no esté repetido (excepto si es la misma categoría que se edita)
+    const repetido = (config.categorias || []).some(c => c.id === codigo && c.id !== editandoId);
+    if (repetido) {
+      showToast('Ya existe una categoría con ese código', 'error');
+      return;
+    }
+
+    if (editandoId) {
+      // Editar categoría existente (el código interno NO cambia para no romper productos)
+      const cat = (config.categorias || []).find(c => c.id === editandoId);
+      if (cat) {
+        cat.nombre = nombre;
+        showToast('Categoría actualizada');
+      }
+    } else {
+      // Agregar nueva categoría
+      if (!config.categorias) config.categorias = [];
+      config.categorias.push({ id: codigo, nombre, activa: true });
+      showToast('Categoría agregada');
+    }
+
+    guardarConfig();
+    renderCategorias();
+    actualizarSelectCategorias();
+    cerrarCategoriaModal();
+  });
+}
+
+// Abrir modal para editar categoría (solo se puede cambiar el nombre)
+function editarCategoria(id) {
+  const cat = (config.categorias || []).find(c => c.id === id);
+  if (!cat) return;
+
+  categoriaEditando = id;
+  categoriaModalTitle.innerHTML = 'Editar <span>Categoría</span>';
+  categoriaForm.reset();
+  document.getElementById('categoriaEditandoId').value = id;
+  document.getElementById('catNombre').value = cat.nombre;
+  document.getElementById('catCodigo').value = cat.id;
+  document.getElementById('catCodigo').readOnly = true;
+  document.getElementById('catCodigo').style.opacity = '0.5';
+  document.getElementById('catCodigo').style.cursor = 'not-allowed';
+  categoriaModal.classList.add('active');
+}
+
+// Activar / desactivar categoría
+function toggleCategoria(id) {
+  const cat = (config.categorias || []).find(c => c.id === id);
+  if (!cat) return;
+
+  cat.activa = !cat.activa;
+  guardarConfig();
+  renderCategorias();
+  showToast(cat.activa ? `"${cat.nombre}" ahora es visible en la tienda` : `"${cat.nombre}" está oculta en la tienda`);
+}
+
+// Confirmar eliminación de categoría
+function confirmarEliminarCategoria(id) {
+  const cat = (config.categorias || []).find(c => c.id === id);
+  if (!cat) return;
+
+  const productosEnCategoria = productos.filter(p => p.categoria === id).length;
+  let mensaje = `Se eliminará la categoría "${cat.nombre}".`;
+
+  if (productosEnCategoria > 0) {
+    mensaje += ` Hay ${productosEnCategoria} producto(s) con esta categoría. Quedarán sin categoría.`;
+  }
+
+  pedirConfirmacion('¿Eliminar categoría?', mensaje, () => {
+    config.categorias = (config.categorias || []).filter(c => c.id !== id);
+    guardarConfig();
+    renderCategorias();
+    actualizarSelectCategorias();
+    showToast('Categoría eliminada');
+  });
+}
+
+// Actualizar confirmación para usar el sistema genérico
+btnConfirmarEliminar.addEventListener('click', () => {
+  if (callbackConfirmacion) {
+    callbackConfirmacion();
+    callbackConfirmacion = null;
+  }
+  confirmOverlay.classList.remove('active');
+});
+
+
+
+/* ============================================================
  *  INICIALIZACIÓN
  * ============================================================ */
 
@@ -1164,6 +1380,9 @@ function initAdmin() {
   renderProductos();
   renderPedidos();
   renderDashboard();
+  renderCategorias();
+  actualizarSelectCategorias();
+  initTemas();
 }
 
 // Inicializar cuando el DOM esté listo
