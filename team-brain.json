@@ -257,6 +257,33 @@
       "estado": "completado",
       "progreso": 100,
       "resultado": "11 mejoras: HSL inteligente, guardado automático, preview corregido, transiciones suaves, tema Noche rediseñado"
+    },
+    {
+      "id": "fix-inittemas",
+      "nombre": "Dev Fix initTemas",
+      "tarea": "Definir correctamente la función initTemas",
+      "archivo": "admin.js",
+      "estado": "completado",
+      "progreso": 100,
+      "resultado": "initTemas envuelta en función correctamente"
+    },
+    {
+      "id": "fix-categorias-contador",
+      "nombre": "Dev Fix Categorías",
+      "tarea": "Corregir contador de categorías que muestra 0 en admin",
+      "archivo": "admin.js, admin/index.html",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T18:00:00"
+    },
+    {
+      "id": "fix-temas-colores",
+      "nombre": "Dev Fix Temas Colores",
+      "tarea": "Corregir cambio de colores de temas en admin",
+      "archivo": "admin.js, index.html",
+      "estado": "trabajando",
+      "progreso": 0,
+      "iniciado": "2026-09-27T18:00:00"
     }
   ],
   "archivos": {
