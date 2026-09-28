@@ -20,7 +20,7 @@
  * ============================================================
  */
 
-import { productosCollection, configCollection, getDocs, setDoc, addDoc, updateDoc, deleteDoc, doc } from '../firebase-config.js';
+import { productosCollection, configCollection, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, doc } from './firebase-config.js';
 
 'use strict';
 
@@ -138,13 +138,10 @@ async function cargarDatos() {
 
   // Cargar configuración desde Firebase
   try {
-    const configDoc = await getDocs(configCollection);
-    if (!configDoc.empty) {
-      configDoc.forEach((doc) => {
-        if (doc.id === 'tienda') {
-          config = { ...config, ...doc.data() };
-        }
-      });
+    const configDocRef = doc(configCollection, 'tienda');
+    const configDocSnap = await getDoc(configDocRef);
+    if (configDocSnap.exists()) {
+      config = { ...config, ...configDocSnap.data() };
     }
   } catch (e) {
     console.error('Error al cargar configuración desde Firebase:', e);
@@ -167,8 +164,10 @@ async function guardarProductos() {
     // Guardar cada producto en Firebase
     for (const producto of productos) {
       const productoData = { ...producto };
+      const id = productoData.id;
       delete productoData.id;
-      await setDoc(doc(productosCollection, producto.id), productoData);
+      // Firestore requiere ID como string
+      await setDoc(doc(productosCollection, String(id)), productoData);
     }
     console.log('Productos guardados en Firebase');
   } catch (e) {
@@ -527,12 +526,6 @@ function cerrarModal() {
   productoEditando = null;
 }
 
-function cerrarModal() {
-  const productoModal = document.getElementById('productoModal');
-  if (productoModal) productoModal.classList.remove('active');
-  productoEditando = null;
-}
-
 function mostrarZonaSubida() {
   const fotoUploadZone = document.getElementById('fotoUploadZone');
   const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
@@ -652,8 +645,8 @@ function cargarConfigEnFormulario() {
  *  INICIALIZACIÓN
  * ============================================================ */
 
-function initAdmin() {
-  cargarDatos();
+async function initAdmin() {
+  await cargarDatos();
   cargarConfigEnFormulario();
   renderProductos();
   renderPedidos();
