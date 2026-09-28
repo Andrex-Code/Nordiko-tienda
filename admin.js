@@ -183,6 +183,12 @@ function guardarConfig() {
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebarOverlay');
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+// Verificar que los elementos críticos existan antes de continuar
+// Si falta alguno, el script no debe detenerse (puede cargarse en otras páginas)
+if (!sidebar || !mobileMenuBtn) {
+  console.warn('[admin.js] Elementos del sidebar no encontrados. Algunas funcionalidades estarán limitadas.');
+}
 const navItems = document.querySelectorAll('.nav-item');
 const sectionContents = document.querySelectorAll('.section-content');
 const pageTitle = document.getElementById('pageTitle');
@@ -617,6 +623,11 @@ const btnAgregarProducto = document.getElementById('btnAgregarProducto');
 const btnCancelar = document.getElementById('btnCancelar');
 const modalClose = document.getElementById('modalClose');
 
+// Protección: verificar elementos críticos del modal
+if (!productoModal || !productoForm) {
+  console.warn('[admin.js] Modal de producto no encontrado. La gestión de productos no funcionará.');
+}
+
 // Elementos de foto
 const fotoUploadZone = document.getElementById('fotoUploadZone');
 const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
@@ -881,6 +892,11 @@ document.getElementById('searchProductos').addEventListener('input', (e) => {
  * ============================================================ */
 
 const configForm = document.getElementById('configForm');
+
+// Protección: verificar que el formulario de configuración exista
+if (!configForm) {
+  console.warn('[admin.js] Formulario de configuración no encontrado.');
+}
 
 // Cargar configuración en el formulario
 function cargarConfigEnFormulario() {
@@ -1151,6 +1167,16 @@ const categoriaModalTitle = document.getElementById('categoriaModalTitle');
 let categoriaEditando = null;
 let callbackConfirmacion = null;
 
+/**
+ * Carga y renderiza las categorías en el panel de administración.
+ * Función principal para mostrar la lista de categorías y actualizar el contador.
+ * @returns {void}
+ */
+function cargarCategorias() {
+  renderCategorias();
+  actualizarSelectCategorias();
+}
+
 // Sistema de confirmación genérico (productos y categorías)
 function pedirConfirmacion(titulo, mensaje, callback) {
   const confirmTitle = document.getElementById('confirmTitle');
@@ -1401,8 +1427,7 @@ function initAdmin() {
   renderProductos();
   renderPedidos();
   renderDashboard();
-  renderCategorias();
-  actualizarSelectCategorias();
+  cargarCategorias();
   initTemas();
 }
 
