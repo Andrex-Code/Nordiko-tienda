@@ -133,6 +133,21 @@ function cargarDatos() {
     }
   }
 
+  // Validar categorías: si la config guardada no contiene un array válido
+  // (null, string, objeto, etc. por datos corruptos o versiones anteriores),
+  // restaurar las categorías por defecto y reparar localStorage.
+  // Sin esto, el contador de categorías muestra 0 aunque la tienda
+  // siga mostrando categorías (filtros estáticos en index.html).
+  if (!Array.isArray(config.categorias)) {
+    config.categorias = [
+      { id: 'hidratante', nombre: 'Hidratante', activa: true },
+      { id: 'corporal', nombre: 'Corporal', activa: true },
+      { id: 'facial', nombre: 'Facial', activa: true },
+      { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true }
+    ];
+    guardarConfig();
+  }
+
   // Cargar productos
   const productosGuardados = localStorage.getItem(STORAGE_KEY_PRODUCTOS);
   if (productosGuardados) {
@@ -271,10 +286,10 @@ const TEMAS = {
 
 let temaActual = 'bosque';
 let customColores = {
-  primario: '#2a2a2a',
-  acento: '#c9a96e',
-  fondo: '#0a0a0a',
-  texto: '#ffffff'
+  primario: '#1e3a5f',
+  acento: '#e07a3f',
+  fondo: '#0d1b2a',
+  texto: '#f0e6d3'
 };
 
 function cargarTema() {
@@ -336,29 +351,33 @@ function aplicarTema(nombreTema) {
   root.style.setProperty('--preview-primario-texto', colores.primarioOscuro);
   root.style.setProperty('--preview-fondo-card', colores.fondoCard);
 
-  // Actualizar variables de la tarjeta personalizada
-  root.style.setProperty('--custom-primario', customColores.primario);
-  root.style.setProperty('--custom-acento', customColores.acento);
-  root.style.setProperty('--custom-fondo', customColores.fondo);
-  root.style.setProperty('--custom-texto', customColores.texto);
-
   // Actualizar tarjeta de tema activa en la UI
   document.querySelectorAll('.tema-card').forEach(card => {
     card.classList.toggle('active', card.dataset.tema === nombreTema);
   });
 
-  // Actualizar color pickers si el panel personalizado está visible
-  const panel = document.getElementById('customColorsPanel');
-  if (panel && panel.classList.contains('visible')) {
-    const pickerPrimario = document.getElementById('customPrimario');
-    const pickerAcento = document.getElementById('customAcento');
-    const pickerFondo = document.getElementById('customFondo');
-    const pickerTexto = document.getElementById('customTexto');
-    if (pickerPrimario) pickerPrimario.value = customColores.primario;
-    if (pickerAcento) pickerAcento.value = customColores.acento;
-    if (pickerFondo) pickerFondo.value = customColores.fondo;
-    if (pickerTexto) pickerTexto.value = customColores.texto;
+  // Actualizar variables y pickers SOLO si es tema personalizado
+  if (nombreTema === 'personalizado') {
+    root.style.setProperty('--custom-primario', customColores.primario);
+    root.style.setProperty('--custom-acento', customColores.acento);
+    root.style.setProperty('--custom-fondo', customColores.fondo);
+    root.style.setProperty('--custom-texto', customColores.texto);
+
+    const panel = document.getElementById('customColorsPanel');
+    if (panel && panel.classList.contains('visible')) {
+      const pickerPrimario = document.getElementById('customPrimario');
+      const pickerAcento = document.getElementById('customAcento');
+      const pickerFondo = document.getElementById('customFondo');
+      const pickerTexto = document.getElementById('customTexto');
+      if (pickerPrimario) pickerPrimario.value = customColores.primario;
+      if (pickerAcento) pickerAcento.value = customColores.acento;
+      if (pickerFondo) pickerFondo.value = customColores.fondo;
+      if (pickerTexto) pickerTexto.value = customColores.texto;
+    }
   }
+
+  // Log para debugging
+  console.log(`[aplicarTema] Tema "${nombreTema}" aplicado. Fondo: ${colores.fondo}, Acento: ${colores.acento}`);
 }
 
 /* ============================================================
@@ -1041,10 +1060,10 @@ if (btnRestablecerTema) {
 function restablecerTema() {
   temaActual = 'bosque';
   customColores = {
-    primario: '#2a2a2a',
-    acento: '#c9a96e',
-    fondo: '#0a0a0a',
-    texto: '#ffffff'
+    primario: '#1e3a5f',
+    acento: '#e07a3f',
+    fondo: '#0d1b2a',
+    texto: '#f0e6d3'
   };
   aplicarTema('bosque');
 
