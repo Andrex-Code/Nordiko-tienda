@@ -157,6 +157,15 @@
             precio: 280,
             icono: "🪒",
             badge: ""
+        },
+        {
+            id: 13,
+            nombre: "L'Eau d'Issey Miyake",
+            categoria: "perfume",
+            descripcion: "Descubre la calma en cada gota. L'Eau d'Issey Miyake — la esencia premium que redefine tu presencia. Elegancia japonesa, frescura atemporal.",
+            precio: 20000,
+            icono: "🧴",
+            badge: "new"
         }
     ];
 
@@ -235,7 +244,8 @@
             'hidratante': 'Hidratante',
             'corporal': 'Corporal',
             'facial': 'Facial',
-            'ante-envejecimiento': 'Antiedad'
+            'ante-envejecimiento': 'Antiedad',
+            'perfume': 'Perfume'
         };
         return nombres[categoria] || categoria;
     }
