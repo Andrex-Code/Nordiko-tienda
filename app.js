@@ -832,6 +832,16 @@
     window.setFilter = setFilter;
     window.showLegal = showLegal;
 
+    // Exponer funciones del carrito al scope global
+    window.agregarAlCarrito = agregarAlCarrito;
+    window.actualizarCarrito = actualizarCarrito;
+    window.abrirCarrito = abrirCarrito;
+    window.cerrarCarrito = cerrarCarrito;
+    window.eliminarDelCarrito = eliminarDelCarrito;
+    window.cambiarCantidad = cambiarCantidad;
+    window.guardarCarrito = guardarCarrito;
+    window.cargarCarrito = cargarCarrito;
+
     // ============================================
     // 18. FUNCIONES AUXILIARES PARA FOOTER Y NAVEGACIÓN
     // ============================================
