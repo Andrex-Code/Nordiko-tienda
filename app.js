@@ -203,7 +203,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
     // 3. ESTADO DE LA APLICACIÓN
     // ============================================
 
-    let productos = cargarProductos();
+    let productos = [];
     let carrito = [];
     let filtroActual = 'todos';
     let busquedaActual = '';
@@ -383,7 +383,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
         // Agregar eventos a los botones de "Agregar"
         document.querySelectorAll('.add-to-cart').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const id = parseInt(e.currentTarget.dataset.id);
+                const id = e.currentTarget.dataset.id;
                 agregarAlCarrito(id, e.currentTarget);
             });
         });
@@ -414,7 +414,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
      * Un solo toque y listo.
      */
     function agregarAlCarrito(id, boton) {
-        const producto = productos.find(p => p.id === id);
+        const producto = productos.find(p => String(p.id) === String(id));
         if (!producto) {
             mostrarToast('Ups, no encontramos ese producto', 'error');
             return;
@@ -457,7 +457,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
      * Pregunta antes de borrar para no perderlo por accidente.
      */
     function eliminarDelCarrito(id) {
-        const item = carrito.find(item => item.id === id);
+        const item = carrito.find(item => String(item.id) === String(id));
         if (!item) return;
 
         // Confirmación simple y clara
@@ -473,7 +473,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
      * Botones + y - grandes para usar con el pulgar.
      */
     function cambiarCantidad(id, delta) {
-        const item = carrito.find(item => item.id === id);
+        const item = carrito.find(item => String(item.id) === String(id));
         if (item) {
             item.cantidad += delta;
             if (item.cantidad <= 0) {
@@ -533,7 +533,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
             // Agregar eventos a los botones del carrito (delegación de eventos)
             cartItems.querySelectorAll('.qty-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
+                    const id = btn.dataset.id;
                     const action = btn.dataset.action;
                     cambiarCantidad(id, action === 'increase' ? 1 : -1);
                 });
@@ -541,7 +541,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
 
             cartItems.querySelectorAll('.cart-item-remove').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const id = parseInt(btn.dataset.id);
+                    const id = btn.dataset.id;
                     eliminarDelCarrito(id);
                 });
             });
@@ -833,8 +833,16 @@ import { productosCollection, getDocs } from './firebase-config.js';
     // Cargar carrito guardado antes de renderizar
     cargarCarrito();
 
-    // Dibujar productos al cargar
-    renderizarProductos();
+    // Cargar productos desde Firebase y luego renderizar
+    cargarProductos().then((productosCargados) => {
+        productos = productosCargados;
+        renderizarProductos();
+    }).catch((error) => {
+        console.error('Error al inicializar productos:', error);
+        // Si falla Firebase, usar productos por defecto
+        productos = productosDefault;
+        renderizarProductos();
+    });
 
     // Dibujar carrito (cargado o vacío)
     actualizarCarrito();
@@ -842,6 +850,7 @@ import { productosCollection, getDocs } from './firebase-config.js';
     // Exponer funciones globales para footer y navegación
     window.setFilter = setFilter;
     window.showLegal = showLegal;
+    window.renderizarProductos = renderizarProductos;
 
     // Exponer funciones del carrito al scope global
     window.agregarAlCarrito = agregarAlCarrito;
