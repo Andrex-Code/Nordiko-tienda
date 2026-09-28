@@ -3,288 +3,477 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oficina 3D - Equipo NØRDIKO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Habbo Office - Equipo NØRDIKO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a;
-            color: #f5f5f5;
-            overflow: hidden;
-            height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* ===== 3D SCENE ===== */
-        .scene {
-            width: 100vw;
-            height: 100vh;
-            perspective: 1500px;
-            perspective-origin: 50% 30%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .office-floor {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            left: -50%;
-            top: 50%;
-            background: 
-                linear-gradient(90deg, rgba(201,169,110,0.03) 1px, transparent 1px),
-                linear-gradient(rgba(201,169,110,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            transform: rotateX(75deg);
-            transform-style: preserve-3d;
-        }
-
-        .office-walls {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%);
-        }
-
-        /* ===== ROOMS / DEPARTAMENTOS ===== */
-        .department {
-            position: absolute;
-            width: 280px;
-            height: 200px;
-            transform-style: preserve-3d;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .department:hover {
-            transform: translateZ(20px);
-        }
-
-        .department:hover .room-glow {
-            opacity: 1;
-        }
-
-        .room-glow {
-            position: absolute;
-            inset: -20px;
-            border-radius: 20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-        }
-
-        .room-glow.design { background: radial-gradient(ellipse, rgba(156,39,176,0.15) 0%, transparent 70%); }
-        .room-glow.dev { background: radial-gradient(ellipse, rgba(33,150,243,0.15) 0%, transparent 70%); }
-        .room-glow.qa { background: radial-gradient(ellipse, rgba(255,152,0,0.15) 0%, transparent 70%); }
-        .room-glow.ops { background: radial-gradient(ellipse, rgba(76,175,80,0.15) 0%, transparent 70%); }
-
-        /* ===== ROOM STRUCTURE ===== */
-        .room {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
-            border-radius: 16px;
-            border: 2px solid #333;
+        /* ===== HABBO CONTAINER ===== */
+        .habbo-container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            transform-style: preserve-3d;
         }
 
-        .room-header {
+        /* ===== HEADER HABBO ===== */
+        .habbo-header {
+            background: linear-gradient(180deg, #2d5a87 0%, #1a3a5c 100%);
+            border-radius: 12px 12px 0 0;
+            padding: 15px 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 20px;
+            border: 3px solid #4a90d9;
+            border-bottom: none;
         }
 
-        .room-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .habbo-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #c9a96e 0%, #b8860b 100%);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
         }
 
-        .room-icon.design { background: rgba(156,39,176,0.2); color: #9c27b0; }
-        .room-icon.dev { background: rgba(33,150,243,0.2); color: #2196f3; }
-        .room-icon.qa { background: rgba(255,152,0,0.2); color: #ff9800; }
-        .room-icon.ops { background: rgba(76,175,80,0.2); color: #4caf50; }
-
-        .room-title {
-            font-weight: 700;
-            font-size: 1rem;
+        .habbo-title h1 {
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
         }
 
-        .room-count {
+        .habbo-title p {
+            color: #a0c4e8;
+            font-size: 0.85rem;
+        }
+
+        .habbo-stats {
             margin-left: auto;
-            font-size: 0.75rem;
-            color: #888;
-            background: #0a0a0a;
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-
-        /* ===== AGENTS IN ROOM ===== */
-        .agents-in-room {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+            gap: 15px;
         }
 
-        /* ===== AGENT PERSONITA ===== */
-        .agent-person {
-            width: 50px;
-            height: 70px;
+        .habbo-stat {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .habbo-stat .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #c9a96e;
+        }
+
+        .habbo-stat .label {
+            font-size: 0.65rem;
+            color: #a0c4e8;
+            text-transform: uppercase;
+        }
+
+        /* ===== HABBO ROOM ===== */
+        .habbo-room {
+            background: #2a4a6b;
+            border: 3px solid #4a90d9;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 30px;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Piso isométrico Habbo */
+        .habbo-floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70%;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 58px,
+                    rgba(255,255,255,0.05) 58px,
+                    rgba(255,255,255,0.05) 60px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 58px,
+                    rgba(255,255,255,0.05) 58px,
+                    rgba(255,255,255,0.05) 60px
+                ),
+                linear-gradient(180deg, #3d6b99 0%, #2a4a6b 100%);
+            transform: perspective(800px) rotateX(60deg);
+            transform-origin: bottom;
+        }
+
+        /* Pared Habbo */
+        .habbo-wall {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            background: linear-gradient(180deg, #4a90d9 0%, #3d6b99 100%);
+            border-bottom: 4px solid #2a4a6b;
+        }
+
+        /* Ventanas en pared */
+        .wall-windows {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .window {
+            width: 80px;
+            height: 100px;
+            background: linear-gradient(180deg, #87ceeb 0%, #4a90d9 100%);
+            border: 4px solid #fff;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .window::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #fff;
+        }
+
+        .window::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 3px;
+            background: #fff;
+        }
+
+        /* ===== HABBO TILES (Baldosas) ===== */
+        .habbo-tiles {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 4px;
+            padding: 20px;
+        }
+
+        .habbo-tile {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #4a7ba6 0%, #3d6b99 100%);
+            border-radius: 4px;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .habbo-tile:hover {
+            background: linear-gradient(135deg, #5a8bc6 0%, #4d7ba9 100%);
+            transform: scale(1.05);
+            z-index: 5;
+        }
+
+        .habbo-tile.has-agent {
+            background: linear-gradient(135deg, #c9a96e 0%, #b8860b 100%);
+            border-color: #fff;
+        }
+
+        .habbo-tile.has-agent::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* ===== HABBO AVATARS ===== */
+        .habbo-avatars {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        /* Avatar estilo Habbo */
+        .habbo-avatar {
+            width: 60px;
+            height: 100px;
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
         }
 
-        .agent-person:hover {
-            transform: translateY(-5px) scale(1.1);
-            z-index: 10;
+        .habbo-avatar:hover {
+            transform: translateY(-10px);
         }
 
-        .agent-person:hover .agent-tooltip {
+        .habbo-avatar:hover .avatar-bubble {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
 
-        /* Cabeza */
-        .agent-head {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
+        /* Cabeza Habbo */
+        .avatar-head {
+            width: 50px;
+            height: 50px;
             margin: 0 auto;
+            border-radius: 50% 50% 45% 45%;
             position: relative;
+            border: 3px solid rgba(0,0,0,0.2);
             z-index: 2;
         }
 
-        .agent-head.design { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
-        .agent-head.dev { background: linear-gradient(135deg, #2196f3, #1976d2); }
-        .agent-head.qa { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .agent-head.ops { background: linear-gradient(135deg, #4caf50, #388e3c); }
+        .avatar-head.skin-1 { background: #fdbcb4; }
+        .avatar-head.skin-2 { background: #e8b89d; }
+        .avatar-head.skin-3 { background: #c68642; }
+        .avatar-head.skin-4 { background: #8d5524; }
 
-        /* Ojos */
-        .agent-head::before {
-            content: '';
+        /* Pelo */
+        .avatar-hair {
             position: absolute;
-            top: 10px;
-            left: 7px;
-            width: 5px;
-            height: 5px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 11px 0 0 #fff;
+            top: -8px;
+            left: -5px;
+            right: -5px;
+            height: 25px;
+            border-radius: 50% 50% 0 0;
         }
 
-        /* Sonrisa */
-        .agent-head::after {
-            content: '';
+        .avatar-hair.hair-1 { background: #2c1810; }
+        .avatar-hair.hair-2 { background: #8b4513; }
+        .avatar-hair.hair-3 { background: #daa520; }
+        .avatar-hair.hair-4 { background: #1a1a1a; }
+
+        /* Ojos */
+        .avatar-eyes {
             position: absolute;
-            bottom: 6px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10px;
-            height: 5px;
-            border: 2px solid #fff;
+            display: flex;
+            gap: 8px;
+        }
+
+        .avatar-eye {
+            width: 8px;
+            height: 10px;
+            background: #1a1a1a;
+            border-radius: 50%;
+        }
+
+        /* Boca */
+        .avatar-mouth {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 6px;
+            border: 2px solid #c9a96e;
             border-top: none;
             border-radius: 0 0 10px 10px;
         }
 
-        /* Cuerpo */
-        .agent-body {
-            width: 35px;
-            height: 35px;
+        /* Cuerpo Habbo */
+        .avatar-body {
+            width: 55px;
+            height: 45px;
             margin: -5px auto 0;
             border-radius: 8px 8px 4px 4px;
             position: relative;
+            border: 3px solid rgba(0,0,0,0.2);
         }
 
-        .agent-body.design { background: linear-gradient(135deg, #7b1fa2, #4a148c); }
-        .agent-body.dev { background: linear-gradient(135deg, #1976d2, #0d47a1); }
-        .agent-body.qa { background: linear-gradient(135deg, #f57c00, #e65100); }
-        .agent-body.ops { background: linear-gradient(135deg, #388e3c, #1b5e20); }
+        .avatar-body.shirt-1 { background: linear-gradient(180deg, #4a90d9 0%, #2a5a87 100%); }
+        .avatar-body.shirt-2 { background: linear-gradient(180deg, #9c27b0 0%, #7b1fa2 100%); }
+        .avatar-body.shirt-3 { background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%); }
+        .avatar-body.shirt-4 { background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); }
+
+        /* Piernas */
+        .avatar-legs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: -3px;
+        }
+
+        .avatar-leg {
+            width: 20px;
+            height: 25px;
+            border-radius: 0 0 4px 4px;
+        }
+
+        .avatar-leg.pants-1 { background: #1a1a2e; }
+        .avatar-leg.pants-2 { background: #2d3436; }
 
         /* Estado de trabajo */
-        .agent-working {
+        .avatar-status {
             position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 12px;
-            height: 12px;
+            top: -10px;
+            right: -10px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: #4caf50;
-            border: 2px solid #0a0a0a;
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: #fff;
+            z-index: 5;
+        }
+
+        .avatar-status.working {
+            background: #ff9800;
             animation: pulse 1s infinite;
         }
 
-        .agent-working.active {
-            background: #ff9800;
-            animation: pulse 0.5s infinite;
-        }
-
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
-        /* Tooltip */
-        .agent-tooltip {
+        /* Burbuja de diálogo */
+        .avatar-bubble {
             position: absolute;
-            bottom: 100%;
+            bottom: 110%;
             left: 50%;
             transform: translateX(-50%) translateY(10px);
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: #fff;
             border-radius: 12px;
             padding: 12px;
-            min-width: 200px;
+            min-width: 180px;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
             z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
 
-        .tooltip-title {
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            color: #c9a96e;
+        .avatar-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #fff;
         }
 
-        .tooltip-task {
-            font-size: 0.8rem;
-            color: #888;
+        .bubble-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .bubble-task {
+            font-size: 0.75rem;
+            color: #666;
             margin-bottom: 8px;
         }
 
-        .tooltip-status {
+        .bubble-status {
             display: inline-block;
             padding: 3px 10px;
             border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
+            font-size: 0.65rem;
+            font-weight: 700;
         }
 
-        .tooltip-status.working {
-            background: rgba(255,152,0,0.2);
+        .bubble-status.working {
+            background: #fff3e0;
             color: #ff9800;
         }
 
-        .tooltip-status.completed {
-            background: rgba(76,175,80,0.2);
+        .bubble-status.completed {
+            background: #e8f5e9;
             color: #4caf50;
         }
 
-        /* ===== MODAL DETALLE ===== */
-        .modal-overlay {
+        /* ===== MUEBLES HABBO ===== */
+        .habbo-furniture {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            z-index: 1;
+        }
+
+        .furniture-desk {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            background: linear-gradient(180deg, #8b6914 0%, #6b4f0a 100%);
+            border-radius: 4px;
+            border: 3px solid #5a4008;
+        }
+
+        .furniture-desk::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            width: 40px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            border: 2px solid #333;
+        }
+
+        .furniture-desk::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            right: 10px;
+            width: 30px;
+            height: 20px;
+            background: #c9a96e;
+            border-radius: 2px;
+        }
+
+        /* ===== MODAL HABBO ===== */
+        .habbo-modal-overlay {
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.8);
@@ -297,23 +486,23 @@
             transition: all 0.3s ease;
         }
 
-        .modal-overlay.active {
+        .habbo-modal-overlay.active {
             opacity: 1;
             visibility: visible;
         }
 
-        .modal {
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 500px;
+        .habbo-modal {
+            background: linear-gradient(180deg, #2d5a87 0%, #1a3a5c 100%);
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 450px;
             width: 90%;
-            border: 1px solid #333;
+            border: 3px solid #4a90d9;
             transform: scale(0.9);
             transition: transform 0.3s ease;
         }
 
-        .modal-overlay.active .modal {
+        .habbo-modal-overlay.active .habbo-modal {
             transform: scale(1);
         }
 
@@ -324,30 +513,21 @@
             margin-bottom: 20px;
         }
 
-        .modal-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
+        .modal-avatar-preview {
+            width: 70px;
+            height: 100px;
+            position: relative;
         }
 
-        .modal-avatar.design { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
-        .modal-avatar.dev { background: linear-gradient(135deg, #2196f3, #1976d2); }
-        .modal-avatar.qa { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .modal-avatar.ops { background: linear-gradient(135deg, #4caf50, #388e3c); }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 700;
+        .modal-info h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
         }
 
-        .modal-subtitle {
-            color: #888;
-            font-size: 0.9rem;
+        .modal-info p {
+            color: #a0c4e8;
+            font-size: 0.85rem;
         }
 
         .modal-close {
@@ -355,101 +535,43 @@
             width: 35px;
             height: 35px;
             border-radius: 50%;
-            background: #333;
-            border: none;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
             color: #fff;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.2rem;
         }
 
         .modal-body {
-            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 15px;
         }
 
-        .modal-label {
-            font-size: 0.75rem;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-
-        .modal-value {
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .modal-footer {
+        .modal-row {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
         }
 
-        .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+        .modal-label { color: #a0c4e8; }
+        .modal-value { color: #fff; font-weight: 600; }
 
-        .modal-btn.primary {
-            background: #c9a96e;
-            color: #0a0a0a;
-        }
-
-        .modal-btn.secondary {
-            background: #333;
-            color: #fff;
-        }
-
-        /* ===== STATS BAR ===== */
-        .stats-bar {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(26,26,26,0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            padding: 15px 30px;
-            display: flex;
-            gap: 30px;
-            border: 1px solid #333;
-            z-index: 100;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #c9a96e;
-        }
-
-        .stat-label {
-            font-size: 0.7rem;
-            color: #888;
-            text-transform: uppercase;
-        }
-
-        /* ===== REFRESH ===== */
-        .refresh-indicator {
+        /* Refresh */
+        .refresh-badge {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(26,26,26,0.9);
-            border: 1px solid #c9a96e;
-            border-radius: 50px;
-            padding: 10px 20px;
+            background: linear-gradient(180deg, #2d5a87 0%, #1a3a5c 100%);
+            border: 2px solid #4a90d9;
+            border-radius: 20px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: #c9a96e;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #fff;
             z-index: 100;
         }
 
@@ -461,86 +583,111 @@
             animation: pulse 2s infinite;
         }
 
-        /* Posiciones de departamentos */
-        .dept-design { top: 15%; left: 5%; }
-        .dept-dev { top: 15%; left: 38%; }
-        .dept-qa { top: 55%; left: 5%; }
-        .dept-ops { top: 55%; left: 38%; }
-
-        @media (max-width: 1200px) {
-            .dept-design { top: 10%; left: 2%; }
-            .dept-dev { top: 10%; left: 52%; }
-            .dept-qa { top: 50%; left: 2%; }
-            .dept-ops { top: 50%; left: 52%; }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .habbo-tiles { grid-template-columns: repeat(4, 1fr); }
+            .habbo-avatars { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-value" id="statTotal">0</div>
-            <div class="stat-label">Agentes</div>
+    <div class="habbo-container">
+        <!-- Header -->
+        <div class="habbo-header">
+            <div class="habbo-logo">N</div>
+            <div class="habbo-title">
+                <h1>NØRDIKO - Oficina del Equipo</h1>
+                <p>Equipo de desarrollo en acción</p>
+            </div>
+            <div class="habbo-stats">
+                <div class="habbo-stat">
+                    <div class="value" id="statTotal">0</div>
+                    <div class="label">Agentes</div>
+                </div>
+                <div class="habbo-stat">
+                    <div class="value" id="statActive" style="color: #ff9800">0</div>
+                    <div class="label">Activos</div>
+                </div>
+                <div class="habbo-stat">
+                    <div class="value" id="statDone" style="color: #4caf50">0</div>
+                    <div class="label">Listos</div>
+                </div>
+            </div>
         </div>
-        <div class="stat-item">
-            <div class="stat-value" id="statActive" style="color: #ff9800">0</div>
-            <div class="stat-label">Activos</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="statDone" style="color: #4caf50">0</div>
-            <div class="stat-label">Completados</div>
-        </div>
-    </div>
 
-    <!-- 3D Scene -->
-    <div class="scene" id="scene">
-        <div class="office-walls"></div>
-        <div class="office-floor"></div>
-        <!-- Departamentos se generan por JS -->
+        <!-- Room -->
+        <div class="habbo-room">
+            <div class="habbo-wall"></div>
+            <div class="wall-windows">
+                <div class="window"></div>
+                <div class="window"></div>
+                <div class="window"></div>
+            </div>
+            <div class="habbo-floor"></div>
+            
+            <!-- Avatares -->
+            <div class="habbo-avatars" id="habboAvatars">
+                <!-- Cargado por JS -->
+            </div>
+        </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
+    <div class="habbo-modal-overlay" id="modalOverlay">
+        <div class="habbo-modal">
             <div class="modal-header">
-                <div class="modal-avatar" id="modalAvatar">A</div>
-                <div>
-                    <div class="modal-title" id="modalTitle">Agente</div>
-                    <div class="modal-subtitle" id="modalSubtitle">Tarea</div>
+                <div class="modal-avatar-preview" id="modalAvatar"></div>
+                <div class="modal-info">
+                    <h3 id="modalTitle">Agente</h3>
+                    <p id="modalSubtitle">Tarea</p>
                 </div>
                 <button class="modal-close" onclick="closeModal()">×</button>
             </div>
             <div class="modal-body">
-                <div class="modal-label">Estado</div>
-                <div class="modal-value" id="modalStatus">Trabajando</div>
-                <div class="modal-label">Progreso</div>
-                <div class="modal-value" id="modalProgress">0%</div>
-                <div class="modal-label">Resultado</div>
-                <div class="modal-value" id="modalResult">-</div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn secondary" onclick="closeModal()">Cerrar</button>
+                <div class="modal-row">
+                    <span class="modal-label">Estado:</span>
+                    <span class="modal-value" id="modalStatus">Trabajando</span>
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label">Progreso:</span>
+                    <span class="modal-value" id="modalProgress">0%</span>
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label">Resultado:</span>
+                    <span class="modal-value" id="modalResult">-</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="refresh-indicator">
+    <div class="refresh-badge">
         <div class="refresh-dot"></div>
         <span>En vivo</span>
     </div>
 
     <script>
+        const AVATAR_STYLES = [
+            { skin: 'skin-1', hair: 'hair-1', shirt: 'shirt-1', pants: 'pants-1' },
+            { skin: 'skin-2', hair: 'hair-2', shirt: 'shirt-2', pants: 'pants-2' },
+            { skin: 'skin-3', hair: 'hair-3', shirt: 'shirt-3', pants: 'pants-1' },
+            { skin: 'skin-4', hair: 'hair-4', shirt: 'shirt-4', pants: 'pants-2' },
+            { skin: 'skin-1', hair: 'hair-3', shirt: 'shirt-2', pants: 'pants-1' },
+            { skin: 'skin-2', hair: 'hair-1', shirt: 'shirt-3', pants: 'pants-2' },
+            { skin: 'skin-3', hair: 'hair-4', shirt: 'shirt-1', pants: 'pants-1' },
+            { skin: 'skin-4', hair: 'hair-2', shirt: 'shirt-4', pants: 'pants-2' }
+        ];
+
         async function loadTeamData() {
             try {
                 const response = await fetch('team-brain.json?t=' + Date.now());
                 const data = await response.json();
-                renderOffice(data);
+                renderHabbo(data);
             } catch (error) {
                 console.error('Error:', error);
             }
         }
 
-        function renderOffice(data) {
+        function renderHabbo(data) {
             const agents = data.agentes || [];
             const completed = agents.filter(a => a.estado === 'completado');
             const active = agents.filter(a => a.estado === 'trabajando');
@@ -549,60 +696,39 @@
             document.getElementById('statActive').textContent = active.length;
             document.getElementById('statDone').textContent = completed.length;
 
-            // Organizar por departamentos
-            const departments = [
-                { id: 'design', name: 'Diseño', icon: 'fa-paint-brush', class: 'design', agents: agents.filter(a => ['css-designer', 'brand-manager', 'niche-specialist'].includes(a.id)) },
-                { id: 'dev', name: 'Desarrollo', icon: 'fa-code', class: 'dev', agents: agents.filter(a => ['html-developer', 'js-developer', 'mobile-store', 'devops', 'categorias-admin', 'recomendaciones-consultor', 'fix-inittemas', 'fix-categorias-contador', 'fix-temas-colores'].includes(a.id)) },
-                { id: 'qa', name: 'Control de Calidad', icon: 'fa-bug', class: 'qa', agents: agents.filter(a => ['revision-codigo', 'revision-ux', 'revision-seguridad', 'revision-responsive', 'revision-temas', 'mejoras-temas'].includes(a.id)) },
-                { id: 'ops', name: 'Operaciones', icon: 'fa-rocket', class: 'ops', agents: agents.filter(a => a.id === 'devops-despliegue') }
-            ];
-
-            const scene = document.getElementById('scene');
-            // Limpiar departamentos anteriores
-            scene.querySelectorAll('.department').forEach(d => d.remove());
-
-            departments.forEach((dept, index) => {
-                const deptEl = document.createElement('div');
-                deptEl.className = `department dept-${dept.id}`;
+            const container = document.getElementById('habboAvatars');
+            container.innerHTML = agents.map((agent, index) => {
+                const style = AVATAR_STYLES[index % AVATAR_STYLES.length];
+                const isActive = agent.estado === 'trabajando';
                 
-                const agentsHtml = dept.agents.map(agent => {
-                    const isActive = agent.estado === 'trabajando';
-                    const initials = agent.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                    
-                    return `
-                        <div class="agent-person" onclick="showAgentDetail('${agent.id}')" data-agent-id="${agent.id}">
-                            <div class="agent-working ${isActive ? 'active' : ''}"></div>
-                            <div class="agent-head ${dept.class}"></div>
-                            <div class="agent-body ${dept.class}"></div>
-                            <div class="agent-tooltip">
-                                <div class="tooltip-title">${agent.nombre}</div>
-                                <div class="tooltip-task">${agent.tarea}</div>
-                                <span class="tooltip-status ${isActive ? 'working' : 'completed'}">
-                                    ${isActive ? 'Trabajando' : 'Completado'}
-                                </span>
-                            </div>
+                return `
+                    <div class="habbo-avatar" onclick="showAgentDetail('${agent.id}')" data-agent-id="${agent.id}">
+                        <div class="avatar-status ${isActive ? 'working' : ''}">
+                            <i class="fas fa-${isActive ? 'spinner fa-spin' : 'check'}"></i>
                         </div>
-                    `;
-                }).join('');
-
-                deptEl.innerHTML = `
-                    <div class="room-glow ${dept.class}"></div>
-                    <div class="room">
-                        <div class="room-header">
-                            <div class="room-icon ${dept.class}">
-                                <i class="fas ${dept.icon}"></i>
+                        <div class="avatar-head ${style.skin}">
+                            <div class="avatar-hair ${style.hair}"></div>
+                            <div class="avatar-eyes">
+                                <div class="avatar-eye"></div>
+                                <div class="avatar-eye"></div>
                             </div>
-                            <span class="room-title">${dept.name}</span>
-                            <span class="room-count">${dept.agents.length}</span>
+                            <div class="avatar-mouth"></div>
                         </div>
-                        <div class="agents-in-room">
-                            ${agentsHtml}
+                        <div class="avatar-body ${style.shirt}"></div>
+                        <div class="avatar-legs">
+                            <div class="avatar-leg ${style.pants}"></div>
+                            <div class="avatar-leg ${style.pants}"></div>
+                        </div>
+                        <div class="avatar-bubble">
+                            <div class="bubble-title">${agent.nombre}</div>
+                            <div class="bubble-task">${agent.tarea}</div>
+                            <span class="bubble-status ${isActive ? 'working' : 'completed'}">
+                                ${isActive ? 'Trabajando' : 'Completado'}
+                            </span>
                         </div>
                     </div>
                 `;
-
-                scene.appendChild(deptEl);
-            });
+            }).join('');
         }
 
         function showAgentDetail(agentId) {
@@ -613,16 +739,23 @@
                     if (!agent) return;
 
                     const isActive = agent.estado === 'trabajando';
-                    const initials = agent.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    const style = AVATAR_STYLES[data.agentes.indexOf(agent) % AVATAR_STYLES.length];
                     
-                    // Determinar clase de color
-                    let cls = 'dev';
-                    if (agent.id.startsWith('css') || agent.id.startsWith('brand')) cls = 'design';
-                    else if (agent.id.startsWith('revision') || agent.id === 'mejoras-temas') cls = 'qa';
-                    else if (agent.id === 'devops-despliegue') cls = 'ops';
-
-                    document.getElementById('modalAvatar').textContent = initials;
-                    document.getElementById('modalAvatar').className = `modal-avatar ${cls}`;
+                    document.getElementById('modalAvatar').innerHTML = `
+                        <div class="avatar-head ${style.skin}" style="width:60px;height:60px;margin:0 auto">
+                            <div class="avatar-hair ${style.hair}"></div>
+                            <div class="avatar-eyes">
+                                <div class="avatar-eye"></div>
+                                <div class="avatar-eye"></div>
+                            </div>
+                            <div class="avatar-mouth"></div>
+                        </div>
+                        <div class="avatar-body ${style.shirt}" style="width:55px;height:40px;margin:-5px auto 0"></div>
+                        <div class="avatar-legs">
+                            <div class="avatar-leg ${style.pants}"></div>
+                            <div class="avatar-leg ${style.pants}"></div>
+                        </div>
+                    `;
                     document.getElementById('modalTitle').textContent = agent.nombre;
                     document.getElementById('modalSubtitle').textContent = agent.tarea;
                     document.getElementById('modalStatus').textContent = isActive ? 'Trabajando ahora' : 'Completado';
@@ -637,12 +770,10 @@
             document.getElementById('modalOverlay').classList.remove('active');
         }
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('modalOverlay').addEventListener('click', (e) => {
             if (e.target.id === 'modalOverlay') closeModal();
         });
 
-        // Cerrar con Escape
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
