@@ -896,41 +896,43 @@ configForm.addEventListener('submit', (e) => {
  *  SISTEMA DE TEMAS - UI
  * ============================================================ */
 
-// Manejar selección de tema — con guardado automático
-document.querySelectorAll('.tema-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const tema = card.dataset.tema;
+function initTemas() {
+  // Manejar selección de tema — con guardado automático
+  document.querySelectorAll('.tema-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const tema = card.dataset.tema;
 
-    if (tema === 'personalizado') {
-      // Mostrar panel de colores personalizados
-      const panel = document.getElementById('customColorsPanel');
-      if (panel) {
-        panel.classList.toggle('visible');
+      if (tema === 'personalizado') {
+        // Mostrar panel de colores personalizados
+        const panel = document.getElementById('customColorsPanel');
+        if (panel) {
+          panel.classList.toggle('visible');
+        }
+      } else {
+        // Ocultar panel personalizado si está visible
+        const panel = document.getElementById('customColorsPanel');
+        if (panel) {
+          panel.classList.remove('visible');
+        }
       }
-    } else {
-      // Ocultar panel personalizado si está visible
-      const panel = document.getElementById('customColorsPanel');
-      if (panel) {
-        panel.classList.remove('visible');
-      }
-    }
 
-    temaActual = tema;
-    aplicarTema(tema);
+      temaActual = tema;
+      aplicarTema(tema);
 
-    // Guardar automáticamente al seleccionar un tema
-    guardarTema();
+      // Guardar automáticamente al seleccionar un tema
+      guardarTema();
 
-    // Feedback visual: animación en la tarjeta seleccionada
-    card.classList.add('pulse');
-    setTimeout(() => card.classList.remove('pulse'), 300);
+      // Feedback visual: animación en la tarjeta seleccionada
+      card.classList.add('pulse');
+      setTimeout(() => card.classList.remove('pulse'), 300);
 
-    // Actualizar tarjeta activa
-    document.querySelectorAll('.tema-card').forEach(c => {
-      c.classList.toggle('active', c.dataset.tema === tema);
+      // Actualizar tarjeta activa
+      document.querySelectorAll('.tema-card').forEach(c => {
+        c.classList.toggle('active', c.dataset.tema === tema);
+      });
     });
   });
-});
+}
 
 // Manejar color pickers personalizados
 const colorPickers = [
