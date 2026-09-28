@@ -1,51 +1,89 @@
-# 🔍 DIAGNÓSTICO PROFUNDO: Temas en Admin no cambian colores
+# Debug Profundo: Temas en Admin NO cambian los colores
 
-## 📋 RESUMEN EJECUTIVO
+## Problema Reportado
 
-| Aspecto | Estado |
-|---------|--------|
-| `TEMAS.cafe` existe con colores definidos | ✅ CORRECTO |
-| `aplicarTema()` accede correctamente a `TEMAS` | ✅ CORRECTO |
-| Variables CSS se establecen en `document.documentElement` | ✅ CORRECTO |
-| **Los colores NO cambian al hacer clic** | ❌ BUG CONFIRMADO |
+Al hacer clic en una tarjeta de tema (ej. "cafe"):
+- La tarjeta se marca como activa ✓
+- Se guarda en localStorage ✓
+- PERO los colores NO cambian ✗
 
----
+## Evidencia
 
-## 🔬 ANÁLISIS DEL CÓDIGO
+Al hacer clic en tema "cafe":
+- fondoAntes: #0a0a0a → fondoDespues: #0a0a0a (NO CAMBIÓ)
+- acentoAntes: #c9a96e → acentoDespues: #c9a96e (NO CAMBIÓ)
+- tarjetaActiva: "personalizado" (debería ser "cafe")
 
-### 1. Definición de TEMAS (admin.js líneas 179-270)
+## Análisis del Código
+
+### 1. Definición de TEMAS en admin.js (línea 200-291)
 
 ```javascript
 const TEMAS = {
   bosque: {
     primario: '#1a2e1a',
+    primarioClaro: '#243824',
+    primarioOscuro: '#0f1f0f',
     acento: '#c9a96e',
-    fondo: '#0a0a0a',  // ← Color actual reportado por usuario
-    // ... otros colores
+    acentoClaro: '#e0c896',
+    acentoOscuro: '#a88b52',
+    fondo: '#0a0a0a',
+    fondoAlt: '#141210',
+    fondoCard: '#1c1916',
+    texto: '#f5f0e8',
+    textoClaro: '#b8b0a0',
+    textoMuted: '#7a7268',
+    borde: '#3a342e',
+    exito: '#6b8f5e',
+    error: '#c0392b',
+    advertencia: '#fbbf24'
   },
   cafe: {
     primario: '#3e2723',
+    primarioClaro: '#5d4037',
+    primarioOscuro: '#2d1a17',
     acento: '#d4a574',
-    fondo: '#1a1210',  // ← Debería aplicar este
+    acentoClaro: '#e8c9a0',
+    acentoOscuro: '#b8865c',
+    fondo: '#1a1210',
     fondoAlt: '#251a17',
     fondoCard: '#2d201c',
     texto: '#f5f0e8',
-    // ... otros colores
+    textoClaro: '#c4b8a8',
+    textoMuted: '#8a7a6a',
+    borde: '#4a3a32',
+    exito: '#7a9a6d',
+    error: '#c0392b',
+    advertencia: '#fbbf24'
   },
   // ... otros temas
+  personalizado: {
+    primario: '#2a2a2a',
+    primarioClaro: '#3a3a3a',
+    primarioOscuro: '#1a1a1a',
+    acento: '#c9a96e',
+    acentoClaro: '#e0c896',
+    acentoOscuro: '#a88b52',
+    fondo: '#0a0a0a',
+    fondoAlt: '#141414',
+    fondoCard: '#1c1c1c',
+    texto: '#ffffff',
+    textoClaro: '#b0b0b0',
+    textoMuted: '#707070',
+    borde: '#3a3a3a',
+    exito: '#4ade80',
+    error: '#f87171',
+    advertencia: '#fbbf24'
+  }
 };
 ```
 
-✅ **CONCLUSIÓN**: `TEMAS.cafe` existe y tiene colores diferentes a `bosque`.
-
----
-
-### 2. Función aplicarTema (admin.js líneas 296-362)
+### 2. Función aplicarTema (línea 317-387)
 
 ```javascript
 function aplicarTema(nombreTema) {
   const tema = TEMAS[nombreTema];
-  if (!tema) return;  // ← Early return si no existe
+  if (!tema) return;
 
   const colores = nombreTema === 'personalizado' ? {
     ...tema,
@@ -63,7 +101,7 @@ function aplicarTema(nombreTema) {
   root.style.setProperty('--dorado', colores.acento);
   root.style.setProperty('--dorado-claro', colores.acentoClaro);
   root.style.setProperty('--dorado-oscuro', colores.acentoOscuro);
-  root.style.setProperty('--negro', colores.fondo);  // ← Esta es la variable de fondo
+  root.style.setProperty('--negro', colores.fondo);
   root.style.setProperty('--gris-1', colores.fondoCard);
   root.style.setProperty('--gris-2', colores.fondoCard);
   root.style.setProperty('--gris-3', colores.borde);
@@ -72,15 +110,11 @@ function aplicarTema(nombreTema) {
   root.style.setProperty('--exito', colores.exito);
   root.style.setProperty('--error', colores.error);
   root.style.setProperty('--advertencia', colores.advertencia);
-  // ... más variables
+  // ... más código
 }
 ```
 
-✅ **CONCLUSIÓN**: La función está bien estructurada. Si `nombreTema = 'cafe'`, debería aplicar `#1a1210` a `--negro` y `#d4a574` a `--dorado`.
-
----
-
-### 3. Inicialización de temas (admin.js líneas 899-935)
+### 3. Función initTemas (línea 934-970)
 
 ```javascript
 function initTemas() {
@@ -101,7 +135,7 @@ function initTemas() {
       }
 
       temaActual = tema;
-      aplicarTema(tema);  // ← Aquí debería aplicarse "cafe"
+      aplicarTema(tema);
 
       guardarTema();
 
@@ -116,180 +150,68 @@ function initTemas() {
 }
 ```
 
-✅ **CONCLUSIÓN**: El event listener está correctamente adjuntado a cada tarjeta.
-
----
-
-### 4. Estructura HTML de las tarjetas (admin/index.html líneas 2882-2921)
+### 4. HTML de las tarjetas de tema (admin/index.html)
 
 ```html
-<div class="temas-grid" id="temasGrid">
-  <div class="tema-card" data-tema="bosque">...</div>
-  <div class="tema-card" data-tema="cafe">...</div>  ← Esta es la tarjeta "cafe"
-  <div class="tema-card" data-tema="noche">...</div>
-  <div class="tema-card" data-tema="tierra">...</div>
-  <div class="tema-card" data-tema="personalizado">...</div>
+<div class="tema-card" data-tema="cafe">
+  <div class="tema-preview tema-preview-cafe">
+    <div class="tema-preview-color"></div>
+    <div class="tema-preview-color"></div>
+    <div class="tema-preview-color"></div>
+  </div>
+  <span class="tema-nombre">Café</span>
 </div>
 ```
 
-✅ **CONCLUSIÓN**: Las tarjetas están correctamente definidas con `data-tema` apropiado.
+## Diagnóstico
 
----
+### Los colores reportados NO corresponden al tema "cafe"
 
-## 🚨 PISTA CRÍTICA
+| Color | Valor Reportado | Valor Esperado (cafe) | Valor de personalizado |
+|-------|------------------|------------------------|------------------------|
+| fondo | #0a0a0a | #1a1210 | #0a0a0a |
+| acento | #c9a96e | #d4a574 | #c9a96e |
 
-El usuario reporta:
-```
-tarjetaActiva: "personalizado" (debería ser "cafe")
-```
+**Conclusión:** Los colores que se están aplicando son los del tema "personalizado", no los del tema "cafe".
 
-Esto es **MUY revelador**. Si el usuario hizo clic en la tarjeta "cafe" pero la tarjeta activa es "personalizado", entonces:
+### Causa Raíz
 
-### Hipótesis 1: Confusión de tarjetas
-El usuario podría estar haciendo clic en la tarjeta equivocada. La tarjeta con `data-tema="personalizado"` está justo después de la tarjeta "cafe" en el DOM.
+El problema está en la función `aplicarTema`. Cuando se llama con "cafe", debería usar `TEMAS.cafe`, pero en su lugar está usando `TEMAS.personalizado`.
 
-### Hipótesis 2: Problema con `dataset.tema`
-Podría haber un problema con cómo se accede a `card.dataset.tema`. Sin embargo, el código parece correcto.
+Esto puede ocurrir porque:
 
-### Hipótesis 3: Estado previo de "personalizado"
-Si el usuario tenía "personalizado" guardado previamente en localStorage, y hay un problema con la inicialización, podría haber una condición de carrera.
+1. **El localStorage tiene guardado el tema "personalizado"** y al cargar la página, `cargarTema()` establece `temaActual = "personalizado"` y llama a `aplicarTema("personalizado")`.
 
----
+2. **El event listener no se está ejecutando correctamente** cuando se hace clic en "cafe", por lo que `aplicarTema` no se llama con "cafe".
 
-## 🔍 TEORÍAS DEL BUG
+3. **Hay un problema con el HTML** que hace que la tarjeta "cafe" tenga `data-tema="personalizado"`.
 
-### Teoría A: Variable CSS cacheada por el navegador
-El navegador podría estar cacheando los valores de las variables CSS. Esto es poco probable pero posible.
+### Solución Propuesta
 
-**Prueba**: Abrir DevTools → Elements → Verificar que `document.documentElement.style.getPropertyValue('--negro')` devuelve el valor correcto después del clic.
+1. **Verificar el localStorage:** Asegurarse de que el localStorage no tenga guardado el tema "personalizado" cuando se hace clic en "cafe".
 
----
+2. **Verificar el event listener:** Asegurarse de que el event listener se esté ejecutando correctamente cuando se hace clic en "cafe".
 
-### Teoría B: Error JavaScript silencioso
-Podría haber un error en `aplicarTema()` que impide que las variables se establezcan correctamente.
+3. **Verificar el HTML:** Asegurarse de que la tarjeta "cafe" tenga `data-tema="cafe"`.
 
-**Prueba**: Agregar console.log en `aplicarTema()`:
-```javascript
-function aplicarTema(nombreTema) {
-  console.log('aplicarTema llamado con:', nombreTema);
-  const tema = TEMAS[nombreTema];
-  console.log('tema encontrado:', tema);
-  if (!tema) return;
-  // ...
-  console.log('Estableciendo --negro a:', colores.fondo);
-  root.style.setProperty('--negro', colores.fondo);
-}
-```
+4. **Agregar logs para debugging:** Agregar logs en la función `aplicarTema` para verificar qué tema se está aplicando.
 
----
+## Pasos para Reproducir
 
-### Teoría C: Conflicto con app.js
-Aunque `admin/index.html` solo carga `admin.js`, podría haber un conflicto si `app.js` también está siendo cargado desde otra página.
+1. Abrir la página de administración
+2. Ir a la sección "Ajustes"
+3. Hacer clic en la tarjeta de tema "cafe"
+4. Verificar que los colores no cambian
+5. Verificar que la tarjeta activa es "personalizado" en lugar de "cafe"
 
-**Verificado**: `admin/index.html` solo tiene `<script src="../admin.js"></script>` (línea 3270).
+## Archivos Involucrados
 
----
+- `admin.js` - Función `aplicarTema`, `initTemas`, `cargarTema`
+- `admin/index.html` - HTML de las tarjetas de tema
+- `localStorage` - Clave `nordiko_tema`
 
-### Teoría D: Problema con el estado inicial
-Si el usuario tiene "personalizado" guardado previamente, y hay un problema con `cargarTema()`, podría haber una condición de carrera.
+## Notas Adicionales
 
-**Prueba**: Limpiar localStorage y probar de nuevo.
-
----
-
-## ✅ VERIFICACIONES REALIZADAS
-
-| Verificación | Resultado |
-|--------------|-----------|
-| ¿TEMAS.cafe existe? | ✅ Sí (línea 198) |
-| ¿Tiene colores diferentes a bosque? | ✅ Sí (fondo: #1a1210 vs #0a0a0a) |
-| ¿aplicarTema accede correctamente a TEMAS? | ✅ Sí (línea 297) |
-| ¿Las variables se establecen en document.documentElement? | ✅ Sí (línea 308) |
-| ¿El HTML tiene las tarjetas correctas? | ✅ Sí (data-tema="cafe" existe) |
-| ¿Hay conflictos con otros scripts? | ❌ No (solo se carga admin.js) |
-| ¿Hay !important en las variables CSS? | ❌ No |
-
----
-
-## 🎯 PRÓXIMOS PASOS RECOMENDADOS
-
-### 1. Verificación inmediata
-Abrir DevTools en admin y ejecutar:
-```javascript
-// Verificar que TEMAS.cafe existe
-console.log(TEMAS.cafe);
-
-// Verificar que aplicarTema funciona manualmente
-aplicarTema('cafe');
-
-// Verificar que las variables CSS se establecieron
-console.log(document.documentElement.style.getPropertyValue('--negro'));
-console.log(document.documentElement.style.getPropertyValue('--dorado'));
-```
-
-### 2. Depuración del event listener
-Agregar console.log en el event listener:
-```javascript
-card.addEventListener('click', () => {
-  console.log('Clic en tarjeta con data-tema:', card.dataset.tema);
-  const tema = card.dataset.tema;
-  console.log('tema asignado a temaActual:', tema);
-  // ...
-});
-```
-
-### 3. Verificar estado inicial
-```javascript
-// Ver qué tema está guardado
-console.log(localStorage.getItem('nordiko_tema'));
-```
-
-### 4. Forzar recarga
-Limpiar localStorage y recargar:
-```javascript
-localStorage.removeItem('nordiko_tema');
-location.reload();
-```
-
----
-
-## 📝 CONCLUSIÓN
-
-El código JavaScript parece **correcto en teoría**. El problema más probable es:
-
-1. **Confusión de tarjetas**: El usuario podría estar haciendo clic en la tarjeta equivocada.
-2. **Estado residual**: Un tema "personalizado" previo podría estar interfiriendo.
-3. **Error de timing**: Podría haber un problema con el orden de inicialización.
-
-**Recomendación principal**: Agregar console.log detallados para trazar exactamente qué está pasando cuando se hace clic en la tarjeta "cafe".
-
----
-
-## 🔧 CÓDIGO DE DEPURACIÓN SUGERIDO
-
-Agregar al inicio de `aplicarTema()`:
-```javascript
-function aplicarTema(nombreTema) {
-  console.log('[DEBUG] aplicarTema llamado con:', nombreTema);
-  const tema = TEMAS[nombreTema];
-  console.log('[DEBUG] tema encontrado:', tema);
-  if (!tema) {
-    console.error('[DEBUG] Tema no encontrado:', nombreTema);
-    return;
-  }
-  // ... resto del código
-}
-```
-
-Y en el event listener:
-```javascript
-card.addEventListener('click', () => {
-  console.log('[DEBUG] Clic en tarjeta:', card.dataset.tema);
-  // ... resto del código
-});
-```
-
----
-
-*Diagnostico creado: 2026-09-27*  
-*Desarrollador: Especialista en Debugging Frontend*
+- El tema "cafe" tiene colores diferentes a "bosque" y "personalizado"
+- El tema "personalizado" usa los colores de `customColores` en lugar de los colores fijos de `TEMAS.personalizado`
+- El problema puede estar en la forma en que se llama a `aplicarTema` o en la forma en que se lee el tema desde localStorage

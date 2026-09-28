@@ -7,7 +7,6 @@
  *  - Dashboard con estadísticas
  *  - Buscador en tiempo real
  *  - Configuración de la tienda
- *  - Sistema de temas
  *  - Notificaciones toast
  *  - Validación de formularios
  *
@@ -28,7 +27,6 @@
 
 const STORAGE_KEY_PRODUCTOS = 'nordiko_productos';
 const STORAGE_KEY_CONFIG = 'nordiko_config';
-const STORAGE_KEY_TEMA = 'nordiko_tema';
 
 /** Categorías disponibles para los productos */
 const CATEGORIAS = [
@@ -103,6 +101,8 @@ let pedidos = [
 
 let productoAEliminar = null;
 let productoEditando = null;
+let categoriaEditando = null;
+let callbackConfirmacion = null;
 
 /* ============================================================
  *  PRODUCTOS POR DEFECTO
@@ -193,198 +193,7 @@ const navItems = document.querySelectorAll('.nav-item');
 const sectionContents = document.querySelectorAll('.section-content');
 const pageTitle = document.getElementById('pageTitle');
 
-/* ============================================================
- *  SISTEMA DE TEMAS
- * ============================================================ */
 
-const TEMAS = {
-  bosque: {
-    primario: '#1a2e1a',
-    primarioClaro: '#243824',
-    primarioOscuro: '#0f1f0f',
-    acento: '#c9a96e',
-    acentoClaro: '#e0c896',
-    acentoOscuro: '#a88b52',
-    fondo: '#0a0a0a',
-    fondoAlt: '#141210',
-    fondoCard: '#1c1916',
-    texto: '#f5f0e8',
-    textoClaro: '#b8b0a0',
-    textoMuted: '#7a7268',
-    borde: '#3a342e',
-    exito: '#6b8f5e',
-    error: '#c0392b',
-    advertencia: '#fbbf24'
-  },
-  cafe: {
-    primario: '#3e2723',
-    primarioClaro: '#5d4037',
-    primarioOscuro: '#2d1a17',
-    acento: '#d4a574',
-    acentoClaro: '#e8c9a0',
-    acentoOscuro: '#b8865c',
-    fondo: '#1a1210',
-    fondoAlt: '#251a17',
-    fondoCard: '#2d201c',
-    texto: '#f5f0e8',
-    textoClaro: '#c4b8a8',
-    textoMuted: '#8a7a6a',
-    borde: '#4a3a32',
-    exito: '#7a9a6d',
-    error: '#c0392b',
-    advertencia: '#fbbf24'
-  },
-  noche: {
-    primario: '#0a0a0a',
-    primarioClaro: '#1a1a2e',
-    primarioOscuro: '#050508',
-    acento: '#2563eb',
-    acentoClaro: '#60a5fa',
-    acentoOscuro: '#1d4ed8',
-    fondo: '#050508',
-    fondoAlt: '#0f0f1a',
-    fondoCard: '#151525',
-    texto: '#e2e8f0',
-    textoClaro: '#94a3b8',
-    textoMuted: '#64748b',
-    borde: '#2a2a4a',
-    exito: '#22c55e',
-    error: '#ef4444',
-    advertencia: '#f59e0b'
-  },
-  tierra: {
-    primario: '#2d1f1a',
-    primarioClaro: '#4a2c1a',
-    primarioOscuro: '#1a100d',
-    acento: '#c2410c',
-    acentoClaro: '#f59e0b',
-    acentoOscuro: '#9a3412',
-    fondo: '#120a08',
-    fondoAlt: '#1a100d',
-    fondoCard: '#221510',
-    texto: '#fef3c7',
-    textoClaro: '#d4c4a8',
-    textoMuted: '#8a7a68',
-    borde: '#3d2a22',
-    exito: '#84cc16',
-    error: '#ef4444',
-    advertencia: '#fbbf24'
-  },
-  personalizado: {
-    primario: '#2a2a2a',
-    primarioClaro: '#3a3a3a',
-    primarioOscuro: '#1a1a1a',
-    acento: '#c9a96e',
-    acentoClaro: '#e0c896',
-    acentoOscuro: '#a88b52',
-    fondo: '#0a0a0a',
-    fondoAlt: '#141414',
-    fondoCard: '#1c1c1c',
-    texto: '#ffffff',
-    textoClaro: '#b0b0b0',
-    textoMuted: '#707070',
-    borde: '#3a3a3a',
-    exito: '#4ade80',
-    error: '#f87171',
-    advertencia: '#fbbf24'
-  }
-};
-
-let temaActual = 'bosque';
-let customColores = {
-  primario: '#1e3a5f',
-  acento: '#e07a3f',
-  fondo: '#0d1b2a',
-  texto: '#f0e6d3'
-};
-
-function cargarTema() {
-  const temaGuardado = localStorage.getItem(STORAGE_KEY_TEMA);
-  if (temaGuardado) {
-    try {
-      const datos = JSON.parse(temaGuardado);
-      temaActual = datos.tema || 'bosque';
-      if (datos.customColores) {
-        customColores = { ...customColores, ...datos.customColores };
-      }
-    } catch (e) {
-      console.error('Error al cargar tema:', e);
-    }
-  }
-  aplicarTema(temaActual);
-}
-
-function aplicarTema(nombreTema) {
-  const tema = TEMAS[nombreTema];
-  if (!tema) return;
-
-  const colores = nombreTema === 'personalizado' ? {
-    ...tema,
-    primario: customColores.primario,
-    acento: customColores.acento,
-    fondo: customColores.fondo,
-    texto: customColores.texto
-  } : tema;
-
-  const root = document.documentElement;
-  root.style.setProperty('--verde-oscuro', colores.primario);
-  root.style.setProperty('--verde-1', colores.primarioClaro);
-  root.style.setProperty('--verde-2', colores.fondoCard);
-  root.style.setProperty('--verde-3', colores.borde);
-  root.style.setProperty('--dorado', colores.acento);
-  root.style.setProperty('--dorado-claro', colores.acentoClaro);
-  root.style.setProperty('--dorado-oscuro', colores.acentoOscuro);
-  root.style.setProperty('--negro', colores.fondo);
-  root.style.setProperty('--gris-1', colores.fondoCard);
-  root.style.setProperty('--gris-2', colores.fondoCard);
-  root.style.setProperty('--gris-3', colores.borde);
-  root.style.setProperty('--blanco', colores.texto);
-  root.style.setProperty('--gris-texto', colores.textoClaro);
-  root.style.setProperty('--exito', colores.exito);
-  root.style.setProperty('--error', colores.error);
-  root.style.setProperty('--advertencia', colores.advertencia);
-
-  // ============================================================
-  // ACTUALIZAR VARIABLES DEL PREVIEW DE LA TIENDA
-  // Estas variables controlan la vista previa en tiempo real
-  // ============================================================
-  root.style.setProperty('--preview-fondo', colores.fondo);
-  root.style.setProperty('--preview-borde', colores.borde);
-  root.style.setProperty('--preview-primario', colores.primario);
-  root.style.setProperty('--preview-acento', colores.acento);
-  root.style.setProperty('--preview-texto', colores.texto);
-  root.style.setProperty('--preview-texto-claro', colores.textoClaro);
-  root.style.setProperty('--preview-primario-texto', colores.primarioOscuro);
-  root.style.setProperty('--preview-fondo-card', colores.fondoCard);
-
-  // Actualizar tarjeta de tema activa en la UI
-  document.querySelectorAll('.tema-card').forEach(card => {
-    card.classList.toggle('active', card.dataset.tema === nombreTema);
-  });
-
-  // Actualizar variables y pickers SOLO si es tema personalizado
-  if (nombreTema === 'personalizado') {
-    root.style.setProperty('--custom-primario', customColores.primario);
-    root.style.setProperty('--custom-acento', customColores.acento);
-    root.style.setProperty('--custom-fondo', customColores.fondo);
-    root.style.setProperty('--custom-texto', customColores.texto);
-
-    const panel = document.getElementById('customColorsPanel');
-    if (panel && panel.classList.contains('visible')) {
-      const pickerPrimario = document.getElementById('customPrimario');
-      const pickerAcento = document.getElementById('customAcento');
-      const pickerFondo = document.getElementById('customFondo');
-      const pickerTexto = document.getElementById('customTexto');
-      if (pickerPrimario) pickerPrimario.value = customColores.primario;
-      if (pickerAcento) pickerAcento.value = customColores.acento;
-      if (pickerFondo) pickerFondo.value = customColores.fondo;
-      if (pickerTexto) pickerTexto.value = customColores.texto;
-    }
-  }
-
-  // Log para debugging
-  console.log(`[aplicarTema] Tema "${nombreTema}" aplicado. Fondo: ${colores.fondo}, Acento: ${colores.acento}`);
-}
 
 /* ============================================================
  *  NOTIFICACIONES TOAST
@@ -927,176 +736,7 @@ configForm.addEventListener('submit', (e) => {
   showToast('Configuración guardada');
 });
 
-/* ============================================================
- *  SISTEMA DE TEMAS - UI
- * ============================================================ */
 
-function initTemas() {
-  // Manejar selección de tema — con guardado automático
-  document.querySelectorAll('.tema-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const tema = card.dataset.tema;
-
-      if (tema === 'personalizado') {
-        // Mostrar panel de colores personalizados
-        const panel = document.getElementById('customColorsPanel');
-        if (panel) {
-          panel.classList.toggle('visible');
-        }
-      } else {
-        // Ocultar panel personalizado si está visible
-        const panel = document.getElementById('customColorsPanel');
-        if (panel) {
-          panel.classList.remove('visible');
-        }
-      }
-
-      temaActual = tema;
-      aplicarTema(tema);
-
-      // Guardar automáticamente al seleccionar un tema
-      guardarTema();
-
-      // Feedback visual: animación en la tarjeta seleccionada
-      card.classList.add('pulse');
-      setTimeout(() => card.classList.remove('pulse'), 300);
-
-      // Actualizar tarjeta activa
-      document.querySelectorAll('.tema-card').forEach(c => {
-        c.classList.toggle('active', c.dataset.tema === tema);
-      });
-    });
-  });
-}
-
-// Manejar color pickers personalizados
-const colorPickers = [
-  { picker: 'customPrimario', hex: 'hexPrimario', key: 'primario' },
-  { picker: 'customAcento', hex: 'hexAcento', key: 'acento' },
-  { picker: 'customFondo', hex: 'hexFondo', key: 'fondo' },
-  { picker: 'customTexto', hex: 'hexTexto', key: 'texto' }
-];
-
-colorPickers.forEach(({ picker, hex, key }) => {
-  const input = document.getElementById(picker);
-  const hexDisplay = document.getElementById(hex);
-
-  if (input && hexDisplay) {
-    input.addEventListener('input', () => {
-      customColores[key] = input.value;
-      hexDisplay.textContent = input.value.toUpperCase();
-      if (temaActual === 'personalizado') {
-        aplicarTema('personalizado');
-      }
-      // Guardado automático con debounce (espera 500ms después del último cambio)
-      clearTimeout(input._saveTimeout);
-      input._saveTimeout = setTimeout(() => {
-        guardarTema();
-      }, 500);
-    });
-  }
-});
-
-// Guardar tema en localStorage
-function guardarTema() {
-  try {
-    localStorage.setItem(STORAGE_KEY_TEMA, JSON.stringify({
-      tema: temaActual,
-      customColores: customColores
-    }));
-  } catch (e) {
-    console.warn('No se pudo guardar el tema:', e);
-    showToast('No se pudo guardar el tema', 'error');
-  }
-}
-
-// Guardar tema
-document.getElementById('btnGuardarTema').addEventListener('click', () => {
-  guardarTema();
-  showToast('Tema guardado correctamente');
-});
-
-// ============================================================
-// MODAL DE VISTA PREVIA DE LA TIENDA
-// ============================================================
-
-const btnVerPreview = document.getElementById('btnVerPreview');
-const previewModalOverlay = document.getElementById('previewModalOverlay');
-const previewModalClose = document.getElementById('previewModalClose');
-
-function abrirPreviewModal() {
-  if (previewModalOverlay) {
-    previewModalOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function cerrarPreviewModal() {
-  if (previewModalOverlay) {
-    previewModalOverlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-}
-
-if (btnVerPreview) {
-  btnVerPreview.addEventListener('click', abrirPreviewModal);
-}
-
-if (previewModalClose) {
-  previewModalClose.addEventListener('click', cerrarPreviewModal);
-}
-
-if (previewModalOverlay) {
-  previewModalOverlay.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-      cerrarPreviewModal();
-    }
-  });
-}
-
-// Cerrar con tecla Escape
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    cerrarPreviewModal();
-  }
-});
-
-// Restablecer tema — con confirmación
-const btnRestablecerTema = document.getElementById('btnRestablecerTema');
-if (btnRestablecerTema) {
-  btnRestablecerTema.addEventListener('click', () => {
-    pedirConfirmacion(
-      '¿Restablecer tema?',
-      'Se volverá al tema por defecto (Bosque). Se perderán los colores personalizados.',
-      restablecerTema
-    );
-  });
-}
-
-function restablecerTema() {
-  temaActual = 'bosque';
-  customColores = {
-    primario: '#1e3a5f',
-    acento: '#e07a3f',
-    fondo: '#0d1b2a',
-    texto: '#f0e6d3'
-  };
-  aplicarTema('bosque');
-
-  try {
-    localStorage.removeItem(STORAGE_KEY_TEMA);
-  } catch (e) {
-    console.warn('No se pudo eliminar el tema guardado:', e);
-  }
-
-  // Ocultar panel personalizado
-  const panel = document.getElementById('customColorsPanel');
-  if (panel) {
-    panel.classList.remove('visible');
-  }
-
-  showToast('Tema restablecido al valor por defecto');
-}
 
 /* ============================================================
  *  FUNCIONES DE WHATSAPP (para index.html)
@@ -1163,9 +803,6 @@ const btnAgregarCategoria = document.getElementById('btnAgregarCategoria');
 const btnCancelarCategoria = document.getElementById('btnCancelarCategoria');
 const categoriaModalClose = document.getElementById('categoriaModalClose');
 const categoriaModalTitle = document.getElementById('categoriaModalTitle');
-
-let categoriaEditando = null;
-let callbackConfirmacion = null;
 
 /**
  * Carga y renderiza las categorías en el panel de administración.
@@ -1422,13 +1059,11 @@ btnConfirmarEliminar.addEventListener('click', () => {
 
 function initAdmin() {
   cargarDatos();
-  cargarTema();
   cargarConfigEnFormulario();
   renderProductos();
   renderPedidos();
   renderDashboard();
   cargarCategorias();
-  initTemas();
 }
 
 // Inicializar cuando el DOM esté listo

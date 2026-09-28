@@ -813,8 +813,10 @@
         }
     });
 
+
+
     // ============================================
-    // 16. INICIALIZACIÓN
+    // 17. INICIALIZACIÓN
     // ============================================
 
     // Cargar carrito guardado antes de renderizar
@@ -899,7 +901,7 @@
                 <p>Las cookies son archivos pequeños que se guardan en tu teléfono para mejorar tu experiencia.</p>
                 
                 <h4>2. Uso en NØRDIKO</h4>
-                <p>Usamos cookies para: recordar tu carrito, guardar tus preferencias de tema y analizar el uso.</p>
+                <p>Usamos cookies para: recordar tu carrito y analizar el uso.</p>
                 
                 <h4>3. Control</h4>
                 <p>Puedes desactivar las cookies desde la configuración de tu navegador, pero algunas funciones pueden no funcionar.</p>
