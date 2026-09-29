@@ -228,9 +228,19 @@ function renderProductos(filtro = '') {
     return;
   }
 
-  const productosFiltrados = productos.filter(p =>
-    p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-    p.categoria.toLowerCase().includes(filtro.toLowerCase())
+  // Validar y normalizar productos antes de filtrar
+  const productosValidos = productos.filter(p => {
+    if (!p || typeof p !== 'object') return false;
+    // Asegurar que las propiedades existan
+    if (!p.nombre) p.nombre = 'Sin nombre';
+    if (!p.categoria) p.categoria = '';
+    if (!p.precio) p.precio = 0;
+    return true;
+  });
+
+  const productosFiltrados = productosValidos.filter(p =>
+    (p.nombre || '').toLowerCase().includes((filtro || '').toLowerCase()) ||
+    (p.categoria || '').toLowerCase().includes((filtro || '').toLowerCase())
   );
 
   productosEnGrid = productosFiltrados.length;
@@ -255,6 +265,9 @@ function renderProductos(filtro = '') {
       imagenHTML = `<span>${escapeHtml(emoji)}</span>`;
     }
 
+    // Escapar correctamente el ID para onclick (puede ser string de Firebase)
+    const idEscapado = typeof p.id === 'string' ? `'${escapeHtml(p.id)}'` : p.id;
+
     return `
       <div class="producto-card" data-id="${escapeHtml(p.id)}">
         <div class="producto-foto">
@@ -269,10 +282,10 @@ function renderProductos(filtro = '') {
           </div>
         </div>
         <div class="producto-acciones">
-          <button class="producto-btn edit" onclick="editarProducto(${p.id})" aria-label="Editar">
+          <button class="producto-btn edit" onclick="editarProducto(${idEscapado})" aria-label="Editar">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="producto-btn delete" onclick="confirmarEliminar(${p.id})" aria-label="Eliminar">
+          <button class="producto-btn delete" onclick="confirmarEliminar(${idEscapado})" aria-label="Eliminar">
             <i class="fas fa-trash"></i>
           </button>
         </div>
@@ -706,7 +719,16 @@ function manejarLogin(e) {
     if (loginError) loginError.style.display = 'none';
     showToast('Bienvenido al panel de administración');
     console.log('[admin.js] Login exitoso - llamando initAdmin');
-    initAdmin().catch(e => console.error('[admin.js] Error en initAdmin después de login:', e));
+    
+    // Resetear flag de inicialización para forzar renderizado
+    adminInicializado = false;
+    
+    initAdmin().then(() => {
+      // Asegurar que los productos se rendericen después del login
+      console.log('[admin.js] Post-login: forzando renderizado de productos');
+      renderProductos();
+      renderDashboard();
+    }).catch(e => console.error('[admin.js] Error en initAdmin después de login:', e));
   } else {
     if (loginError) {
       loginError.style.display = 'block';
@@ -730,7 +752,15 @@ function cerrarSesion() {
 
 let adminInicializado = false;
 
+// Exponer funciones globalmente para uso en onclick del HTML
+// (necesario porque el script usa type="module")
 window.initAdmin = initAdmin;
+window.editarProducto = editarProducto;
+window.confirmarEliminar = confirmarEliminar;
+window.cerrarSesion = cerrarSesion;
+window.toggleCategoria = toggleCategoria;
+window.editarCategoria = editarCategoria;
+window.confirmarEliminarCategoria = confirmarEliminarCategoria;
 
 async function initAdmin() {
   // Verificar autenticación primero
@@ -1115,5 +1145,34 @@ window.adminDebug = {
   get firebaseCargado() { return firebaseCargado; },
   get productosEnGrid() { return productosEnGrid; },
   get productos() { return productos; },
-  get adminInicializado() { return adminInicializado; }
+  get adminInicializado() { return adminInicializado; },
+  get loginVisible() { 
+    const overlay = document.getElementById('loginOverlay');
+    return overlay ? overlay.classList.contains('active') : false;
+  },
+  verificarEstado() {
+    console.log('=== ESTADO DEL ADMIN ===');
+    console.log('firebaseCargado:', firebaseCargado);
+    console.log('productosEnGrid:', productosEnGrid);
+    console.log('adminInicializado:', adminInicializado);
+    console.log('loginVisible:', this.loginVisible);
+    console.log('total productos:', productos.length);
+    console.log('productos:', productos);
+    console.log('========================');
+    return {
+      firebaseCargado,
+      productosEnGrid,
+      adminInicializado,
+      loginVisible: this.loginVisible,
+      totalProductos: productos.length
+    };
+  },
+  forzarRenderizado() {
+    console.log('[admin.js] Forzando renderizado manual...');
+    renderProductos();
+    renderDashboard();
+    renderPedidos();
+    cargarCategorias();
+    console.log('[admin.js] Renderizado completado - productosEnGrid:', productosEnGrid);
+  }
 };
