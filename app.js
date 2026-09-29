@@ -344,8 +344,8 @@ import { productosCollection, getDocs } from './firebase-config.js';
                 ? `<span class="product-badge ${producto.badge}">${textoBadge}</span>`
                 : '';
 
-            const imagenHTML = producto.imagen
-                ? `<img src="${escapeHtml(producto.imagen)}" alt="${escapeHtml(producto.nombre)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
+            const imagenHTML = (producto.imagen || producto.imagenBase64)
+                ? `<img src="${escapeHtml(producto.imagen || producto.imagenBase64)}" alt="${escapeHtml(producto.nombre)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
                 : `<span style="font-size: 5rem;">${escapeHtml(producto.icono || '🧴')}</span>`;
 
             const precioAnteriorHTML = producto.precioAnterior
@@ -505,8 +505,8 @@ import { productosCollection, getDocs } from './firebase-config.js';
             `;
         } else {
             cartItems.innerHTML = carrito.map(item => {
-                const imagenHTML = item.imagen
-                    ? `<img src="${escapeHtml(item.imagen)}" alt="${escapeHtml(item.nombre)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`
+                const imagenHTML = (item.imagen || item.imagenBase64)
+                    ? `<img src="${escapeHtml(item.imagen || item.imagenBase64)}" alt="${escapeHtml(item.nombre)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">`
                     : `<span style="font-size: 2.5rem;">${escapeHtml(item.icono || '🧴')}</span>`;
 
                 return `
