@@ -730,6 +730,8 @@ function cerrarSesion() {
 
 let adminInicializado = false;
 
+window.initAdmin = initAdmin;
+
 async function initAdmin() {
   // Verificar autenticación primero
   if (!estaAutenticado()) {
