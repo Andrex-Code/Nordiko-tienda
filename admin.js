@@ -30,13 +30,16 @@ import { productosCollection, configCollection, getDocs, getDoc, setDoc, addDoc,
 
 const STORAGE_KEY_PRODUCTOS = 'nordiko_productos';
 const STORAGE_KEY_CONFIG = 'nordiko_config';
+const STORAGE_KEY_AUTH = 'nordiko_admin_auth';
+const ADMIN_PASSWORD = 'nordiko2026';
 
 /** Categorías disponibles para los productos */
 const CATEGORIAS = [
   'hidratante',
   'corporal',
   'facial',
-  'ante-envejecimiento'
+  'ante-envejecimiento',
+  'perfume'
 ];
 
 /* ============================================================
@@ -62,8 +65,9 @@ function escapeHtml(texto) {
  */
 function formatMoneda(valor) {
   const num = Number(valor);
-  if (isNaN(num) || num < 0) return '$0.00';
-  return '$' + num.toFixed(2);
+  if (isNaN(num) || num < 0) return '$0.000';
+  // Formato colombiano: $20.000 (sin decimales, separador de miles con punto)
+  return '$' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 /* ============================================================
@@ -81,7 +85,8 @@ let config = {
     { id: 'hidratante', nombre: 'Hidratante', activa: true },
     { id: 'corporal', nombre: 'Corporal', activa: true },
     { id: 'facial', nombre: 'Facial', activa: true },
-    { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true }
+    { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true },
+    { id: 'perfume', nombre: 'Perfume', activa: true }
   ]
 };
 
@@ -153,7 +158,8 @@ async function cargarDatos() {
       { id: 'hidratante', nombre: 'Hidratante', activa: true },
       { id: 'corporal', nombre: 'Corporal', activa: true },
       { id: 'facial', nombre: 'Facial', activa: true },
-      { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true }
+      { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true },
+      { id: 'perfume', nombre: 'Perfume', activa: true }
     ];
     guardarConfig();
   }
@@ -319,7 +325,7 @@ function renderPedidos() {
           <div class="pedido-fecha">${formatearFecha(p.fecha)}</div>
           <span class="pedido-estado ${estadoClase[p.estado]}">${estadoTexto[p.estado]}</span>
         </div>
-        <div class="pedido-total">$${p.total.toFixed(2)}</div>
+        <div class="pedido-total">${formatMoneda(p.total)}</div>
       </div>
     `;
   }).join('');
@@ -346,10 +352,10 @@ function renderDashboard() {
     .reduce((sum, p) => sum + p.total, 0);
 
   const statVentas = document.getElementById('statVentas');
-  if (statVentas) statVentas.textContent = '$' + ventasMes.toFixed(2);
+  if (statVentas) statVentas.textContent = formatMoneda(ventasMes);
 
   const statIngresos = document.getElementById('statIngresos');
-  if (statIngresos) statIngresos.textContent = '$' + ventasMes.toFixed(2);
+  if (statIngresos) statIngresos.textContent = formatMoneda(ventasMes);
 
   const productCount = document.getElementById('productCount');
   if (productCount) productCount.textContent = productos.length;
@@ -371,7 +377,7 @@ function renderDashboard() {
           <div style="font-weight: 600; font-size: 0.9rem;">${escapeHtml(p.cliente)}</div>
           <div style="font-size: 0.8rem; color: var(--gris-texto);">Pedido #${p.id} - ${formatearFecha(p.fecha)}</div>
         </div>
-        <div style="font-weight: 700; color: var(--dorado);">$${p.total.toFixed(2)}</div>
+        <div style="font-weight: 700; color: var(--dorado);">${formatMoneda(p.total)}</div>
       </div>
     `).join('');
   }
@@ -645,7 +651,80 @@ function cargarConfigEnFormulario() {
  *  INICIALIZACIÓN
  * ============================================================ */
 
+/**
+ * Verifica si el usuario ya está autenticado
+ * @returns {boolean} true si ya se autenticó en esta sesión/navegador
+ */
+function estaAutenticado() {
+  return localStorage.getItem(STORAGE_KEY_AUTH) === 'true';
+}
+
+/**
+ * Muestra el modal de login
+ */
+function mostrarLogin() {
+  const loginOverlay = document.getElementById('loginOverlay');
+  if (loginOverlay) {
+    loginOverlay.classList.add('active');
+    const loginPassword = document.getElementById('loginPassword');
+    if (loginPassword) {
+      setTimeout(() => loginPassword.focus(), 300);
+    }
+  }
+}
+
+/**
+ * Oculta el modal de login
+ */
+function ocultarLogin() {
+  const loginOverlay = document.getElementById('loginOverlay');
+  if (loginOverlay) loginOverlay.classList.remove('active');
+}
+
+/**
+ * Maneja el envío del formulario de login
+ */
+function manejarLogin(e) {
+  if (e) e.preventDefault();
+  const loginPassword = document.getElementById('loginPassword');
+  const loginError = document.getElementById('loginError');
+  const password = loginPassword ? loginPassword.value : '';
+
+  if (password === ADMIN_PASSWORD) {
+    localStorage.setItem(STORAGE_KEY_AUTH, 'true');
+    ocultarLogin();
+    if (loginPassword) loginPassword.value = '';
+    if (loginError) loginError.style.display = 'none';
+    showToast('Bienvenido al panel de administración');
+    initAdmin();
+  } else {
+    if (loginError) {
+      loginError.style.display = 'block';
+      loginError.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+    }
+    if (loginPassword) {
+      loginPassword.value = '';
+      loginPassword.focus();
+    }
+  }
+}
+
+/**
+ * Cierra la sesión del administrador
+ */
+function cerrarSesion() {
+  localStorage.removeItem(STORAGE_KEY_AUTH);
+  showToast('Sesión cerrada');
+  setTimeout(() => location.reload(), 1000);
+}
+
 async function initAdmin() {
+  // Verificar autenticación primero
+  if (!estaAutenticado()) {
+    mostrarLogin();
+    return;
+  }
+
   await cargarDatos();
   cargarConfigEnFormulario();
   renderProductos();
@@ -653,6 +732,26 @@ async function initAdmin() {
   renderDashboard();
   cargarCategorias();
   inicializarEventos();
+  inicializarLogin();
+}
+
+/**
+ * Inicializa los eventos del formulario de login
+ */
+function inicializarLogin() {
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', manejarLogin);
+  }
+
+  const loginPassword = document.getElementById('loginPassword');
+  if (loginPassword) {
+    loginPassword.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        manejarLogin(e);
+      }
+    });
+  }
 }
 
 function inicializarEventos() {
@@ -824,13 +923,23 @@ function inicializarEventos() {
   const confirmOverlay = document.getElementById('confirmOverlay');
 
   if (btnConfirmarEliminar) {
-    btnConfirmarEliminar.addEventListener('click', () => {
+    btnConfirmarEliminar.addEventListener('click', async () => {
       if (callbackConfirmacion) {
         callbackConfirmacion();
         callbackConfirmacion = null;
       } else if (productoAEliminar) {
-        productos = productos.filter(p => p.id !== productoAEliminar);
-        guardarProductos();
+        const idAEliminar = productoAEliminar;
+        // Eliminar el documento de Firebase
+        try {
+          await deleteDoc(doc(productosCollection, String(idAEliminar)));
+          console.log('Producto eliminado de Firebase:', idAEliminar);
+        } catch (e) {
+          console.error('Error al eliminar producto de Firebase:', e);
+          showToast('Error al eliminar el producto', 'error');
+          return;
+        }
+        // Eliminar del array local
+        productos = productos.filter(p => p.id !== idAEliminar);
         renderProductos();
         renderDashboard();
         showToast('Producto eliminado');

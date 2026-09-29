@@ -703,17 +703,17 @@ import { productosCollection, getDocs } from './firebase-config.js';
             console.warn('Error cargando configuración:', e);
         }
 
-        const whatsappNumber = config.whatsapp || '573001234567';
+        const whatsappNumber = config.whatsapp || '573128439577';
 
         // Construir mensaje de WhatsApp
         let mensaje = `Hola NØRDIKO, quiero hacer un pedido:%0A%0A`;
 
         carrito.forEach(item => {
-            mensaje += `${item.icono || ''} ${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}%0A`;
+            mensaje += `${item.icono || ''} ${item.nombre} x${item.cantidad} - ${formatearPrecio(item.precio * item.cantidad)}%0A`;
         });
 
         const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-        mensaje += `%0A💰 Total: $${total.toFixed(2)}%0A%0A`;
+        mensaje += `%0A💰 Total: ${formatearPrecio(total)}%0A%0A`;
         mensaje += `👤 Nombre: ${nombre}%0A`;
         mensaje += `📱 Teléfono: ${telefono}%0A`;
         mensaje += `📍 Dirección: ${direccion}%0A`;
