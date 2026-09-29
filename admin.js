@@ -3,20 +3,17 @@
  *  PANEL DE ADMINISTRACIÓN - NØRDIKO
  * ============================================================
  *  Lógica del panel de administración:
- *  - CRUD de productos con localStorage
+ *  - CRUD de productos con Firebase
  *  - Dashboard con estadísticas
  *  - Buscador en tiempo real
  *  - Configuración de la tienda
  *  - Notificaciones toast
  *  - Validación de formularios
  *
- *  CORRECCIONES APLICADAS:
- *  - Verificación de existencia de TODOS los elementos del DOM
- *  - Compatibilidad total con admin/index.html
- *  - Claves de localStorage corregidas (nordiko_*)
- *  - Escape HTML para prevenir XSS
- *  - Validación de datos mejorada
- *  - Manejo de datos corruptos de versiones anteriores
+ *  FLUJO DE INICIALIZACIÓN SIMPLE:
+ *  1. inicializarApp() - Punto de entrada único
+ *  2. Si no autenticado -> mostrarLogin()
+ *  3. Si autenticado -> cargarDatos() -> renderizarTodo()
  * ============================================================
  */
 
@@ -25,38 +22,25 @@ import { productosCollection, configCollection, getDocs, getDoc, setDoc, addDoc,
 'use strict';
 
 /* ============================================================
- *  FLAGS DE DEBUGGING
- * ============================================================ */
-let firebaseCargado = true; // Firebase se inicializó correctamente al importar el módulo
-let productosEnGrid = 0;
-
-/* ============================================================
  *  CONSTANTES Y CONFIGURACIÓN
  * ============================================================ */
 
-const STORAGE_KEY_PRODUCTOS = 'nordiko_productos';
-const STORAGE_KEY_CONFIG = 'nordiko_config';
 const STORAGE_KEY_AUTH = 'nordiko_admin_auth';
 const ADMIN_PASSWORD = 'nordiko2026';
 
 /** Categorías disponibles para los productos */
-const CATEGORIAS = [
-  'hidratante',
-  'corporal',
-  'facial',
-  'ante-envejecimiento',
-  'perfume'
+const CATEGORIAS_DEFAULT = [
+  { id: 'hidratante', nombre: 'Hidratante', activa: true },
+  { id: 'corporal', nombre: 'Corporal', activa: true },
+  { id: 'facial', nombre: 'Facial', activa: true },
+  { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true },
+  { id: 'perfume', nombre: 'Perfume', activa: true }
 ];
 
 /* ============================================================
  *  UTILIDADES
  * ============================================================ */
 
-/**
- * Escapa texto para prevenir XSS al insertar en HTML.
- * @param {*} texto - Texto a escapar
- * @returns {string} Texto seguro
- */
 function escapeHtml(texto) {
   if (texto === null || texto === undefined) return '';
   const div = document.createElement('div');
@@ -64,15 +48,9 @@ function escapeHtml(texto) {
   return div.innerHTML;
 }
 
-/**
- * Formatea un número como precio.
- * @param {number} valor - Valor a formatear
- * @returns {string} Valor formateado
- */
 function formatMoneda(valor) {
   const num = Number(valor);
   if (isNaN(num) || num < 0) return '$0.000';
-  // Formato colombiano: $20.000 (sin decimales, separador de miles con punto)
   return '$' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
@@ -87,13 +65,7 @@ let config = {
   mensaje: '¡Gracias por tu pedido! Te contactaremos pronto.',
   email: '',
   direccion: '',
-  categorias: [
-    { id: 'hidratante', nombre: 'Hidratante', activa: true },
-    { id: 'corporal', nombre: 'Corporal', activa: true },
-    { id: 'facial', nombre: 'Facial', activa: true },
-    { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true },
-    { id: 'perfume', nombre: 'Perfume', activa: true }
-  ]
+  categorias: [...CATEGORIAS_DEFAULT]
 };
 
 let pedidos = [
@@ -133,11 +105,10 @@ async function cargarDatos() {
     const querySnapshot = await getDocs(productosCollection);
     if (!querySnapshot.empty) {
       const productosFirebase = [];
-      querySnapshot.forEach((doc) => {
-        productosFirebase.push({ id: doc.id, ...doc.data() });
+      querySnapshot.forEach((d) => {
+        productosFirebase.push({ id: d.id, ...d.data() });
       });
       productos = productosFirebase;
-      console.log('Productos cargados desde Firebase:', productos.length);
     } else {
       productos = obtenerProductosEjemplo();
       guardarProductos();
@@ -160,28 +131,19 @@ async function cargarDatos() {
 
   // Validar categorías
   if (!Array.isArray(config.categorias)) {
-    config.categorias = [
-      { id: 'hidratante', nombre: 'Hidratante', activa: true },
-      { id: 'corporal', nombre: 'Corporal', activa: true },
-      { id: 'facial', nombre: 'Facial', activa: true },
-      { id: 'ante-envejecimiento', nombre: 'Antiedad', activa: true },
-      { id: 'perfume', nombre: 'Perfume', activa: true }
-    ];
+    config.categorias = [...CATEGORIAS_DEFAULT];
     guardarConfig();
   }
 }
 
 async function guardarProductos() {
   try {
-    // Guardar cada producto en Firebase
     for (const producto of productos) {
       const productoData = { ...producto };
       const id = productoData.id;
       delete productoData.id;
-      // Firestore requiere ID como string
       await setDoc(doc(productosCollection, String(id)), productoData);
     }
-    console.log('Productos guardados en Firebase');
   } catch (e) {
     console.error('Error al guardar productos en Firebase:', e);
   }
@@ -190,7 +152,6 @@ async function guardarProductos() {
 async function guardarConfig() {
   try {
     await setDoc(doc(configCollection, 'tienda'), config);
-    console.log('Configuración guardada en Firebase');
   } catch (e) {
     console.error('Error al guardar configuración en Firebase:', e);
   }
@@ -221,19 +182,12 @@ function showToast(message, type = 'success') {
  *  RENDERIZAR PRODUCTOS
  * ============================================================ */
 
-window.renderProductos = renderProductos;
-
 function renderProductos(filtro = '') {
   const lista = document.getElementById('productosLista');
-  if (!lista) {
-    console.error('[admin.js] productosLista no existe en el DOM');
-    return;
-  }
+  if (!lista) return;
 
-  // Validar y normalizar productos antes de filtrar
   const productosValidos = productos.filter(p => {
     if (!p || typeof p !== 'object') return false;
-    // Asegurar que las propiedades existan
     if (!p.nombre) p.nombre = 'Sin nombre';
     if (!p.categoria) p.categoria = '';
     if (!p.precio) p.precio = 0;
@@ -244,9 +198,6 @@ function renderProductos(filtro = '') {
     (p.nombre || '').toLowerCase().includes((filtro || '').toLowerCase()) ||
     (p.categoria || '').toLowerCase().includes((filtro || '').toLowerCase())
   );
-
-  productosEnGrid = productosFiltrados.length;
-  console.log('[admin.js] renderProductos - productosEnGrid:', productosEnGrid, 'firebaseCargado:', firebaseCargado);
 
   if (productosFiltrados.length === 0) {
     lista.innerHTML = `
@@ -267,7 +218,6 @@ function renderProductos(filtro = '') {
       imagenHTML = `<span>${escapeHtml(emoji)}</span>`;
     }
 
-    // Escapar correctamente el ID para onclick (puede ser string de Firebase)
     const idEscapado = typeof p.id === 'string' ? `'${escapeHtml(p.id)}'` : p.id;
 
     return `
@@ -308,10 +258,7 @@ function obtenerNombreCategoria(cat) {
 
 function renderPedidos() {
   const lista = document.getElementById('pedidosLista');
-  if (!lista) {
-    console.error('[admin.js] pedidosLista no existe en el DOM');
-    return;
-  }
+  if (!lista) return;
 
   if (pedidos.length === 0) {
     lista.innerHTML = `
@@ -418,10 +365,7 @@ function cargarCategorias() {
 
 function renderCategorias() {
   const lista = document.getElementById('categoriasLista');
-  if (!lista) {
-    console.error('[admin.js] categoriasLista no existe en el DOM');
-    return;
-  }
+  if (!lista) return;
 
   const categorias = config.categorias || [];
 
@@ -672,12 +616,11 @@ function cargarConfigEnFormulario() {
 }
 
 /* ============================================================
- *  INICIALIZACIÓN
+ *  FLUJO DE INICIALIZACIÓN SIMPLE
  * ============================================================ */
 
 /**
  * Verifica si el usuario ya está autenticado
- * @returns {boolean} true si ya se autenticó en esta sesión/navegador
  */
 function estaAutenticado() {
   return localStorage.getItem(STORAGE_KEY_AUTH) === 'true';
@@ -720,17 +663,11 @@ function manejarLogin(e) {
     if (loginPassword) loginPassword.value = '';
     if (loginError) loginError.style.display = 'none';
     showToast('Bienvenido al panel de administración');
-    console.log('[admin.js] Login exitoso - llamando initAdmin');
-    
-    // Resetear flag de inicialización para forzar renderizado
-    adminInicializado = false;
-    
-    initAdmin().then(() => {
-      // Asegurar que los productos se rendericen después del login
-      console.log('[admin.js] Post-login: forzando renderizado de productos');
-      renderProductos();
-      renderDashboard();
-    }).catch(e => console.error('[admin.js] Error en initAdmin después de login:', e));
+
+    // Cargar datos y renderizar después del login
+    cargarDatos().then(() => {
+      renderizarTodo();
+    }).catch(e => console.error('Error después de login:', e));
   } else {
     if (loginError) {
       loginError.style.display = 'block';
@@ -752,46 +689,33 @@ function cerrarSesion() {
   setTimeout(() => location.reload(), 1000);
 }
 
-let adminInicializado = false;
+/**
+ * Renderiza todos los componentes del admin
+ */
+function renderizarTodo() {
+  cargarConfigEnFormulario();
+  renderProductos();
+  renderPedidos();
+  renderDashboard();
+  cargarCategorias();
+  inicializarEventos();
+}
 
-// Exponer funciones globalmente para uso en onclick del HTML
-// (necesario porque el script usa type="module")
-window.initAdmin = initAdmin;
-window.editarProducto = editarProducto;
-window.confirmarEliminar = confirmarEliminar;
-window.cerrarSesion = cerrarSesion;
-window.toggleCategoria = toggleCategoria;
-window.editarCategoria = editarCategoria;
-window.confirmarEliminarCategoria = confirmarEliminarCategoria;
-
-async function initAdmin() {
-  // Verificar autenticación primero
+/**
+ * Punto de entrada único - Inicializa la aplicación
+ */
+async function inicializarApp() {
   if (!estaAutenticado()) {
     mostrarLogin();
+    inicializarLogin();
     return;
   }
-
-  // Evitar inicialización duplicada
-  if (adminInicializado) {
-    console.log('[admin.js] Admin ya fue inicializado, omitiendo inicialización duplicada');
-    return;
-  }
-
-  console.log('[admin.js] Inicializando admin - firebaseCargado:', firebaseCargado);
 
   try {
     await cargarDatos();
-    cargarConfigEnFormulario();
-    renderProductos();
-    renderPedidos();
-    renderDashboard();
-    cargarCategorias();
-    inicializarEventos();
-    inicializarLogin();
-    adminInicializado = true;
-    console.log('[admin.js] Admin inicializado correctamente - productos:', productos.length, 'productosEnGrid:', productosEnGrid);
+    renderizarTodo();
   } catch (e) {
-    console.error('[admin.js] Error fatal al inicializar admin:', e);
+    console.error('Error al inicializar admin:', e);
     showToast('Error al cargar el panel. Verifica tu conexión.', 'error');
   }
 }
@@ -990,16 +914,13 @@ function inicializarEventos() {
         callbackConfirmacion = null;
       } else if (productoAEliminar) {
         const idAEliminar = productoAEliminar;
-        // Eliminar el documento de Firebase
         try {
           await deleteDoc(doc(productosCollection, String(idAEliminar)));
-          console.log('Producto eliminado de Firebase:', idAEliminar);
         } catch (e) {
           console.error('Error al eliminar producto de Firebase:', e);
           showToast('Error al eliminar el producto', 'error');
           return;
         }
-        // Eliminar del array local
         productos = productos.filter(p => p.id !== idAEliminar);
         renderProductos();
         renderDashboard();
@@ -1127,54 +1048,38 @@ function inicializarEventos() {
   }
 }
 
+/* ============================================================
+ *  EXPOSICIÓN GLOBAL
+ * ============================================================ */
+
+// Funciones principales del flujo de inicialización
+window.inicializarApp = inicializarApp;
+window.manejarLogin = manejarLogin;
+window.cargarDatos = cargarDatos;
+window.renderizarTodo = renderizarTodo;
+
+// Funciones de productos
+window.renderProductos = renderProductos;
+window.editarProducto = editarProducto;
+window.confirmarEliminar = confirmarEliminar;
+
+// Funciones de categorías
+window.toggleCategoria = toggleCategoria;
+window.editarCategoria = editarCategoria;
+window.confirmarEliminarCategoria = confirmarEliminarCategoria;
+
+// Funciones de sesión
+window.cerrarSesion = cerrarSesion;
+
+/* ============================================================
+ *  INICIALIZACIÓN
+ * ============================================================ */
+
 // Inicializar cuando el DOM esté listo
-function inicializarCuandoDOMListo() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('[admin.js] DOMContentLoaded - inicializando admin');
-      initAdmin().catch(e => console.error('[admin.js] Error en initAdmin:', e));
-    });
-  } else {
-    console.log('[admin.js] DOM ya listo - inicializando admin');
-    initAdmin().catch(e => console.error('[admin.js] Error en initAdmin:', e));
-  }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    inicializarApp();
+  });
+} else {
+  inicializarApp();
 }
-
-inicializarCuandoDOMListo();
-
-// Exponer variables de debugging al scope global para verificación en consola
-window.adminDebug = {
-  get firebaseCargado() { return firebaseCargado; },
-  get productosEnGrid() { return productosEnGrid; },
-  get productos() { return productos; },
-  get adminInicializado() { return adminInicializado; },
-  get loginVisible() { 
-    const overlay = document.getElementById('loginOverlay');
-    return overlay ? overlay.classList.contains('active') : false;
-  },
-  verificarEstado() {
-    console.log('=== ESTADO DEL ADMIN ===');
-    console.log('firebaseCargado:', firebaseCargado);
-    console.log('productosEnGrid:', productosEnGrid);
-    console.log('adminInicializado:', adminInicializado);
-    console.log('loginVisible:', this.loginVisible);
-    console.log('total productos:', productos.length);
-    console.log('productos:', productos);
-    console.log('========================');
-    return {
-      firebaseCargado,
-      productosEnGrid,
-      adminInicializado,
-      loginVisible: this.loginVisible,
-      totalProductos: productos.length
-    };
-  },
-  forzarRenderizado() {
-    console.log('[admin.js] Forzando renderizado manual...');
-    renderProductos();
-    renderDashboard();
-    renderPedidos();
-    cargarCategorias();
-    console.log('[admin.js] Renderizado completado - productosEnGrid:', productosEnGrid);
-  }
-};
