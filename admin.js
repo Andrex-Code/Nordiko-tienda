@@ -25,6 +25,12 @@ import { productosCollection, configCollection, getDocs, getDoc, setDoc, addDoc,
 'use strict';
 
 /* ============================================================
+ *  FLAGS DE DEBUGGING
+ * ============================================================ */
+let firebaseCargado = true; // Firebase se inicializó correctamente al importar el módulo
+let productosEnGrid = 0;
+
+/* ============================================================
  *  CONSTANTES Y CONFIGURACIÓN
  * ============================================================ */
 
@@ -226,6 +232,9 @@ function renderProductos(filtro = '') {
     p.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
     p.categoria.toLowerCase().includes(filtro.toLowerCase())
   );
+
+  productosEnGrid = productosFiltrados.length;
+  console.log('[admin.js] renderProductos - productosEnGrid:', productosEnGrid, 'firebaseCargado:', firebaseCargado);
 
   if (productosFiltrados.length === 0) {
     lista.innerHTML = `
@@ -696,7 +705,8 @@ function manejarLogin(e) {
     if (loginPassword) loginPassword.value = '';
     if (loginError) loginError.style.display = 'none';
     showToast('Bienvenido al panel de administración');
-    initAdmin();
+    console.log('[admin.js] Login exitoso - llamando initAdmin');
+    initAdmin().catch(e => console.error('[admin.js] Error en initAdmin después de login:', e));
   } else {
     if (loginError) {
       loginError.style.display = 'block';
@@ -718,6 +728,8 @@ function cerrarSesion() {
   setTimeout(() => location.reload(), 1000);
 }
 
+let adminInicializado = false;
+
 async function initAdmin() {
   // Verificar autenticación primero
   if (!estaAutenticado()) {
@@ -725,14 +737,29 @@ async function initAdmin() {
     return;
   }
 
-  await cargarDatos();
-  cargarConfigEnFormulario();
-  renderProductos();
-  renderPedidos();
-  renderDashboard();
-  cargarCategorias();
-  inicializarEventos();
-  inicializarLogin();
+  // Evitar inicialización duplicada
+  if (adminInicializado) {
+    console.log('[admin.js] Admin ya fue inicializado, omitiendo inicialización duplicada');
+    return;
+  }
+
+  console.log('[admin.js] Inicializando admin - firebaseCargado:', firebaseCargado);
+
+  try {
+    await cargarDatos();
+    cargarConfigEnFormulario();
+    renderProductos();
+    renderPedidos();
+    renderDashboard();
+    cargarCategorias();
+    inicializarEventos();
+    inicializarLogin();
+    adminInicializado = true;
+    console.log('[admin.js] Admin inicializado correctamente - productos:', productos.length, 'productosEnGrid:', productosEnGrid);
+  } catch (e) {
+    console.error('[admin.js] Error fatal al inicializar admin:', e);
+    showToast('Error al cargar el panel. Verifica tu conexión.', 'error');
+  }
 }
 
 /**
@@ -1067,8 +1094,24 @@ function inicializarEventos() {
 }
 
 // Inicializar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdmin);
-} else {
-  initAdmin();
+function inicializarCuandoDOMListo() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('[admin.js] DOMContentLoaded - inicializando admin');
+      initAdmin().catch(e => console.error('[admin.js] Error en initAdmin:', e));
+    });
+  } else {
+    console.log('[admin.js] DOM ya listo - inicializando admin');
+    initAdmin().catch(e => console.error('[admin.js] Error en initAdmin:', e));
+  }
 }
+
+inicializarCuandoDOMListo();
+
+// Exponer variables de debugging al scope global para verificación en consola
+window.adminDebug = {
+  get firebaseCargado() { return firebaseCargado; },
+  get productosEnGrid() { return productosEnGrid; },
+  get productos() { return productos; },
+  get adminInicializado() { return adminInicializado; }
+};
