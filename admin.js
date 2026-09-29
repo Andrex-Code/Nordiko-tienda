@@ -838,17 +838,42 @@ function inicializarEventos() {
         showToast('Por favor selecciona una imagen', 'error');
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('La imagen no puede superar 5MB', 'error');
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('La imagen no puede superar 10MB', 'error');
         return;
       }
+      
+      // Comprimir imagen antes de guardar
       const reader = new FileReader();
       reader.onload = (event) => {
-        const base64 = event.target.result;
-        if (fotoPreview) fotoPreview.src = base64;
-        if (prodImagenBase64) prodImagenBase64.value = base64;
-        mostrarVistaPrevia();
-        showToast('Foto cargada correctamente');
+        const img = new Image();
+        img.onload = () => {
+          // Redimensionar a máximo 800px de ancho
+          const maxWidth = 800;
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Comprimir a JPEG calidad 0.7
+          const base64 = canvas.toDataURL('image/jpeg', 0.7);
+          
+          if (fotoPreview) fotoPreview.src = base64;
+          if (prodImagenBase64) prodImagenBase64.value = base64;
+          mostrarVistaPrevia();
+          showToast('Foto cargada y comprimida (' + Math.round(base64.length / 1024) + ' KB)');
+        };
+        img.onerror = () => showToast('Error al cargar la imagen', 'error');
+        img.src = event.target.result;
       };
       reader.onerror = () => showToast('Error al cargar la imagen', 'error');
       reader.readAsDataURL(file);
