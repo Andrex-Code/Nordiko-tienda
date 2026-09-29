@@ -221,6 +221,8 @@ function showToast(message, type = 'success') {
  *  RENDERIZAR PRODUCTOS
  * ============================================================ */
 
+window.renderProductos = renderProductos;
+
 function renderProductos(filtro = '') {
   const lista = document.getElementById('productosLista');
   if (!lista) {
