@@ -645,7 +645,10 @@ function mostrarLogin() {
  */
 function ocultarLogin() {
   const loginOverlay = document.getElementById('loginOverlay');
-  if (loginOverlay) loginOverlay.classList.remove('active');
+  if (loginOverlay) {
+    loginOverlay.classList.remove('active');
+    loginOverlay.style.display = 'none';
+  }
 }
 
 /**
