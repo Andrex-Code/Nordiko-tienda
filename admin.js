@@ -503,7 +503,11 @@ function cerrarModal() {
 function mostrarZonaSubida() {
   const fotoUploadZone = document.getElementById('fotoUploadZone');
   const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
-  if (fotoUploadZone) fotoUploadZone.style.display = 'flex';
+  if (fotoUploadZone) {
+    fotoUploadZone.style.display = 'flex';
+    fotoUploadZone.style.visibility = 'visible';
+    fotoUploadZone.style.opacity = '1';
+  }
   if (fotoPreviewContainer) fotoPreviewContainer.style.display = 'none';
 }
 
